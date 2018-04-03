@@ -1,0 +1,164 @@
+[[file:index.org][{back to main page}]]
+#+HTML_HEAD: <link rel="stylesheet" typ="text/css" href="/home/hiro/org/css/worg.css"/>
+#+TITLE: 编译原理LL(1)算法详解
+#+DATE: 2016-11-21 13:28:36
+#+OPTIONS: toc:nil
+
+#+BEGIN_CENTER
+Dec 21, 2016
+#+END_CENTER
+
+最近编译原理有个实验，要我们自己写一个递归向上的语法分析器。因为前几天在忙前端（Android）和算法，所以一直没工夫看。结果昨天晚上是老师作业截止日期，我却一个字都没动......只能匆忙拿同学的实验报告借鉴了一下。
+
+算是蒙混过关了，可心里总觉着不踏实，于是啃了下书，在网上看了几篇文章，写点东西总结一下吧。
+
+#+TOC: headlines 2
+
+** LL(1)
+   :PROPERTIES:
+   :CUSTOM_ID: ll1
+   :END:
+
+定义： - 第一个 L：从左向右输入 - 第二个
+L：最左推导（每次把最左边的非终结符用产生式代替） - 1：向前展望为1
+
+满足条件： - 对于所有不能导出空集的表达式，他们的 First 集不能为空 > For
+every production A -> a1|a2|...|a ,First(ai) 没有交集
+
+-  若任何一个产生式有空集属于他的 First 集，那么剩余其他产生式的 First
+   集和 Follow 集交集为空 > For every nontermianl A such that First(A)
+   contains e, First(A) n Follow(A) is empty.
+
+参考： https://segmentfault.com/a/1190000002561366
+
+** 消除左递归
+   :PROPERTIES:
+   :CUSTOM_ID: 消除左递归
+   :END:
+
+如果文法本身存在左递归，它会无限循环下去。它是无法做 LL(1)
+运算的，所以，需要在运算之前消除左递归。
+
+会一直递归循环的文法：
+
+#+BEGIN_EXAMPLE
+    A -> Aa|b               左递归
+        A -> b
+        A -> Aa
+            Aa -> ba
+            Aa -> Aaa
+                Aaa -> baa
+                Aaa -> Aaaa
+#+END_EXAMPLE
+
+消除左递归：
+
+#+BEGIN_EXAMPLE
+    A -> Aa|b               可以写为
+    A -> bA'                可以肯定是以 b 开头
+    A' -> aA'|<empty>       左递归转为右递归
+
+        A' -> aA'
+            aA' -> aaA'
+                aaA' -> aaa'
+#+END_EXAMPLE
+
+把左递归转为右递归后，由原来的扩展（shift）转为了归约（reduce），所以不会死循环。
+
+参考： http://www.voidcn.com/blog/thisinnocence/article/p-6269181.html
+
+** First() 集合
+   :PROPERTIES:
+   :CUSTOM_ID: first-集合
+   :END:
+
+对于非终结符，我们把它所有的开始的终结符的集合，记做是 First 集。 -
+如果存在 T->a，那 T 的 First 集为 a - 如果存在 T->A，那么 T 的 First
+集为 First(A)
+
+上面是我自己的理解。下面上个例子说明一下：
+
+#+BEGIN_EXAMPLE
+    exp -> exp addop term | term
+    addop -> +| -
+    term -> term mulop factor | factor
+    mulop -> *
+    factor -> (exp)|<number>
+#+END_EXAMPLE
+
+分解后：
+
+#+BEGIN_EXAMPLE
+    exp -> exp addop term
+    exp -> term
+    addop -> +
+    addop -> -
+    term -> term mulop factor
+    term -> factor
+    mulop -> ∗
+    mulop -> /
+    actor -> (exp)
+    factor -> <number>
+#+END_EXAMPLE
+
+First 集：
+
+#+BEGIN_EXAMPLE
+    First(exp) = {(, <number>}
+    First(term) = {(, <number>}
+    First(factor) = {(, <number>}
+    First(addop) = {+, -}
+    First(mulop) = {*}
+#+END_EXAMPLE
+
+参考：http://www.cnblogs.com/yuanting0505/p/3761411.html 以及：课本
+
+** Follow() 集合
+   :PROPERTIES:
+   :CUSTOM_ID: follow-集合
+   :END:
+
+对于非终结符，我们把它结束后的所有的非终结符的集合叫做 Follow 集。 -
+对于一个开始非终结符，它的 Follow 集中包含 $ - 如果存在
+T->...UA，Follow(T) = Follow(U) = First(A)
+
+依旧是上次那个例子：
+
+#+BEGIN_EXAMPLE
+    Follow(exp) = {$, +, -}
+    Follow(addop) = {(, <number>}
+    Follow(term) = {$, +, -, *, )}
+    Follow(mulop) = {(, <number>}
+    Follow(factor) = {$, +, -, *, )}
+#+END_EXAMPLE
+
+** 预测分析表
+   :PROPERTIES:
+   :CUSTOM_ID: 预测分析表
+   :END:
+
+Y 轴：非终结符 X 轴：终结符
+
+举例：
+
+#+BEGIN_EXAMPLE
+    E -> nE'
+    E' -> +nE'|<empty>
+#+END_EXAMPLE
+
+求出其 First 和 Follow 集：
+
+#+BEGIN_EXAMPLE
+    First(E) = {n}
+    First(E') = {+, <empty>}
+    Follow(E) = Follow(E') = {n}
+#+END_EXAMPLE
+
+分析表： | M[N,T] | n | + | $ | | ------| ------ | ------ | ------ | | E
+| E -> nE' | | | | E' | | E' -> +nE' | E' -> @@html:<number>@@ |
+
+
+
+
+
+

@@ -1,0 +1,162 @@
+[[file:index.org][{back to main page}]]
+#+TITLE: Deepin 使用小记
+
+#+DATE: 2016-10-02 15:35:10
+
+在受够了 windows
+系统如此先进不要折腾且游戏众多的使用体验之后，我决定找点事儿干......
+
+同学推荐说国产有款 Linux
+系统不错，网上查着看了一下，好评也挺多，于是便准备入手装这款
+DEEPIN（深度）系统，我把我安装过程中装的软件以及各种奇葩坑爹的事儿写在这里分享一下。
+
+马士兵曰过：网上遇到有人不会的问题你会的话一定要回答人家。
+
+我觉得写这些东西也算是一种回答，起码可以更新一下网上那些有些旧的答案了。
+
+#+BEGIN_HTML
+  <!--more-->
+#+END_HTML
+
+** 安装记
+   :PROPERTIES:
+   :CUSTOM_ID: 安装记
+   :END:
+
+*** 安装步骤
+    :PROPERTIES:
+    :CUSTOM_ID: 安装步骤
+    :END:
+
+-  原来是 win10 系统，这次重装不打算装双系统，直接将 DEEPIN
+   作为我的主力系统，所以最先做的一件事是：备份！
+-  备份完后制作 U 盘启动器，这一步很多工具都可以完成。比如说
+   UltraISO。我用的是深度推荐的深度 U 盘启动器。
+-  开机时选择 U 盘启动，直接进入深度安装界面。进入 U
+   盘启动的方法不同电脑有不同快捷键，我的是 - Lenovo B4400，快捷键是 F12
+   。
+-  安装时有两种模式，一是简单模式，二是专家模式。我选的是专家模式，主要要做的事就是分区，我的分区简单的很，/目录
+   50G ，home目录 剩余全部。 ### 问题
+
+-  U 盘启动器制作失败。
+   这种问题我是第一次遇到，一脸懵逼，当时猜测是可能深度启动盘制作失败，于是换了
+   UltraISO
+   ，结果只能出来安装界面，无法继续进行下一步操作。在反复实验后，才发现
+
+-  U 盘制作工具有一定失败率。
+
+而恰好我尝试的两次足以让我内心崩溃不去尝试而想别的问题。饶了有一大圈后忐忐忑忑再次用深度制作工具做好进行尝试，终于成功安装好了系统。
+
+-  系统引导出错 Missing Operating System
+   这是安装完成后重启时出现的错误，只能通过 U 盘引导启动系统，启动后拔掉
+   U 盘还可以接着用。mdzz
+   ，在网上找了好久，改过硬盘引导，没用，最后发现应该是我安装好重启的时候拔
+   U 盘有点迟的原因。
+
+#+BEGIN_QUOTE
+  我是先按 现在重启 后拔的 U 盘所以出错。 正确的姿势是：先拔 U 盘，再按
+  现在重启 。
+#+END_QUOTE
+
+** 科学上网（FQ）
+   :PROPERTIES:
+   :CUSTOM_ID: 科学上网fq
+   :END:
+
+以前 windows 下使用的是 lantern ，Android 端使用的是 shadowsocks
+。想想那时候的 lantern 还是免费的，流量无限制，windows 、linux 、mac
+、android
+都可以使用，当之无愧翻墙必备。可如今它要收费了，年费180￥，作为学生党，lantern
+，我只能放弃你了......
+
+然后我决定入 shadowsocks，只要在这边配置一个客户端即可。
+
+*** 步骤
+    :PROPERTIES:
+    :CUSTOM_ID: 步骤
+    :END:
+
+**** 安装编译环境
+     :PROPERTIES:
+     :CUSTOM_ID: 安装编译环境
+     :END:
+
+=sudo apt-get install build-essential=
+
+**** 先安装 libQtShadowsocks
+     :PROPERTIES:
+     :CUSTOM_ID: 先安装-libqtshadowsocks
+     :END:
+
+-  解决依赖
+   =sudo apt-get install qt5-qmake qtbase5-dev libbotan1.10-dev debhelper pkg-config=
+
+-  从 github 上下源码
+   =git clone https://github.com/shadowsocks/libQtShadowsocks.git=
+
+-  编译 =cd libQtShadowsocks*/ sudo dpkg-buildpackage -uc -us -b=
+
+-  安装
+   =cd .. sudo dpkg -i libqtshadowsocks.deb shadowsocks-libqtshadowsocks.deb=
+
+**** 安装Shadowsocks-Qt5
+     :PROPERTIES:
+     :CUSTOM_ID: 安装shadowsocks-qt5
+     :END:
+
+-  解决依赖
+   =apt-get install libqrencode-dev libzbar-dev libappindicator-dev=
+
+-  从 github 上下源码
+   =git clone https://github.com/shadowsocks/shadowsocks-qt5.git=
+
+-  编译 =cd shadowsocks-qt5*/ sudo dpkg-buildpackage -uc -us -b=
+
+-  安装 =cd .. sudo dpkg -i shadowsocks-qt5_*.deb=
+
+*2017-03-04 更新* 原来这个也打包好了，心累：
+
+#+BEGIN_EXAMPLE
+    sudo apt install shadowsocks-qt5
+#+END_EXAMPLE
+
+**** 配置
+     :PROPERTIES:
+     :CUSTOM_ID: 配置
+     :END:
+
+一般直接购买 shadowsocks
+（影梭）就可以得到你的用户名节点等，填好之后保存，客户端显示连接成功并不证明你真的连接成功。还需要进行系统的设置：
+
+[[http://oeoaak94a.bkt.clouddn.com/de1.png]]
+
+然后其实就可以全局代理了。
+
+**** Chrome 下的 Proxy SwitchySharp 插件
+     :PROPERTIES:
+     :CUSTOM_ID: chrome-下的-proxy-switchysharp-插件
+     :END:
+
+个人不是很喜欢全局代理，有了这个工具后，便可以在 chrome
+上开启你的科学上网之旅了。
+
+-  首先需要安装扩展，自己可以在网上百度找到具体资源下载。
+-  情景模式完全可以按我这样设置：
+
+[[http://oeoaak94a.bkt.clouddn.com/de2.png]]
+
+切换规则也是如图：
+
+[[http://oeoaak94a.bkt.clouddn.com/de3.png]]
+
+这样就可以科学的上网了！
+
+后记
+
+还装了一些 coder 需要用的 IDE 和编辑环境，就不一一写出了。可能会后续更新
+
+
+
+
+
+

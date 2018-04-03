@@ -1,0 +1,272 @@
+[[file:index.org][{back to main page}]]
+#+TITLE: Android 文件存储
+
+#+DATE: 2016-11-16 18:55:33
+
+Android 文件存储学完有一个礼拜了，总结一下。
+
+#+BEGIN_HTML
+  <!--more-->
+#+END_HTML
+
+** RAM & ROM
+   :PROPERTIES:
+   :CUSTOM_ID: ram-rom
+   :END:
+
+RAM，Random Access
+Memory，随机存储器，在工作状态可以随机读取数据，但在断电后会丢失数据。也就是我们常说的运行内存。
+
+ROM，Read Only
+Memory，只读存储器，分为程序分区和系统分区，存放系统数据和用户数据。
+
+程序分区有存放系统程序和用户程序的数据，默认只有自己的程序可以访问，当你卸载
+app 时，会一起删除 - Apk 内置数据存放于=data/app=目录 - APP
+私有数据存放于=data/data=目录（系统程序数据也存放在此）
+
+公共存储区，即常说的外部存储区，所有人都可以访问，当你卸载 app
+时，仅仅会移除存储在通过=getExternalFilesDir()=获取到的外部数据,所在目录：=storge/sdcard=
+
+在设置里面可以看到用户程序运行时会有缓存和数据， -
+缓存：=data/data/包名/catch= - 数据：=data/data/包名/files=
+没错，它们就存放在程序分区。
+
+应用扩展存储：=sdcard/Android/data/包名=
+
+** 从 app/assets & app/res/raw 获取
+   :PROPERTIES:
+   :CUSTOM_ID: 从-appassets-appresraw-获取
+   :END:
+
+fromRaw：
+
+获取 app/raw 目录下的资源文件，转为 stream：
+
+#+BEGIN_SRC java
+    InputStream inputStream = context.getResources().openRawResource(R.raw.city);
+#+END_SRC
+
+转为 string：
+
+#+BEGIN_SRC java
+    public static String getStringStream(InputStream inputStream) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len = -1;
+
+        try {
+            while ((len = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, len);
+            }
+
+            outputStream.close();
+            inputStream.close();
+
+            byte[] bytes = outputStream.toByteArray();
+            String stringStream = new String(bytes, "utf-8");
+            return stringStream;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+#+END_SRC
+
+from assets： 获取 stream：
+
+#+BEGIN_SRC java
+    InputStream inputStream = context.getAssets().open("city.json");
+#+END_SRC
+
+用上面的方法同样可以转为 string
+
+** read & write 从内部存储
+   :PROPERTIES:
+   :CUSTOM_ID: read-write-从内部存储
+   :END:
+
+先搞一个读写操作的方法：
+
+writeAndRead():
+
+#+BEGIN_SRC java
+    private void writeAndRead(Context context, String str) {
+        try {
+            FileOutputStream outputStream = new FileOutputStream(extendFile);
+            String cacheString = str;
+            outputStream.write(cacheString.getBytes());
+
+            outputStream.close();
+
+            FileInputStream inputStream = new FileInputStream(extendFile);
+            String cache = Util.getStringStream(inputStream);
+            Log.i("ExtendFile", cache);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+#+END_SRC
+
+前面有说内部存储有缓存和文件存储两部分。读写自己 app 下的 file 和 cache
+不需要权限。
+
+file（文件存储）：
+
+保存文件：
+
+#+BEGIN_SRC java
+    private void saveFile(Context context, String userName, String pwd) {
+
+        FileOutputStream outputStream = null;
+
+        try {
+            /**
+            *通过 openFileOutput（filename，存储模式）来新建一个文件
+            *MOOD_PRIVATE 指私有，不被其他应用访问
+            **/
+            outputStream = context.openFileOutput("test", Context.MODE_PRIVATE);
+            String userPw = String.format("%s;%s", userName, pwd);
+            byte[] bytes = userPw.getBytes("utf-8");
+            outputStream.write(bytes);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+#+END_SRC
+
+读文件：
+
+#+BEGIN_SRC java
+    private void readFile(Context context) {
+        InputStream inputStream = null;
+        String strUserPw = null;
+
+        // Util 类在前面介绍过，用来转换 stream 到 string
+        try {
+            inputStream = context.openFileInput("test");
+            strUserPw = Util.getStringStream(inputStream);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+#+END_SRC
+
+cache（缓存）读写：
+
+#+BEGIN_SRC java
+    private void writeAndReadCacheFile (Context context) {
+        /**
+        *通过 getCacheDir() 方法获得 cache 目录
+        * 其他和上面 file 的方法相同
+        **/
+        File cacheDir = context.getCacheDir();
+        File cacheFile = new File(cacheDir.getAbsolutePath() + "/internalCache");
+        String str = new String("hello internalCache");
+
+        writeAndRead(context, str);
+    }
+#+END_SRC
+
+** read & write 从外部存储
+   :PROPERTIES:
+   :CUSTOM_ID: read-write-从外部存储
+   :END:
+
+注意，这里的外部存储不是指外置内存卡！！！
+
+首先，申明权限：
+
+#+BEGIN_EXAMPLE
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />  
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />  
+#+END_EXAMPLE
+
+同样的，主要是拿到外部存储的文件地址：
+
+#+BEGIN_SRC java
+    private void writeAndReadExtendFile(Context context) {
+
+        //通过 getExternalFilesDir() 方法创建的目录会随 app 的卸载而删除
+        //通过 getExternalPublicDirectory() 方法创建的目录不会随 app 的卸载而删除
+        File extendFileDir = context.getExternalFilesDir(null);
+        File extendFile = new File(extendFileDir.getAbsolutePath() + "/myextendfile.txt");
+        String str = new String("hello myextend file");
+
+        writeAndRead(context, str);
+    }
+#+END_SRC
+
+** read & write 从外置内存卡
+   :PROPERTIES:
+   :CUSTOM_ID: read-write-从外置内存卡
+   :END:
+
+判断外置内存卡是否可用：
+
+#+BEGIN_SRC java
+    /* Checks if external storage is available for read and write */  
+    public boolean isExternalStorageWritable() {  
+        String state = Environment.getExternalStorageState();  
+        if (Environment.MEDIA_MOUNTED.equals(state)) {  
+            return true;  
+        }  
+        return false;  
+    }  
+
+    /* Checks if external storage is available to at least read */  
+    public boolean isExternalStorageReadable() {  
+        String state = Environment.getExternalStorageState();  
+        if (Environment.MEDIA_MOUNTED.equals(state) ||  
+            Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {  
+            return true;  
+        }  
+        return false;  
+    }
+#+END_SRC
+
+拿到外置内存卡的地址：
+
+#+BEGIN_SRC java
+    private void writeAndReadExternalFile(Context context) {
+        File externalStorageDirectory = Environment.getExternalStorageDirectory();
+        File externalDir = new File(externalStorageDirectory.getAbsolutePath() + "/mydir");
+
+        // 判断是否有外置内存卡中是否有我的 app 包的目录
+        if (!externalDir.exists()) {
+            externalDir.mkdir();
+        }
+
+        FileOutputStream outputStream = null;
+        FileInputStream inputStream = null;
+
+        File externalFile = new File(externalStorageDirectory.getAbsolutePath() + "/mydir/myexternalfile");
+        String str = new String("hello, myexternal file");
+
+        writeAndRead(context, str);
+    }
+#+END_SRC
+
+** 感受
+   :PROPERTIES:
+   :CUSTOM_ID: 感受
+   :END:
+
+这次课的只是很零散，以后估计有大坑......
+
+
+
+
+
+

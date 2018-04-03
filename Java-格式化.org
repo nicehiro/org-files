@@ -1,0 +1,137 @@
+[[file:index.org][{back to main page}]]
+#+TITLE: Java 格式化
+
+#+DATE: 2016-12-16 23:17:31
+
+今天看《Head First Java》，对所学 java 知识进行查缺补漏。
+
+#+BEGIN_HTML
+  <!--more-->
+#+END_HTML
+
+** 数字”格式化“的格式
+   :PROPERTIES:
+   :CUSTOM_ID: 数字格式化的格式
+   :END:
+
+一般我们直接调用：
+
+#+BEGIN_SRC java
+    String.format("This is a test %d.", 43);
+#+END_SRC
+
+就可以对字符串进行格式化。
+
+格式化的语法：
+
+#+BEGIN_EXAMPLE
+    % [argument number][flags][width][.precision] type
+#+END_EXAMPLE
+
+-  %：表示在这个地方插入格式化对象，必有
+-  argument number：如果有多个需要格式化的参数时配置
+-  flags：特定 flags，比如说数字前可以加=,=、=+=等，代表一种特殊选项
+-  width：最小字符数，如果不足，自动补全；反之，可以超出
+-  .precision：精确度
+-  type：格式化对象的类型，必有
+
+我们常用的 type 格式有： - %d：decimal - %f：float point -
+%x：hexadecimal - %c：character - %s：string
+
+*** 数字格式化的例子
+    :PROPERTIES:
+    :CUSTOM_ID: 数字格式化的例子
+    :END:
+
+#+BEGIN_SRC java
+    String.format("5,6.1f", 42.000);
+#+END_SRC
+
+运行结果：
+
+#+BEGIN_EXAMPLE
+    42.0
+#+END_EXAMPLE
+
+我们对照上面说的格式： % 开头必有，=,=用于格式化后面数字的
+flags；=6=表示最小的字符数是6位；=.1=表示精确度只有一位小数点；=f=表示格式化对象为浮点数。
+
+有些奇怪的是，“6”的作用好像被”.1“替代而没有显示出来。这是需要我们注意的。
+
+#+BEGIN_SRC java
+    String.format("hahahaha %,d hahaha %,.2f", 12345, 1234567.12345)
+#+END_SRC
+
+运行结果：
+
+#+BEGIN_EXAMPLE
+    hahahaha 12,345 hahaha 1,234,567.12
+#+END_EXAMPLE
+
+这个可以很好理解了。
+
+** 对日期的格式化
+   :PROPERTIES:
+   :CUSTOM_ID: 对日期的格式化
+   :END:
+
+对日期的格式化是对 Date 对象的格式化：
+
+-  完整的日期与时间显示：
+
+   #+BEGIN_SRC java
+       String.format("%tc", new Date());
+   #+END_SRC
+
+   运行结果：
+
+   #+BEGIN_EXAMPLE
+       星期六 十二月 17 00:03:29 CST 2016
+   #+END_EXAMPLE
+
+-  只有时间：
+
+   #+BEGIN_SRC java
+       String.format("%tr", new Date());
+   #+END_SRC
+
+   运行结果：
+
+   #+BEGIN_EXAMPLE
+       12:05:14 上午
+   #+END_EXAMPLE
+
+-  周、月、日：
+
+   #+BEGIN_SRC java
+       Date now = new Date();
+       String.format("%tA, %tB %td", now, now, now);
+   #+END_SRC
+
+   运行结果：
+
+   #+BEGIN_EXAMPLE
+       星期六，十二月 17
+   #+END_EXAMPLE
+
+   实现上诉功能但不需要传入参数即可：
+
+   #+BEGIN_SRC java
+       Date now = new Date();
+       String.format("%tA, %<tB, %<td", today);
+   #+END_SRC
+
+额，其实有更强大的 Calendar 可以用来操作时间，详情自行查阅 Java API
+
+** 感受
+   :PROPERTIES:
+   :CUSTOM_ID: 感受
+   :END:
+
+从今起戒撸！！！
+
+
+
+
+
+

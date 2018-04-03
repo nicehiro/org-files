@@ -1,0 +1,396 @@
+[[file:index.org][{back to main page}]]
+#+HTML_HEAD: <link rel="stylesheet" typ="text/css" href="/home/hiro/org/css/worg.css"/>
+#+TITLE: 算法 排序
+
+#+DATE: 2017-04-28 14:46:06
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/hiro/org/css/worg.css"/>
+
+开始复习算法了。刚开始是想要使用清华严老师的课本的，但看了下书后发现，严老师的书数据结构的内容比较多，算法不是很多，并且有些上课的时候已经理解了。所以我决定开始看一年前买的《Algorithm》第四版。内容丰富，而且以
+Java
+作为编程实践。今天看了一天（也不太算一整天），把之前看过的排序部分搞定了。总结在此。
+
+#+BEGIN_HTML
+  <!--more-->
+#+END_HTML
+
+** 排序
+   :PROPERTIES:
+   :CUSTOM_ID: 排序
+   :END:
+
+*** 排序模板
+    :PROPERTIES:
+    :CUSTOM_ID: 排序模板
+    :END:
+
+#+BEGIN_EXAMPLE
+    private static Comparable[] aux;
+
+    public static boolean less(Comparable v, Comparable w) {
+       return v.compareTo(w) < 0;
+    }
+
+    public static void exch(Comparable[] arr, int i, int j) {
+        Comparable temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
+    public static void show(Comparable[] arr) {
+        for (int i=0; i<arr.length; i++) {
+            System.out.println(arr[i]);
+        }
+        System.out.println();
+    }
+
+    public static boolean isSorted(Comparable[] arr) {
+        for (int i=1; i<arr.length; i++) {
+            if (less(arr[i], arr[i-1]))
+                return false;
+        }
+        return true;
+    }
+
+    public static void sort(Comparable[] arr) {
+        // sort method
+    }
+#+END_EXAMPLE
+
+*** 选择排序
+    :PROPERTIES:
+    :CUSTOM_ID: 选择排序
+    :END:
+
+-  在数组中找一个最小的元素，与第一个元素交换
+-  在剩下的数组中找剩下当中最小的元素，与第二个元素交换
+-  以此类推
+
+   #+BEGIN_EXAMPLE
+       public static void sort(Comparable[] arr) {
+       for (int i=0; i<arr.length; i++) {
+           int min = i;
+           for (int j=i+1; j<arr.length; j++) {
+               if (less(arr[j], arr[min])) {
+                   min = j;
+               }
+               exch(arr, i, min);
+           }
+       }
+       }
+   #+END_EXAMPLE
+
+对于长度为 N 的数组，需要进行 =N^2 / 2= 次比较和 =N= 次交换。
+
+题后话：其实一看题目就想着可以用递归实现......于是用 Lisp 实现了一下：
+
+#+BEGIN_EXAMPLE
+    (defun selection (lst)
+      (if (not lst)
+          nil
+          (let* ((x (minest lst))
+                (ret (selection (remove x lst))))
+            (setf ret (cons x ret)))))
+
+    (defun minest (lst)
+      (if (= 1 (length lst))
+          (car lst)
+          (let ((ret (minest (cdr lst)))
+                (x (car lst)))
+            (if (< x ret)
+                (setf ret x)
+                (setf ret ret)))))
+
+    (defun maxest (lst)
+      (if (= 1 (length lst))
+          (car lst)
+          (let ((ret (maxest (cdr lst)))
+                (x (car lst)))
+            (if (> x ret)
+                (setf ret x)
+                (setf ret ret)))))
+#+END_EXAMPLE
+
+好用有些繁琐，但其实原理很简单，我也实现了一个可以从大到小排序的方法。如果可以，还可以通过添加可选参数增加可以比较的方法。
+### 插入排序 - 先找两个元素排序，把小的元素插入到大元素的前面 -
+再找第三个元素，把他插入到合适的位置 - 以此类推
+
+#+BEGIN_EXAMPLE
+    public static void sort(Comparable[] arr) {
+        for (int i=1; i<arr.length; i++) {
+            for (int j=i; j>0 && less(arr[j], arr[j-1]); j--) {
+                exch(arr, j, j-1);
+            }
+        }
+    }
+#+END_EXAMPLE
+
+对于随机排列切长度为 N 且主键不重复的数组，平均情况下插入排序需要
+=N^2 / 4= 比较和 =N^2 / 4= 次交换。 最好情况下需要 N-1 次比较和 0
+次交换。最坏情况下需要 =N^2 / 2= 次比较和 =N^2 / 2= 次交换。
+改进：内循环中不要每次一检测到有小元素出现就交换，可以在本次循环结束之后再交换。
+### 希尔排序 插入排序的改进版 - 先确定一递增序列。使数组中任意间隔为 h
+的有序数组都是有序的。 - 每个递增序列使用插入排序进行排序 -
+递增序列间隔大小每次减少，直到为 1，成为插入排序
+
+#+BEGIN_EXAMPLE
+    public static void sort(Comparable[] arr) {
+        int n = arr.length;
+        int h = 1;
+        while (h < n/3) h = 3 * h + 1;
+        while (h >= 1) {
+            for (int i=h; i<n; i++) {
+                for (int j=i; j>=h && less(arr[j], arr[j-h]); j-=h) {
+                    exch(a, j, j-h);
+                    // 可以只交换位置                                                 
+                }   
+            }    
+            h = h / 3;
+        }
+    }
+#+END_EXAMPLE
+
+使用希尔排序所需的比较次数不会超过 N 的若干倍。
+
+*** 归并排序
+    :PROPERTIES:
+    :CUSTOM_ID: 归并排序
+    :END:
+
+-  把数组分成两个部分
+-  先对左边进行排序，再对右边进行排序
+-  最后合并
+   
+**** 自顶向下
+     :PROPERTIES:
+     :CUSTOM_ID: 自顶向下
+     :END:
+
+毫无疑问，可以使用递归的方法实现。又称，自顶向下。
+
+#+BEGIN_EXAMPLE
+    private static Comparable[] aux;
+
+    public static void sort(Comparable[] arr) {
+       aux = new Comparable[arr.length];
+       sort(a, 0, a.length-1);
+    }
+
+    public static void sort(Comparable[] arr, int low, int high) {
+        if (low >= high) return;
+        int mid = (high + low) / 2;
+        sort(arr, low, mid);
+        sort(arr, mid+1, high);
+        merge(arr, low, mid, high);
+    }
+
+    public static void merge(Comparable[] arr, int low, int mid, int high) {
+        int i = low, j = mid + 1;
+
+        for (int k=low; k<=high; k++) {
+            aux[k] = arr[k];
+        }
+
+        for (int k=low; k<=high; k++) {
+            if (i > mid) arr[k] = aux[j++];
+            else if (j > high) arr[k] = aux[i++];
+            else if (less(aux[j], aux[i])) arr[k] = aux[j++];
+            else arr[k] = aux[i++];
+        }
+    }
+#+END_EXAMPLE
+
+命题一：对于长度为 N 的任意数组，自顶向下的归并排序需要 =1/2 * N * lgN=
+至 =N * lgN= 次比较。 证明在书上 P173。使用了归纳法，易懂。
+
+命题二：对于长度为 N 的任意数组，自顶向下的归并排序需要访问数组
+=6 * N * lgN= 次。2N 次用来复制数组，2N 次用来移动数组，最多 2N
+次的比较。 #### 自底向上 就是迭代。
+
+设置一个变量 size 用于记录每次 merge 时候的数组大小。从小开始，最小是 1
+，最大小于 n 。
+
+#+BEGIN_EXAMPLE
+    public static void sort_diedai(Comparable[] arr) {
+        aux = new Comparable[arr.length];
+        int n = arr.length;
+
+        for (int size=1; size<n; size+=size) {
+            for (int low=0; low<n-size; low+=size+size) {
+                merge(arr, low, Math.min(low+size+size-1, N-1));
+            }
+        }
+    }
+#+END_EXAMPLE
+
+命题一：对于长度为 N 的任意数组，自底向上的归并排序需要 =1/2 * N * lgN=
+至 =N * lgN= 次比较，访问数组 =6 * N * lgN= 次。 ### 快速排序 -
+与上述归并排序正好相反。归并排序其实是在合并的时候排序，而快速排序是在拆分的时候排序
+- 拆分时，比第一个元素小的放左边，比第一个元素大的放右边 - 之后递归执行
+
+#+BEGIN_EXAMPLE
+    public static void sort(Comparable[] arr, int low, int high) {
+        if (high <= low) return;
+        int j = partition(arr, low, high);
+        sort(arr, low, j);
+        sort(arr, j+1, high);
+    }
+
+    public static void partition(Comparable[] arr, int low, high) {
+        int i = low, j = high;
+        Comparable v = arr[low];
+
+        while (true) {
+            while (less(arr[++i], v)) if (i == high) break;
+            while (less(v, arr[j--])) if (j == low) break;
+            if (i >= j) break;
+            exch(arr, low, j);
+            return j;
+        }
+    }
+#+END_EXAMPLE
+
+命题一：将长度为 N 的无重复数组排序，快速排序平均需要 =~2NlnN=
+次比较以及 =1/6= 次交换。 命题二：快速排序最多需要 =N^2 / 2= 次比较。
+
+相对来说，平均情况下比较次数约有 1.39 倍于最好情况
+=NlgN=，也就是说起比较次数多于归并排序，但由于它在循环中移动数据的次数较少，所以性能上优于归并排序。
+
+**** 算法改进
+     :PROPERTIES:
+     :CUSTOM_ID: 算法改进
+     :END:
+
+***** 切换到插入排序
+      :PROPERTIES:
+      :CUSTOM_ID: 切换到插入排序
+      :END:
+
+-  对于小数组，插入排序比快速排序快
+
+在切分数组足够小的时候都可以直接切换排序方法到插入排序。 #####
+三取样切分 - 快速排序受制于切分元素。
+如果每次切分的元素都可以使数组分为数量相差不多的两组，那么这样的切分元素是较好的；而如果每次都使用数组的中位数来切分，效果是最好的。
+- 求中位数需要代价。 通过多次实验，发现取样为 3 时的中位数切分效果最好。
+##### 熵最优排序（三向切分的快速排序） -
+解决重复数据多的数组的快速排序问题
+重复数据多，导致多出很多无用的对重复数据的切分 - 切分为 3
+种类型的数据：litter，greater， equal - low 到 lt 之间是小于
+arr[low]，lt 到 i 是等于 arr[low]，i 到 gt 是未排序，gt 到 high 是大于
+arr[low] - 具体实现详见代码
+
+#+BEGIN_EXAMPLE
+    public static void sort(Comparable[] arr, int low, int high) {
+        if (high <= low) return;
+        int lt = low, i = low + 1, gt = high;
+        Comparable v = arr[low];
+
+        while (i<=gt) {
+            int cmp = a[i].compareTo(v);
+            if (cmp > 0) exch(arr, i, gt--);
+            else if (cmp < 0) exhc(arr, lt++, i++);
+            else i++;
+        }   
+
+        sort(arr, low, lt-1);
+        sort(arr, gt+1, high);
+    }
+#+END_EXAMPLE
+
+命题：对于三向切分排序，对于一个长度为 N 的数组，需要 =~(@ln2)NH=
+次比较。 ### 堆排序 #### 基于堆的优先队列 二叉树的一些重要的定义： -
+深度：共有几层结点 - 高度：深度 - 1 - 度：结点有几个儿子结点 -
+满二叉树：除最后一层外，其他结点均有两个儿子结点 -
+完全二叉树：除最后两层结点的度可以小于 2 以外，其他都等于 2 - 一棵大小为
+N 的完全二叉树的高度为 lgN 核心算法就是下面这两个排序方法： #####
+由下至上（上浮）
+
+#+BEGIN_EXAMPLE
+    private void swim(int k) {
+        while (k>1 && less(k/2, k)) {
+            exch(k/2, k);
+            k = k / 2;
+        }
+    }
+#+END_EXAMPLE
+
+***** 由上至下（下沉）
+      :PROPERTIES:
+      :CUSTOM_ID: 由上至下下沉
+      :END:
+
+#+BEGIN_EXAMPLE
+    private void sink(int k) {
+        while (2*k > N) {
+            int j = 2 * k;
+            if (j<N && less(j, j+1)) j++;
+            if (less(k, j)) exch(k, j);
+            k = j;
+        }
+    }
+#+END_EXAMPLE
+
+命题：对于一个含有 N 的元素的基于堆的优先队列，插入操作只需不超过 lgN+1
+次比较。删除最大元素的操作不超过 2lgN 次比较。
+
+***** 堆排序
+      :PROPERTIES:
+      :CUSTOM_ID: 堆排序
+      :END:
+
+-  堆构造和堆排序两个方面
+-  堆构造只是构造一个优先队列，即第一个元素是最大的（或最小的），并不是有序数组
+-  堆排序每次将堆中第一个元素与最后一个元素互换，然后继续将数组剩余元素做相同处理
+
+   #+BEGIN_EXAMPLE
+       public static void sort(Comparable[] arr) {
+       int N = arr.length;
+       for (int k=N/2; k>=1; k--) {
+           sink(arr, k, N);
+       }
+
+       while (N > 1) {
+           exch(arr, 1, N--);
+           sink(arr, 1, N);
+       }
+       }
+   #+END_EXAMPLE
+
+   命题一：将 N 个元素用下沉操作构造堆只需少于 2N 次的比较以及少于 N
+   次的交换。 这里我简单证了一下，还好，高中功底还在......
+   [[http://oeoaak94a.bkt.clouddn.com/erchashu.jpg]] 命题二：将 N
+   个元素排序，堆排序只需少于 =2N+2NlgN= 次比较以及一半次数的交换。
+
+堆排序是我们目前所致的唯一能够同时最优的利用空间和时间的方法------在最坏的情况下也能保证对数级的比较和恒定的额外空间（需要吗？）。并且代码简单，只需要几行就可以实现。
+## 排序算法的复杂度 命题一：没有任何基于比较的算法能够保证使用少于
+=lg(N!) ~ NlgN= 次比较将长度为 N 的数组排序。 书上 P280
+有证明，使用二叉树描述排序算法来证。
+
+命题二：归并排序是一种渐进优的基于比较的排序算法。也就是说，归并排序在最坏情况下的比较次数与（任何基于比较的排序算法）所需的最少比较次数相同，都是
+=~lgN=。
+
+命题三：不存在任何基于比较的排序算法能够保证在 NH-N 次比较之内将 N
+个元素排序。H 为主键值出现频率定义的香农信息量。
+=H = -(p1*lgp1 + p2*lgp2 + ... + pk*lgpk)= 当无重复数据出现时，H 等于
+lgN，与命题一相同。
+
+稳定性：如果一个排序算法可以保留数组中重复元素的相对位置，则可以称这个排序算法是稳定的。就上诉算法而言，插入排序和归并排序，还有选择排序是稳定的。而快速排序，希尔排序和堆排序是不稳定的。
+
+| 算法           | 是否稳定   | 是否原地排序   | 时间复杂度   | 空间复杂度   |
+|----------------+------------+----------------+--------------+--------------|
+| 选择排序       | 是         | 是             | N\^2         | 1            |
+| 插入排序       | 是         | 是             | N ~ N\^2     | 1            |
+| 希尔排序       | 否         | 是             |              | 1            |
+| 快速排序       | 否         | 是             | NlgN         | lgN          |
+| 三向快速排序   | 否         | 是             | N ~ NlgN     | lgN          |
+| 归并排序       | 是         | 否             | NlgN         | N            |
+| 堆排序         | 否         | 是             | NlgN         | 1            |
+
+注： - 话比较绕，得多看几遍才能理解。 -
+算法书上说选择排序是不稳定的，我想了几次觉得选择排序是稳定的。之后又查看了严老师的书，书上说简单排序（即选择排序）是稳定的。如有不同见解，希望评论指出。
+- 上述所有 lg 表示以 2 为底的 log 函数。
+
+
+
+
+
+

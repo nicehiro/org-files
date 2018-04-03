@@ -1,0 +1,297 @@
+[[file:index.org][{back to main page}]]
+#+TITLE: 算法 图
+
+#+DATE: 2017-05-11 17:31:45
+
+最近感觉胸口那里有些酸痛，猜测八成是因为在电脑前面做的时间太长了。所以自己调节了一下，出去玩了会。打算立个
+flag，每天晚上跑会儿步 =.=
+
+/5-15 23:10 更新/
+看了医生，做了心电图拍了片子，医生说是小事，就是神经痛，一般就是熬夜太累导致的......
+没办法，作死要在一个月之内看完《算法
+4》，不然可能就跟不上考研复习的进度了。我的想法是，只要不是听起来可怕的大毛病，所有这些都可以坚持过去，毕竟现在还有些年轻的资本。
+@@html:<!--more-->@@
+
+** 图
+   :PROPERTIES:
+   :CUSTOM_ID: 图
+   :END:
+
+图是由一组顶点和一组能够将两个顶点相连的组成的。 一些定义： -
+自环：一条连接一个顶点和其自身的边 - 平行边：连接同一对顶点的两条边 -
+多重图：含有平行边的图 - 简单图：没有平行边或自环的图 -
+相邻：两个顶点通过一条边相连 - 度数：依附与一个顶点的边的总数 -
+路径：由边顺序连接的一系列顶点 - 简单路径：一条没有重复顶点的路径 -
+环：一条至少含有一条边且起点和终点相同的路径 -
+简单环：不含有重复顶点和边的环 - 路径的长度：该路径包含的边数 -
+连通图：如果从任一顶点都存在一条路径到达另一任一顶点，则称其为连通图 -
+极大连通图：一幅非连通的图由若干个连通的部组成，他们都是极大连通子图 -
+生成树森林：连通图的生成树是该图的一个子图，包含图中所有的顶点且是一棵树
+- 树：无环连通图 - 弧头：有向图中有箭头的那端 -
+弧尾：有向图中无箭头的那端
+
+*** 邻接矩阵表示
+    :PROPERTIES:
+    :CUSTOM_ID: 邻接矩阵表示
+    :END:
+
+用一个二位数组表示边之间的关系。
+
+*** 邻接表
+    :PROPERTIES:
+    :CUSTOM_ID: 邻接表
+    :END:
+
+为图中每一个顶点建立一个单链表，每个结点由三个域组成： -
+邻接点域，表示与顶点相邻的点在图中的位置 - 指向下一个结点的指针 -
+数据，该节点包含的数据
+在书上例题中，为了更好的介绍图处理算法，每个结点都只有一个邻接点域
+/逆邻接表/：以 vi 为头，计算 vi 的入度的一种邻接表
+
+*** 十字链表
+    :PROPERTIES:
+    :CUSTOM_ID: 十字链表
+    :END:
+
+有向图的链式存储结构。两种数据结构，一是顶点数据结构，而是边的数据结构：
+顶点： - 数据域 - 指向第一个入度的边 - 指向第一个出度的边 边： -
+尾域：弧尾在图中的位置 - 头域：弧头在图中的位置 - 指向弧头相同的下一条弧
+- 指向弧尾相同的下一条弧 - 边的权重等信息
+
+*** 多重邻接表
+    :PROPERTIES:
+    :CUSTOM_ID: 多重邻接表
+    :END:
+
+无向图的链式存储结构。为每一条边设一个结点。数据结构： -
+mark：标志域，标记这个结点是否被使用 -
+ivex、jvex：依附这条边的两个结点在图中的位置 - ilink：指向下一条依附顶点
+ivex 的边 - jlink：同上 - info：信息域 顶点表示： - data：信息域 -
+指向它所相邻的边的
+
+** 深度优先搜索
+   :PROPERTIES:
+   :CUSTOM_ID: 深度优先搜索
+   :END:
+
+像是走迷宫一样，拿着一条绳子把走过的都记录下来。如果遇到没走过的路口，就继续走；如果遇到走过的路口，放弃这个路口，回退到上个路口。
+
+#+BEGIN_SRC java
+    // marked 数组记录是否被访问过
+    private void dfs(Graph g, int s) {
+        marked[s] = true;
+        count ++;
+        for (int w : g.adj(s)) {
+            if (!marked(s))
+                dfs(g, w);
+        }
+    }
+#+END_SRC
+
+*** 应用
+    :PROPERTIES:
+    :CUSTOM_ID: 应用
+    :END:
+
+-  查找所有的连通分量 定义一个 count 变量，使用 count 来分类
+-  检测是否是无环图
+-  寻找路径
+
+命题一：深度优先搜索标记与起点连通的所有顶点所需的时间和顶点的度书成正比。
+## 广度优先搜索 -
+设一个队列，用来记录每一层遍历的结点，每次从队列中取出一个遍历其子节点 -
+distTo：到某结点的距离 - marked：是否已遍历 - edgeTo：该节点的上一个结点
+
+#+BEGIN_SRC java
+    private void bfs(Graph g, int s) {
+        Queue<Integer> queue = new Queue<>();
+        for (int v=0; v<marked.length; v++) {
+            distTo[v] = INFINITY;
+        }
+        distTo[s] = 0;
+        marked[s] = true;
+        queue.enqueue(s);
+
+        while (!queue.isEmpty()) {
+            int temp = queue.dequeue();
+            for (int w : g.adj(temp)) {
+                if (!marked[w]) {
+                    marked[w] = true;
+                    distTo[w] = distTo[temp] + 1;
+                    edgeTo[w] = temp;
+                    queue.enqueue(w);
+                }
+            }
+        }
+    }
+#+END_SRC
+
+命题一：对于从 s 可达的任意顶点 v，广度优先搜索都能找到一条从 s 到 v
+的最短路径。 命题二：广度优先搜索所需的时间在最坏情况下和 V+E 成正比。
+
+** 拓扑排序
+   :PROPERTIES:
+   :CUSTOM_ID: 拓扑排序
+   :END:
+
+给定一幅有向图，将所有的顶点排序，使得所有的有向边均从排在前面的顶点指向排在后面的顶点。
+其实就是指，在到达元素 v 之前，元素 w 必须先执行，那么 w 应该排在 v
+之前。
+
+命题一：当且仅当一幅有向图是无环图时，才可进行拓扑排序。
+
+顶点的三种排列顺序： - 前序排序：递归调用之前将顶点加入队列 -
+后序排列：递归调用之后将顶点加入队列 - 逆后序排列：后序的逆
+
+命题二：一幅有向无环图的拓扑排序就是这图的逆后序排序。
+
+** Kosaraju 算法（计算有向图的强连通分量）
+   :PROPERTIES:
+   :CUSTOM_ID: kosaraju-算法计算有向图的强连通分量
+   :END:
+
+操作：将有向图的逆图（reverse）进行拓扑排序，然后对得到的结果进行深度遍历
+思想：书上的说明比较理性（我也实在不想看，因为我觉得我已经理解了==_=！=）。强连通分量，需要是一个顶点
+v 可以到达 w，同时 w 也可以到达 v。图 g reverse 之后变成 G，就是原来图 g
+的逆向，如果说第一个的拓扑排序是检查从 v 到 w
+的可达性，那么第二次的深度排序就是检查从 w 到 v
+的可达性。（个人理解，欢迎拍砖）
+
+github：https://github.com/nicehiro/Algorithm/blob/master/Graph/KosarajuSharirSCC.java
+
+** 最小生成树
+   :PROPERTIES:
+   :CUSTOM_ID: 最小生成树
+   :END:
+
+给定一幅无向加权图，可以找到其最小生成树。
+生成树：一棵含有图所有结点的无环连通子图。
+最小生成树：权值相加最小的生成树。
+误区：我一直认为最小生成树和最短路径是一样的概念。但其实不是。二者有很大区别，虽然有些算法比较相似，但不可混淆。
+
+*** 切分定理
+    :PROPERTIES:
+    :CUSTOM_ID: 切分定理
+    :END:
+
+将加权无向图中的所有顶点分为两部分，横跨两个集合的边中可以选择一条属于最小生成树的边。
+
+命题一：权重最小的横切边不一定是所有横切边中唯一属于图的横切边。
+
+*** 贪心算法
+    :PROPERTIES:
+    :CUSTOM_ID: 贪心算法
+    :END:
+
+使用切分定理找到最小生成树的一条边，不断重复知道找到最小生成树的所有边。
+
+*** Prim 算法
+    :PROPERTIES:
+    :CUSTOM_ID: prim-算法
+    :END:
+
+每次总是向下一条连接树中的顶点和不在树中的顶点且权重最小的边加入树中。
+
+/Prim 算法的延时实现/
+github：https://github.com/nicehiro/Algorithm/blob/master/Graph/LazyPrimMST.java
+延时主要延时在了不能即时从优先队列中删除失效的边。
+
+命题一：Prim 算法的延时实现计算一幅含有 V 个顶点和 E
+条边的连通加权无向图的最小生成树的空间与 E 成正比，所需的时间和 ElogE
+成正比（最坏）
+
+/Prim 算法的即时实现/
+github：https://github.com/nicehiro/Algorithm/blob/master/Graph/PrimMST.java
+
+命题二：Prim 算法的即时实现计算一幅含有 V 个顶点和 E
+条边的连通加权无向图的最小生成树的空间与 V 成正比，所需的时间和 ElogV
+成正比（最坏）
+
+*** Kruskal 算法
+    :PROPERTIES:
+    :CUSTOM_ID: kruskal-算法
+    :END:
+
+按照边的权重（从小到大）处理，每次将便加入最小生成树中，新加入的边不要与已加入的边构成环，知道有
+V-1 条边为止
+
+命题一：Kruskal 算法计算一幅含有 V 个顶点和 E
+条边的连通加权无向图的最小生成树的空间与 E 成正比，所需的时间和 ElogE
+成正比（最坏）
+
+** 最短路径
+   :PROPERTIES:
+   :CUSTOM_ID: 最短路径
+   :END:
+
+在一幅有向加权图中，从 s 到 v 的最短路径是其权重最小者。 性质： -
+路径是有有向的。 - 权重不一定等于距离 - 并不是所有顶点都是可达的 -
+负权重环：环上所有边的权重之和是负的有向环
+可以先找出所有的强连通分量，再对每个强连通分量求最短路径 -
+负权重会使问题更复杂
+
+*** 顶点的放松（relax）操作
+    :PROPERTIES:
+    :CUSTOM_ID: 顶点的放松relax操作
+    :END:
+
+这个算法才是求最短路径的核心算法。算法会谨慎的选择顶点，使得每次顶点的松弛操作都能得到到达某个顶点的更短的路径，最后逐渐找到到达每个顶点的最短路径。
+
+#+BEGIN_SRC java
+    private void relax(DirectedEdge e) {
+        int v = e.from();
+        int w = e.to();
+        if (distTo[w] > distTo[v] + e.weight()) {
+            edgeTo[w] = e;
+            distTo[w] = distTo[v] + e.weight();
+            if (pq.contains(w)) pq.decreaseKey(w, distTo[w]);
+            else pq.insert(w, distTo[w]);
+        }
+    }
+#+END_SRC
+
+*** Dijkstra 算法
+    :PROPERTIES:
+    :CUSTOM_ID: dijkstra-算法
+    :END:
+
+github：https://github.com/nicehiro/Algorithm/blob/master/Graph/DijkstraSP.java
+和 Prim 算法的即时实现很相似。
+
+命题一：在一幅含有 V 个顶点和 E 条边的加权有向图中，使用 Dijkstra
+算法得到的最短路径树所需的空间和 V 成正比，时间和 ElogV 成正比
+命题二：该算法只适用于顶点为正的有向无环图
+
+*** 无环加权有向图的最短路径算法
+    :PROPERTIES:
+    :CUSTOM_ID: 无环加权有向图的最短路径算法
+    :END:
+
+先对图进行拓扑排序，将得到的结果中的每个顶点进行 relax 操作即可。
+github：https://github.com/nicehiro/Algorithm/blob/master/Graph/AcyclicSP.java
+按照拓扑排序的结果来 relax 时，后面的 relax
+操作执行并不会影响前面元素。因此，只需要执行比 Dijkstra
+算法更少的时间就可以找到最短路径。
+
+*** Bellman-Ford 算法
+    :PROPERTIES:
+    :CUSTOM_ID: bellman-ford-算法
+    :END:
+
+github：https://github.com/nicehiro/Algorithm/blob/master/Graph/BellmanFordSP.java
+
+命题一：当且仅当加权有向图中至少存在一条从 s 到 v 的有向路径且所有从 s
+到 v 的有向路径上的任意顶点都不存在于任何负权重的环中，s 到 v
+的最短路径才是存在的 命题二：在任意含有 V 个顶点的加权有向图中给定起点
+s，从 s 无法到达任意负权重环，以下算法可以解决其中的单点最短路径：将
+distTo[s] 初始化为
+0，其他初始化为无穷大，以任意顺序放松有向图中的所有边，重复 V 轮
+命题三：Bellman-Ford 算法所需的时间和 EV 成正比，空间和 V 成反比
+
+感觉和 Prim 算法的延时实现有些像。 ## 感受
+
+
+
+
+
+

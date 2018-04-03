@@ -1,0 +1,112 @@
+[[file:index.org][{back to main page}]]
+#+TITLE: Win10 C/C++ DOS 编译环境配置
+
+#+DATE: 2016-10-06 13:19:01
+
+有个小学妹找我问C语言的题目，哈哈好久没看过了，电脑上都没有一个轻巧的编译器了。于是乎，想起了Cygwin，于是乎想起了DOS。讲道理DOS也是命令行好吧，应该可以实现直接编译C/C++的。
+
+网上资源有些旧了，我来做件好事更新一下~
+
+#+BEGIN_HTML
+  <!--more-->
+#+END_HTML
+
+首先先搞一个简单的C程序：
+
+#+BEGIN_SRC C++
+    #include <stdio.h>
+    int main()
+    {
+        printf("Hello World!\n");
+        return 0;
+    }
+#+END_SRC
+
+程序够简单，但是你却不能直接编译：
+
+编译命令：cl test.c [[http://oeoaak94a.bkt.clouddn.com/dos1.png]]
+
+截图版本有些旧，因为我已经配置好了，所以不能演示错误的了
+哈，聪明人一看就知道要干啥了，去配置环境变量~
+
+话说这个要用的cl.exe在哪呢？
+
+#+BEGIN_QUOTE
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin
+#+END_QUOTE
+
+这是我的路径，一般是visual studio目录下VC目录下的bin目录里面
+
+[[http://oeoaak94a.bkt.clouddn.com/dos2.png]]
+
+然后添加该文件与path
+
+[[http://oeoaak94a.bkt.clouddn.com/dos3.png]]
+
+将会出现一下错误：
+
+[[http://oeoaak94a.bkt.clouddn.com/dos4.png]]
+
+看错误，不包括路径集？是啥，不可能没有 stdio.h 吧！
+
+#+BEGIN_QUOTE
+  原因是：当你用DOS编译时，编译器会去找你引用的动态链接库和头文件，去哪里找？当然只能是环境变量。所以我们需要在环境变量中添加两个新变量：LIB
+  和 INCLUDE，分别包括你需要用的连接库和头文件。
+#+END_QUOTE
+
+好的，再试试！
+
+#+BEGIN_QUOTE
+  LIB：C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib
+  INCLUDE：C:\Program Files (x86)\Microsoft Visual Studio
+  14.0\VC\include
+#+END_QUOTE
+
+[[http://oeoaak94a.bkt.clouddn.com/dos5.png]]
+
+想骂人有木有！！！ 竟然没有这个头文件！！！ 慢慢找吧！！！
+
+终于在我努力下找到了这个头文件目录：
+
+#+BEGIN_QUOTE
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10150.0\ucrt
+#+END_QUOTE
+
+加进去，再试试！
+
+[[http://oeoaak94a.bkt.clouddn.com/dos6.png]]
+
+哈哈，看到没，已经生成了.obj文件，可是好像又有新问题出现了......
+Link出错？？！！
+
+好吧，肯定还是环境变量的问题！再找找 Link 的 Lib 文件~
+
+网上找了一波后：
+
+#+BEGIN_QUOTE
+  LIB：C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib
+#+END_QUOTE
+
+加进去！ 编译：
+
+[[http://oeoaak94a.bkt.clouddn.com/dos7.png]]
+
+同样的新问题，同样的方法搞定：
+
+#+BEGIN_QUOTE
+  LIB：C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10150.0\ucrt\x86
+#+END_QUOTE
+
+加进去！ 编译：
+
+[[http://oeoaak94a.bkt.clouddn.com/dos8.png]]
+
+妈妈的终于搞好了！丫的你再报错啊！
+
+最近考试，好烦啊~
+
+
+
+
+
+

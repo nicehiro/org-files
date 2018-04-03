@@ -1,0 +1,189 @@
+[[file:index.org][{back to main page}]]
+#+TITLE: ANSI 第四章习题
+
+#+DATE: 2017-04-04 11:17:16
+
+学习 ANSI Common Lisp 第四章，课后习题答案。
+
+学习地址：http://www.kancloud.cn/kancloud/acl/60474
+
+#+BEGIN_HTML
+  <!--more-->
+#+END_HTML
+
+**** 定义一个函数，接受一个平方数组（square array，一个相同维度的数组 (n
+n) )，并将它顺时针转 90 度
+     :PROPERTIES:
+     :CUSTOM_ID: 定义一个函数接受一个平方数组square-array一个相同维度的数组-n-n-并将它顺时针转-90-度
+     :END:
+
+#+BEGIN_EXAMPLE
+    > (quarter-turn #2A((a b) (c d)))
+    #2A((C A) (D B))
+#+END_EXAMPLE
+
+答案： 先搞清楚题目中说的平方数组是什么东西：类似 2x2 或 3x3 或 4x4
+的数组 翻转 90 度，就是：
+
+#+BEGIN_EXAMPLE
+    | 1 2 3 |      | 7 4 1 |
+    | 4 5 6 |  =>  | 8 5 2 |
+    | 7 8 9 |      | 9 6 3 |
+#+END_EXAMPLE
+
+代码如下：（参考：http://www.shido.info/lisp/pacl2\_e.html#data）改动一小点～
+
+#+BEGIN_EXAMPLE
+    (defun quarter-turn (a)
+      (let ((temp (array-dimensions a)))
+        (let ((num (car temp)) (newarr (make-array temp)))
+          (let ((c (/ (- num 1) 2)))
+            (do ((i 0 (+ i 1))) ((= i num))
+              (do ((j 0 (+ j 1))) ((= j num))
+                (setf (aref newarr i j)
+                      (aref a (+ c (* -1 (- j c))) i)))))
+          newarr)))
+#+END_EXAMPLE
+
+**** 用 reduce 来定义以下两个函数：
+     :PROPERTIES:
+     :CUSTOM_ID: 用-reduce-来定义以下两个函数
+     :END:
+
+#+BEGIN_EXAMPLE
+    (a) copy-list
+    (b) reverse （针对列表）
+#+END_EXAMPLE
+
+答案：
+
+#+BEGIN_EXAMPLE
+    (a)
+    (defun my-copy (lst)                                             
+        (reduce #'cons lst :from-end t :initial-value nil))
+
+    (b)
+    (defun my-reverse (lst)                                          
+        (reduce #'(lambda (x y) (cons y x)) lst :initial-value nil))
+#+END_EXAMPLE
+
+关于 reduce 的用法，可以参考： http://clhs.lisp.se/Body/f\_reduce.htm
+
+**** 定义一个结构来表示一棵树，其中每个节点包含某些数据及三个小孩。
+     :PROPERTIES:
+     :CUSTOM_ID: 定义一个结构来表示一棵树其中每个节点包含某些数据及三个小孩
+     :END:
+
+#+BEGIN_EXAMPLE
+    (a) 一个函数来复制这样的树（复制完的节点与本来的节点是不相等（ `eql` ）的）
+    (b) 一个函数，接受一个对象与这样的树，如果对象与树中各节点的其中一个字段相等时，返回真
+#+END_EXAMPLE
+
+答案：
+
+#+BEGIN_EXAMPLE
+    (defstruct node
+      elt
+      left
+      middle
+      right)
+
+    (defun my-copy (tree)
+      (if tree
+          (make-node
+           :elt (node-elt tree)
+           :left (my-copy (node-left tree))
+           :middle (my-copy (node-middle tree))
+           :right (my-copy (node-right tree)))))
+
+    (defun find (obj tree)
+      (if tree
+          (if obj
+              (if (eql obj (node-elt tree))
+                  (tree)
+                  (progn
+                    (find obj (node-left tree))
+                    (find obj (node-middle tree))
+                    (find obj (node-right tree)))))))
+#+END_EXAMPLE
+
+**** 定义一个函数，接受一颗二插搜索树，并返回由此树元素组成的，一个由大至小排序的列表
+     :PROPERTIES:
+     :CUSTOM_ID: 定义一个函数接受一颗二插搜索树并返回由此树元素组成的一个由大至小排序的列表
+     :END:
+
+答案：
+
+#+BEGIN_EXAMPLE
+    (defun print-bst (bst)
+      (if bst
+          (print-bst (node-r bst))
+          (format t "~A " (node-elt bst))
+          (print-bst (node-l bst))))
+#+END_EXAMPLE
+
+**** 定义 bst-adjoin 。这个函数应与 bst-insert
+接受相同的参数，但应该只在对象不等于任何树中对象时将其插入
+     :PROPERTIES:
+     :CUSTOM_ID: 定义-bst-adjoin-这个函数应与-bst-insert-接受相同的参数但应该只在对象不等于任何树中对象时将其插入
+     :END:
+
+答案：
+
+#+BEGIN_EXAMPLE
+    (defun bst-adjoin (obj bst <)
+      (if (bst-find obj bst <)
+          (bst-insert obj bst <)
+          nil))
+#+END_EXAMPLE
+
+注：其实 =bst-insert=
+本来就有着判断插入元素是否和树中元素相同的功能，所以感觉此处是多此一举。
+
+**** 任何哈希表的内容可以由关联列表（assoc-list）来描述，其中列表的元素是
+(k . v) 的形式，对应到哈希表中的每一个键值对。定义一个函数
+     :PROPERTIES:
+     :CUSTOM_ID: 任何哈希表的内容可以由关联列表assoc-list来描述其中列表的元素是-k-.-v-的形式对应到哈希表中的每一个键值对定义一个函数
+     :END:
+
+#+BEGIN_EXAMPLE
+    (a) 接受一个关联列表，并返回一个对应的哈希表。
+    (b) 接受一个哈希表，并返回一个对应的关联列表。
+#+END_EXAMPLE
+
+答案：
+
+#+BEGIN_EXAMPLE
+    (a)
+    ;迭代版
+    (defun list-hash (lst)
+      (if lst
+          (let ((new-hash (make-hash-table)))
+        (dolist (item lst)
+              (setf (gethash (car item) new-hash) (cdr item)))
+            h)))
+    ;递归版
+    (defun list-hash (lst)
+      (if lst
+          (let ((item (car lst)))
+            (setf (gethash (car item) new-hash) (cdr item))
+            (list-hash (cdr lst)))
+          nil))
+    (b)
+    (defun hash-list (hash)
+      (if hash
+          (let ((lst nil))
+            (maphash #'(lambda (k v) (setf lst (cons (cons k (cons v nil)) ls\
+    t))) hash)
+            lst)))
+#+END_EXAMPLE
+
+注：(b) 题没有写递归版的原因是，对 hash 表不能很好的进行递归循环 (b)
+题中参考答案是用 push 来完成的，我这边电脑不知道为什么一用 push
+就报错，只能使用 setf 来将就一下了。
+
+
+
+
+
+

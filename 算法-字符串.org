@@ -1,0 +1,392 @@
+[[file:index.org][{back to main page}]]
+#+HTML_HEAD: <link rel="stylesheet" typ="text/css" href="/home/hiro/org/css/worg.css"/>
+#+TITLE: 算法 字符串
+
+#+DATE: 2017-05-21 23:16:56
+
+学习了有关与字符串的一些算法。记得当初大二的时候老师直接把关于字符串的算法跳了过去（忘了是什么原因），所以现在重新学这些算法有些难以理解。这章内容引进了一个非常有趣的数据结构------字母表，奇妙的是，在它的
+Java
+实现中，可以直接使用数组来替代！本人愚笨，看透这一点依旧用了不少时间。在之后的字符串的匹配问题上，让我明白了现代编辑器最牛逼的字符匹配功能是如何实现的，还破天荒的让我看到了利用有限自动机来实现高效率的字符串查找。惊喜很多，收货也很多。
+
+** 字符串排序
+   :PROPERTIES:
+   :CUSTOM_ID: 字符串排序
+   :END:
+
+将一个字符串中的字母排序，我们可以直接使用之前学过的排序算法（基于比较）来排序。但这章介绍的排序算法可以不通过比较就可以完成排序。听起来就很魔幻。
+
+*** 低位优先的字符串排序
+    :PROPERTIES:
+    :CUSTOM_ID: 低位优先的字符串排序
+    :END:
+
+Least-Significant-Digit First
+这种算法使用了键索引计数法来排序。所谓的键索引计数法，一共有四个重要的步骤：
+**** 初始化数组
+
+#+BEGIN_SRC java
+    String[] aux = new String[N];
+    int[] count = new int[R+1];
+#+END_SRC
+
+**** 计算字符出现频率
+
+   #+BEGIN_SRC java
+       // 将本字符出现的频率保存到字母表中本字符的下一个字符的位置
+       for (int i=0; i<N; i++)
+       count[a[i].charAt(d) + 1] ++;
+   #+END_SRC
+
+**** 将频率转化为索引
+
+   #+BEGIN_SRC java
+       // 将本字符之前出现的字符的总次数保存到字母表中本字符的下一个字符的位置
+       // 这样字母表中的字母对应的元素就是那个字符排好序后应该在的第一个位置
+       for (int r=0; r<R; r++)
+       count[r+1] += count[r];
+   #+END_SRC
+
+**** 将元素分类
+
+   #+BEGIN_SRC java
+       for (int i=0; i<N; i++)
+       aux[count[a[i].charAt(d)]++] = a[i];
+   #+END_SRC
+
+**** 回写
+
+   #+BEGIN_SRC java
+       for (int i=0; i<N; i++)
+       a[i] = aux[i];
+   #+END_SRC
+
+上诉步骤执行完毕，一共四个 for
+循环就可以完成字符串的排序且不需要作比较。 > 命题一：键索引计数法排序 N
+个键为 0 到 R-1 之间的整数的元素需要访问数组 11N+4R+1 次
+
+看代码：初始化数组需要 =N+R+1= 次；第一次循环中，访问数组 =2N= 次；第二次循环中，访问数组 =2R= 次；第三次循环中访问数组 =3N= 次；第四次循环访问数组=2N=次。所以一共加起来也不到上面命题里面那么多，我是想不透了
+==.=!=
+
+低位优先排序就是将字符串从右向左以每个位置的字符作为键，用键索引计数法将字符串排序
+W（字符串的长度）遍。所以在算法结束我们才知道为什么一开始要错位保存频率。
+> 命题：对于基于 R 个字符的字母表的 N 个以长为 W
+的字符串作为键的元素，低位优先的字符串排序需要访问=~7WN+3WR=次数组，使用的额外空间与=N+R=成正比
+
+#+BEGIN_QUOTE
+  命题：低位优先的字符串只能适用于等长字符串
+#+END_QUOTE
+
+*** 高位优先的字符串排序
+    :PROPERTIES:
+    :CUSTOM_ID: 高位优先的字符串排序
+    :END:
+
+看到书上一句很有感触的话来形容看完这个算法的感受： 
+#+BEGIN_QUOTE
+它的简洁性是有欺骗性的。
+#+END_QUOTE
+
+这个算法仅仅在低位优先排序算法的基础上做了一点点小改动，可是它却是书中比较难理解的算法之一（个人感觉）。并且这里的配图我不是很赞同（或许是我理解错了），它的配图中的索引标的不准确，导致我花了不少时间在这个错误的索引上。
+
+相对于低位优先排序，高位优先排序新加了方法用于得到字符串结尾的表示方法：
+
+#+BEGIN_SRC java
+    private static int charAt(String s, int d) {
+        if (d < s.length())
+            return s.charAt(d);
+        else return -1;
+    }
+#+END_SRC
+
+算法执行分析：
+**** 计算频率
+
+   #+BEGIN_SRC java
+       // count 数组值的含义：
+       // r=0：未使用
+       // r=1：长度为 d 的字符串数量
+       // 2<r<R+2：第 d 个字符的索引值是 r-2 的字符串的数量
+       for (int i=low, i<=high, i++)
+           count[charAt(a[i], d) + 2] ++;
+   #+END_SRC
+
+****  将频率转化为索引
+
+   #+BEGIN_SRC java
+       // count 数组值的含义：
+       // r=0：长度为 d 的字符串的子数组的开始索引
+       // 1<r<R+1：第 d 个字符的索引值是 r-1 的组字符的其实索引
+       // r=R+1：未使用
+       for (int r=0; r<R+1; r++)
+       count[r+1] += count[r];
+   #+END_SRC
+
+**** 数据分类
+
+   #+BEGIN_SRC java
+       // count 数组值的含义：
+       // 0<r<R-1：第 d 个字符的索引值为 r 的字符串的子数组的起始索引
+       // 其他：未使用
+       for (int i=lowl i<=high; i++)
+       aux[count[charAt(a[i], d)+1] ++] = a[i];
+   #+END_SRC
+
+#+BEGIN_QUOTE
+  命题一：高位优先的字符串排序算法平均需要检查=NlogN=个字符
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+  命题二：要将大小为 R 的字母表中的 N
+  个字符串排序，高位优先的字符串排序算法访问数组的次数在=8N+3R=和=~7WN+3WR=之间，其中
+  W 是字符串的平均长度（在低位优先排序和一次就完成的高位优先排序之间）
+#+END_QUOTE
+
+*** 三向字符串快速排序
+    :PROPERTIES:
+    :CUSTOM_ID: 三向字符串快速排序
+    :END:
+
+三向字符串快速排序要将数组分为三部分，然后递归的将三个子数组排序：1.一个含有所有首字母小于切分字符的字符串数组；2.一个含有所有首字母等于切分字符的字符串的子数组；3.资格含有所有首字母大于切分字符的子数组。
+
+对于第 2 中情况，就可以比较下一个字母的大小了，而第 1 中和第 3
+中情况还需要继续进行首字母的比较。 > 命题：要将含有 N
+个随机字符串的数组排序，三向字符串快速排序平均需要比较字符=~2NlnN= 次
+
+** 单词查找树
+   :PROPERTIES:
+   :CUSTOM_ID: 单词查找树
+   :END:
+
+要理解这颗树，就千万不能把它想做是普通的类似与二叉树那样的树。它的每个结点的数据结构是一个字母表，而不是普通的结点。但是我们可以将它抽象的理解为普通树的形态来分析它。
+- 每个结点有 R 个链接，对应着每个可能出现的字符 -
+字符和键均隐式的保存在数据结构中
+
+有关单词查找树的插入、查找、删除、匹配等操作的具体代码和分析放在了
+[[https://github.com/nicehiro/Algorithm/blob/master/String/TrieST.java][github]]
+
+其中有个算法就可以查找以某个字符串开头的完整单词的匹配（keysWithPrefix），这个算法可以用来实现
+IDE 中的自动补全功能。
+
+#+BEGIN_QUOTE
+  命题一：在单词查找树中查找一个键或是插入一个键时，访问数组的次数最多为键长加
+  1 命题二：一棵单词查找树中的链接总数在 RN 到 RNW 之间，其中 W
+  为键的平均长度（不是很理解还）
+#+END_QUOTE
+
+*** 三向单词查找树
+    :PROPERTIES:
+    :CUSTOM_ID: 三向单词查找树
+    :END:
+
+每个结点都有一个字符和三个子结点，三个子结点分别代表小于、等于和大于结点字符的所有键。
+
+具体的插入、查找、删除等操作和分析放在了
+[[https://github.com/nicehiro/Algorithm/blob/master/String/TST.java][github]]
+
+#+BEGIN_QUOTE
+  命题一：由 N 个平均长度为 w 的字符串构成的三向单词查找树中的链接总数在
+  3N 到 3Nw 之间
+#+END_QUOTE
+
+*** 各种字符串查找算法的性能特点
+    :PROPERTIES:
+    :CUSTOM_ID: 各种字符串查找算法的性能特点
+    :END:
+
+| 算法             | 未命中查找检查的字符数量   | 内存使用           | 优点                           |
+|------------------+----------------------------+--------------------+--------------------------------|
+| 二叉树查找       | c1(lgN)\^2                 | 64N                | 适用于随机排列的键             |
+| 红黑树查找       | c2(lgN)\^2                 | 64N                | 有性能的保证                   |
+| R 向单词查找树   | logN                       | (8R+56)N~(8R+56)   | 适用于较短的键和较小的字母表   |
+| 三向单词查找树   | 1.39lgN                    | 64N~64NW           | 适用于非随机的键               |
+
+** 子字符串查找
+   :PROPERTIES:
+   :CUSTOM_ID: 子字符串查找
+   :END:
+
+所谓子字符串查找就是给定一段长度为 N 的文本和一个长度为 M
+的模式（pattern），在文本中找到一个和该模式相符的子字符串。
+
+*** 暴力子字符串查找
+    :PROPERTIES:
+    :CUSTOM_ID: 暴力子字符串查找
+    :END:
+
+暴力，顾名思义，既然你要查找子字符串，那就从头开始一个一个的匹配，没有其他花里胡哨的，直接正面刚：
+
+#+BEGIN_SRC java
+    /*
+    * 如果 i 和 j 指向的字符不匹配了，那么就需要回退这两个指针
+    * j 回退为 0；i 回退为 i-j
+     */
+    public static int search2(String pat, String txt) {
+        int m = pat.length();
+        int n = txt.length();
+        int i, j;
+        for (i = 0, j = 0; i < n && j < m; i ++) {
+            if (txt.charAt(i) == pat.charAt(j)) j ++;
+            else {
+                i -= j;
+                j = 0;
+            }
+        }
+        if (j == m) return i-m;
+        else return n;
+    }
+#+END_SRC
+
+*** KMP 子字符串排序
+    :PROPERTIES:
+    :CUSTOM_ID: kmp-子字符串排序
+    :END:
+
+三个人名叠在一起，Knuth-Morris-Pratt 三个人名。恩，我努力记住他们......
+
+主要思想是，在遇到不匹配的情况时，根据算法可以回退到一个我们理想的回退状态，不是直接粗暴的回到到最开始的状态。
+
+#+BEGIN_SRC java
+    /*
+    * Knuth-Morris-Pratt 子字符串查找算法
+    * dfa[A][j] 的含义：在 j 状态时，再来一个 A 字符，将会到达什么状态
+    * x 的含义：重启位置，即回退的位置，最开始是状态 0
+    * 这段代码的主要目的是构造 DFA
+    * 1. 首先，在 0 状态下来一个 pat 的第一个字符，一定会跳到状态 1，其他字符来时依旧保持状态 0
+    * 2. 之后，每个状态遇到字符后的处理参照 x 遇到该字符时的处理，这也叫做匹配失败的处理；
+    * 3. 除非那个字符是 pat 的下一个字符， 此时应该跳转到下一状态，这也叫做匹配成功的处理
+    * 4. 最后更新 x 的位置
+     */
+    public KMP(String pat) {
+        this.pat = pat;
+
+        int m = pat.length();
+        dfa = new int[R][m];
+        dfa[pat.charAt(0)][0] = 1;                  // 1
+        for (int x = 0, j = 1; j < m; j ++) {
+            for (int c = 0; c< R; c ++)             // 2
+                dfa[c][j] = dfa[c][x];
+            dfa[pat.charAt(j)][j] = j + 1;          // 3
+            x = dfa[pat.charAt(j)][x];              // 4
+        }
+    }
+#+END_SRC
+
+*** Boyer-Moore 子字符串查找算法
+    :PROPERTIES:
+    :CUSTOM_ID: boyer-moore-子字符串查找算法
+    :END:
+
+根据匹配失败时文本和模式中的字符来决定下一步的行动，预处理步骤的目的在于判断对于文本中可能出现的每一个字符，在匹配失败时应该怎么办。
+
+#+BEGIN_SRC java
+    /*
+    * skip：每次要移动的距离
+    * 如果造成匹配失败的字符不在模式中，向右移动 j+1 个位置，即 j-[-1]
+    * 如果造成匹配失败的字符在模式中，依照 right 数组来使模式字符串和文本对齐
+    * 如果上述方式不能造成 i 向前移动，至少保证 i 每次匹配失败向前移动 1
+     */
+    public int search(String txt) {
+        int m = pattern.length();
+        int n = txt.length();
+        int skip;
+
+        for (int i=0; i<=n-m; i+=skip) {
+            skip = 0;
+            for (int j=m-1; j>=0; j--) {
+                if (pattern.charAt(j) != txt.charAt(i+j)) {
+                    skip = Math.max(1, j-right[txt.charAt(i+j)]);
+                    break;
+                }
+            }
+            if (skip == 0) return i;
+        }
+        return n;
+    }
+#+END_SRC
+
+*** Rabin-Karp 指纹字符串查找算法
+    :PROPERTIES:
+    :CUSTOM_ID: rabin-karp-指纹字符串查找算法
+    :END:
+
+长度为 M 的字符串对应着一个 R 进制的 M
+位数。将文本中长度为模式字符串长度的每个子字符串的 Hash 值和模式字符串的
+Hash 值进行比较，寻找匹配。
+
+#+BEGIN_SRC java
+    /*
+    * 关键的地方在每次未找到匹配时，去掉第一个字符，加上最后一个字符的操作
+    * txtHash 是已经取余之后的数了，所以每次去掉一个字符时，需要将那个字符也进行取余操作
+     */
+    public int search(String txt) {
+        int n = txt.length();
+        if (n < m) return n;
+        long txtHash = hash(txt, m);
+        if ((patHash == txtHash) && check(txt, 0))
+            return 0;
+
+        for (int i=m; i<n; i++) {
+            txtHash = (txtHash + q - RM*txt.charAt(i-m) % q) % q;
+            txtHash = (txtHash*R + txt.charAt(i)) % q;
+
+            int offset = i - m + 1;
+            if ((patHash == txtHash) && check(txt, offset))
+                return offset;
+        }
+        return n;
+    }
+#+END_SRC
+
+** 压缩算法
+   :PROPERTIES:
+   :CUSTOM_ID: 压缩算法
+   :END:
+
+神他妈输入法首个匹配的是=亚索=......
+
+*** 游程压缩
+    :PROPERTIES:
+    :CUSTOM_ID: 游程压缩
+    :END:
+
+对于冗余的一长串字符相同的比特流，自然而然就想到用 字符+字符个数
+的形式将比特流压缩。
+
+*** Huffman 压缩
+    :PROPERTIES:
+    :CUSTOM_ID: huffman-压缩
+    :END:
+
+大二数据结构期末的大作业！当时在网上找的一个答案用 C++
+实现的，代码两大概有 500
+行，在当时是我见过的最大的一个程序了，勉勉强强看了一个星期才看懂，给老师答辩的时候还要提前在下面准备好久，那时候真是尴尬啊......
+
+要了解 Huffman 压缩，需要知道一个概念： -
+前缀码：如果所有字符编码都不会成为其他字符编码的前缀，则这种编码风格被称为前缀码
+
+前缀码使得编码成为唯一，不需要在每个字符的码前加分隔符。
+
+Huffman 压缩的编码，解码，建树等操作和分析都放在了
+[[https://github.com/nicehiro/Algorithm/blob/master/String/Huffman.java][github]]
+
+** 感受
+   :PROPERTIES:
+   :CUSTOM_ID: 感受
+   :END:
+
+1. 以上全部代码实现及代码分析放在了
+   [[https://github.com/nicehiro/Algorithm/tree/master/String][github]]
+
+2. 感受到了递归的强大力量。让复杂的问题简单化，难以实现的算法得以简单实现。
+
+3. 英语是有多么重要啊！
+   为什么很多东西一定要自己亲身体验吃过亏之后才承认那就是真理？我很痛恨自己，恨自己没有在该好好学习英语的时候（高中）上课和老师对着干，后悔自己大学前三年一直没有认真的对待英语。
+   现在在看《算法
+   4》这本书，原版是老外写的，我自然是不认为我那三脚猫的英语水平可以看得懂算法那难懂的思想。所以，我选择买了中文译版。但是，有时候真的觉得中文译版很别扭。一些关键思想的表述让我翻来覆去得要看好几次才可以看懂。也不是说是译者翻译的不好，而是译者在翻译的过程中为了行文通顺，为了段落逻辑清晰一定会加上自己的一些思想的，这样我们看到的就是不纯正的算法思想，自然比较难以理解。
+
+4. 坚定自己的梦想。这么大了还谈梦想说出来都有些想笑。如果你是真正热爱计算机这个行业，真正喜欢编程，真正能够为学到一门新技术二开心，那么，就不要放弃。我们学东西，永远都要架在兴趣上，别把学习搞得像是打怪升级一样。
+
+
+
+
+

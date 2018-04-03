@@ -1,0 +1,27 @@
+#+HUGO_BASE_DIR: ~/Documents/blog/
+#+hugo_section: notes
+#+hugo_auto_set_lstmod: t
+
+#+TITLE: Python 爬虫知识点整理
+
+#+DATE: 2018-03-25
+#+OPTIONS: toc:nil
+
+* 整理回顾《用Python写网络爬虫》
+
+** 爬取这个网站之前需要干什么？
+*** robots.txt
+
+这个文件注明了服务器对不同用户代理的不同限制，格式如下：
+#+BEGIN_SRC 
+User-agent: *
+Crawl-delay: 5
+Disallow: /trap
+#+END_SRC
+表明：对于 * （其余所有的代理），不能爬取 /trap 下的文件，切爬取之间间隔为 5s 。
+
+*** 网站大小
+事先估算要爬取的网站中内容的大小，确定需要多久才能完成爬取。使用 =site:taobao.com/article= 来搜索淘宝下文章的页面有多少。
+
+*** 识别网站所用的技术
+使用 Python 库 =buildwith= 来分析网站。可以大概确定这个网站爬取的难度。

@@ -1,0 +1,26 @@
+[[file:index.org][{back to main page}]]
+#+TITLE: 在 Emacs 中玩井子棋游戏
+
+#+DATA: 2018-1-30 21:21:00
+
+昨天发现了一个纽约市的 Emacser 集会分享的[[http://emacsnyc.org/videos.html][网站]]，他们会把近期的技术分享活动发到网站上，制作成视频发到 Youtube，感觉做得很不错。我看了一起的井子棋视频游戏，大佬现场敲代码教你如何写一个 Emacs 游戏，这位大佬还是 2048-game 的作者。我记一下这个小游戏的思路。
+
+* 简介
+#+BEGIN_QUOTE
+Games are a great way to get started writing programs in any language. In Emacs Lisp, they’re even better—you use the same exact techniques to extend Emacs, configuring it to do what you want. In this presentation, I livecode tic-tac-toe. You’ll see how to create a basic major mode, make functions, store state, and set keybindings.
+#+END_QUOTE
+从网站抄的话当开始吧。
+
+* 开始
+第一步需要实现的功能是：M-x 输入 tictactoe 命令，跳转到一个新的 buffer。
+#+BEGIN_SRC elisp
+(defun tictactoe ()
+  "Start playing tic tac toe."
+  (interactive)
+  (switch-to-buffer "tictactoe"))
+#+END_SRC
+
+=interactive= 表示这个函数是个交互性函数，简单来说就是可以使用 M-x 调用的函数。
+
+* 定义 Major-Mode
+现在跳到 tictactoe buffer 时候使用的是默认的 Fundamental-mode，我们

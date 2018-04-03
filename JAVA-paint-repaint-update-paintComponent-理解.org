@@ -1,0 +1,98 @@
+[[file:index.org][{back to main page}]]
+#+TITLE: JAVA paint(),repaint(),update(),paintComponent() 理解
+
+#+DATE: 2016-09-30 15:56:24
+
+最近将脱手两个月的 Java 又捡起来，因为自己还欠
+马士兵老师一个暑假作业俄罗斯方块没做。可是上手后发现又遇到了之前上课的难点问题：组件重绘。不过在网上百般查找后还是找到了问题的所在。下面写一些我自己的理解和对网上查找的答案进行总结，进而加深印象。
+
+#+BEGIN_HTML
+  <!--more0-->
+#+END_HTML
+
+** 你要知道
+   :PROPERTIES:
+   :CUSTOM_ID: 你要知道
+   :END:
+
+-  paint(Graphics g) 可以有程序自动调用，不需要显示调用也可以执行；
+-  如果使用 awt 的 Frame 组件，重绘时这样进行：repaint() ->
+   update(Graphics g) -> paint(Graphics g)，一般需要重写paint(Graphics
+   g) 方法，因而双缓冲绘图原理就是在 update 方法中建立缓冲；
+-  如果使用 swing 的 JFrame 组件，重绘时这样进行：repaint() ->
+   update(Graphics g)(没啥作用) -> paint(Graphics g)(也没啥用) ->
+   paintComponent(Graphics g) -> paintBorder(Graphics g) ->
+   paintChildren(Graphics g)，一般需要重写paintComponent(Graphics g)
+   方法； ## 我遇到的错误一
+
+我用的是swing 的 JFrame。 *Q: who calls paintComponent(Graphics g) ?*
+下面贴一篇大神的文章，说的很清楚了：
+
+#+BEGIN_QUOTE
+  When you subclass JComponent or JPanel to draw graphics, override the
+  paintComponent() method. This method is called because the user did
+  something with the user interface that required redrawing, or your
+  code has explicitly requested that it be redrawn.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+  Called automatically when it becomes visible
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+  When a window becomes visible (uncovered or deminimized) or is
+  resized, the “system” automatically calls the paintComponent() method
+  for all areas of the screen that have to be redrawn.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+  Called indirectly from a user-defined listener via repaint()
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+  When a listener (mouse, button, keyboard, ...) of yours is called, the
+  listener code often makes changes that should be displayed in your
+  graphics area. Never call paintComponent() method directly.
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+  Change instance variables. The listener code should set instance
+  variables that paintComponent()uses in drawing the panel. After
+  changing the values, the next time paintComponent() is called, these
+  new values will be used. But you won't want to wait for a call to
+  paintComponent(), callrepaint(). Call repaint(). The repaint() method
+  consolidates all requests to change the component (there may be
+  several repaint requests between screen refreshes). It adds an update
+  request to the GUI event queue so that the update will be properly
+  coordinated with other GUI actions (Swing and AWT are not
+  thread-safe). This update request, when processed, calls update(),
+  which callspaint(), which calls your paintComponent() method (as well
+  as calling paintBorder() andpaintChildren().
+#+END_QUOTE
+
+总的来说就是：有两种方法可以调用 paintComponent()
+方法，一是系统调用，Java
+自己判断是否该重绘，比如当最小化再最大化；二是调用 repaint()
+方法，一般新启一个线程不断重绘。
+
+** 我遇到的错误二
+   :PROPERTIES:
+   :CUSTOM_ID: 我遇到的错误二
+   :END:
+
+paintComponent(Graphics) 与 paintComponents(Graphics)写叉了？？！！
+
+为自己智商着急！！ 最怕出现这种问题它就偏偏出了这种问题！！
+
+我本应该调用前者函数，结果使用 eclipse 的简单方法直接 source ->
+override\implements methods 找到了个加 s 的方法！！
+结果那个方法也是与组件重绘有关，但就是不能实现我要的功能，总有一些奇奇怪怪、莫名其妙的问题......
+
+所以，切记：
+*代码编辑器能给我们带来很大的便利性，但这一切都要基于自己已经强大到可以驾驭编辑器的地步！否则，很可能有更大的麻烦等着你！*
+
+
+
+
+
+

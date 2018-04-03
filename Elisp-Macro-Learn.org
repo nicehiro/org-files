@@ -1,0 +1,135 @@
+#+HUGO_BASE_DIR: ~/Documents/blog/
+#+hugo_section: notes
+#+hugo_auto_set_lstmod: t
+
+#+TITLE: Elisp Macro 学习笔记
+
+#+DATE: 2017-08-09
+#+OPTIONS: toc:nil
+
+** 宏与函数的区别
+*** 返回值
+ 
+宏返回的是一个展开式（在 Emacs 中返回的宏展开会被直接执行），函数返回的是一个值/求出的结果。
+
+=`= 加在括号外面，表示整个表达式不求值，加在符号（symbol）前面表示该符号不求值； ='= 放在符号前面和 =`= 用法相同。
+=`= 可以和 =,= 一起使用，表示在 =`= 表达式中求某个符号的值。
+
+下面这个例子是我学习 [[https://zilongshanren.com/][子龙山人]] 的 [[http://list.youku.com/albumlist/show?][21 天学会 Emacs]] 的视频中的例子。跟着教程来可以节省不少重头开始的 Hack 时间。
+#+BEGIN_SRC emacs-lisp
+(defun prelude-search (query-url prompt)
+  "Open the search url constructed with the QUERY-URL.
+PROMPT sets the `read-string prompt."
+  (browse-url
+   (concat query-url
+           (url-hexify-string
+            (if mark-active
+                (buffer-substring (region-beginning) (region-end))
+              (read-string prompt))))))
+
+(defmacro prelude-install-search-engine 
+          (search-engine-name search-engine-url search-engine-prompt)
+  "Given some information regarding a search engine, 
+   install the interactive command to search through them"    
+  `(defun ,(intern (format "prelude-%s" search-engine-name)) ()                                                       ; #2
+       ,(format "Search %s with a query or region if any." search-engine-name)                                        ; #3
+       (interactive)
+       (prelude-search ,search-engine-url ,search-engine-prompt)))                                                    ; #4
+#+END_SRC
+
+通过上面的宏，可以生成下面四个不同的函数，示范第一个函数执行时的宏展开：
+#+BEGIN_SRC emacs-lisp
+(defun prelude-google ()
+  "Search http://www.google.com/search?q= with a query or region if any"
+  (interactive)
+  (prelude-search "http://www.google.com/search?q=" "Google: "))
+#+END_SRC
+
+** 宏设计
+
+关于宏设计方面需要注意的东西是从《ANSI Common Lisp》上面看来的。
+
+一个问题需要注意的是，我们在宏内部使用的变量如果在外部也有相同的变量时，可能会得到不是我们期待的结果。这里放几个书上面的例子，我将它们的宏展开一并写上来，分析一下：
+
+这个函数用来执行 body 命令 n 次， =,@= 表示将后面符号（如果是list）中所有参数‘扒开’，想想如果执行下面的 =,@body= 后，我们会得到一个 =body= 代表的表达式的宏展开式
+
+#+BEGIN_SRC lisp
+(defmacro ntimes (n &rest body)
+  `(do ((x 0 (+ x 1)))
+       ((>= x ,n))
+     ,@body))
+
+(ntimes 10 (princ "."))
+
+;; 上面这个的宏展开可以写成这样：
+(do ((x 0 (+ x 1)))
+    ((>= x 10))
+  (princ "."))
+
+
+;; 当外部函数使用了与宏相同的变量 x 的时候
+(let ((x 10))
+  (ntimes 5
+	  (setf x (+ x 1)))
+  x)
+
+;; 上面式子的宏展开
+;; 第一次循环直接退出外部设置的 x 影响了宏展开的执行
+(let ((x 10))
+  (do ((x 0 (+ x 1)))
+      ((>= x 5))
+    (setf x (+ x 1)))
+  x)
+
+;; 设计宏的时候使用的变量不能和外部设置的变量相同
+;; 这里用到一个函数：gensym
+;; 在一个程序里，不会存在任何一个符号 eql gensym
+;; 这样在外部程序设置的变量就不会影响宏展开的执行了
+(defmacro ntimes-2 (n &rest body)
+  (let ((g (gensym)))
+    `(do ((,g 0 (+ ,g 1)))
+	 ((>= ,g ,n))
+       ,@body)))
+
+;; 示例
+(let ((x 10))
+  (ntimes-2 5
+	    (setq x (+ x 1)))
+  x)
+
+;; 宏展开:
+(let ((x 10))
+  (do* ((g (gensym))
+       (g 0 (+ g 1)))
+      ((>= g 5))
+    (setf x (+ x 1)))
+  x)
+#+END_SRC
+  
+宏使用的时候还有一种问题需要考虑：多重求值。即一个参数在多次迭代中被求值，这里依旧是以上面那个函数为例：
+
+#+BEGIN_SRC lisp
+;; 这里如果传入可变的参数
+(let ((v 10))
+  (ntimes-3 (setf v (- v 1))
+	    (princ ".")))
+
+;; 上诉式子的宏展开
+;; 每次循环的时候 v 都在变化，所以输出的结果不是我们期待的 10 个
+;; 而是 5 个
+> (let ((v 10))
+    (do ((#:g1 0 (+ #:g1 1)))
+        ((>= #:g1 (setf v (- v 1))))
+      (princ ".")))
+
+;; 完全版本
+(defmacro ntimes-3 (n &rest body)
+  (let ((g (gensym))
+	(h (gensym)))
+    `(let ((,h ,n))
+       (do ((,g 0 (+ ,g 1)))
+	   ((>= ,g ,h))
+	 ,@body))))
+#+END_SRC
+
+上面说的内容使用的是 Clisp 的语法，但对于 Elisp 来说同样适用。

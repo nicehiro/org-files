@@ -1,0 +1,397 @@
+[[file:index.org][{back to main page}]]
+#+TITLE: Android RecycleView Learning
+
+#+DATE: 2016-10-08 19:23:30
+
+先看看它的来源：
+
+#+BEGIN_EXAMPLE
+    public class RecyclerView
+    extends ViewGroup implements ScrollingView, NestedScrollingChild
+#+END_EXAMPLE
+
+官方说明：
+
+#+BEGIN_QUOTE
+  RecyclerView is a more advanced and flexible version of ListView. This
+  widget is a container for large sets of views that can be recycled and
+  scrolled very efficiently. Use the RecyclerView widget when you have
+  lists with elements that change dynamically.
+#+END_QUOTE
+
+其实就是 ListView 的替代，强制你使用 ViewHolder 这种比较优秀的方法。
+
+#+BEGIN_HTML
+  <!--more-->
+#+END_HTML
+
+** 如何实现
+   :PROPERTIES:
+   :CUSTOM_ID: 如何实现
+   :END:
+
+*** gradle 文件
+    :PROPERTIES:
+    :CUSTOM_ID: gradle-文件
+    :END:
+
+添加 support 包的引用：
+
+#+BEGIN_SRC java
+    compile 'com.android.support:recyclerview-v7:24.1.0'
+#+END_SRC
+
+*** xml 文件中使用
+    :PROPERTIES:
+    :CUSTOM_ID: xml-文件中使用
+    :END:
+
+切记需要打全路径！
+
+#+BEGIN_SRC java
+    <android.support.v7.widget.RecyclerView
+    android:id="@+id/recycler_view"
+    android:layout_below="@+id/add_message_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+#+END_SRC
+
+*** java 代码中实现
+    :PROPERTIES:
+    :CUSTOM_ID: java-代码中实现
+    :END:
+
+这里你需要搞两个东西：adapter 和 layoutmanager 。
+
+**** Adapter
+     :PROPERTIES:
+     :CUSTOM_ID: adapter
+     :END:
+
+和 ListView 一样，你需要为你的 RecycleView 设置对应的
+Adapter。只不过这个 Adapter 需要的是特定的
+Adapter，必须继承于RecycleView.Adapter@@html:<VH>@@类。而其中使用的
+ViewHolder 也需要的是特定的 ViewHolder，继承于RecycleView.ViewHolder。
+
+当然，如果你需要传递的放在 ListView 上的 item
+有多种类型，你可能还需要设置一个 ViewType 来判断。
+
+MessageAdapter.java
+
+#+BEGIN_SRC java
+    public class MessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
+        private List<Message> messageList;
+        private interface ViewType {
+            int TEXT = 10;
+            int IMAGE = 20;
+        }
+        public MessageAdapter(List<Message> messageList) {
+            this.messageList = messageList;
+        }
+        @Override
+        public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            //viewType was from methed getItemViewType()
+            if (viewType == ViewType.TEXT) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.text_message_item, parent, false);
+                return new TextViewHolder(view);
+            } else {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_message_item, parent, false);
+                return new ImageViewHolder(view);
+            }
+        }
+        @Override
+        public void onBindViewHolder(final MessageViewHolder holder, final int position) {
+            if (getItemViewType(position) == ViewType.TEXT) {
+                TextViewHolder textViewHolder = (TextViewHolder) holder;
+                TextMessage textMessage = (TextMessage) messageList.get(position);
+                textViewHolder.getHead().setImageResource(textMessage.getHeadImageResId());
+                textViewHolder.getTime().setText(textMessage.getTime());
+                textViewHolder.getText().setText(textMessage.getText());
+            } else {
+                ImageViewHolder imageViewHolder = (ImageViewHolder) holder;
+                ImageMessage imageMessage = (ImageMessage) messageList.get(position);
+                imageViewHolder.getHead().setImageResource(imageMessage.getHeadImageResId());
+                imageViewHolder.getTime().setText(imageMessage.getTime());
+                imageViewHolder.getImage().setImageResource(imageMessage.getImageResId());
+            }
+        }
+        @Override
+        public int getItemCount() {
+            return messageList.size();
+        }
+        @Override
+        public int getItemViewType(int position) {
+            Message message = messageList.get(position);
+            if (message instanceof TextMessage) {
+                return ViewType.TEXT;
+            } else {
+                return ViewType.IMAGE;
+            }
+        }
+    }
+#+END_SRC
+
+这个类继承了RecycleView.Adapter@@html:<VH>@@，实现了四个抽象方法：
+
+#+BEGIN_SRC java
+    getItemCount() 返回 Message 的大小
+    getItemViewType 返回 Message 的 type
+    onCreateViewHolder 第一次创建该 type 的 ViewHolder 时调用
+    onBindViewHolder 刷新 RecycleView 的时候调用
+#+END_SRC
+
+**** LayoutManager
+     :PROPERTIES:
+     :CUSTOM_ID: layoutmanager
+     :END:
+
+Layoutmanager 是一个抽象类，系统为我们提供了三种实现类，有
+LinearLayoutmanager，GridLayoutmanager，
+StaggeredLayoutManager，分别是线性显示，网格显示和瀑布流显示。
+
+LinearLayoutmanager：
+
+#+BEGIN_SRC java
+    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this,                          LinearLayoutManager.VERTICAL, false);
+    recyclerView.setLayoutManager(layoutManager);
+#+END_SRC
+
+StaggeredLayoutManager：
+
+#+BEGIN_SRC java
+    StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+    recyclerView.setLayoutManager(layoutManager);
+#+END_SRC
+
+*** Animation 动画
+    :PROPERTIES:
+    :CUSTOM_ID: animation-动画
+    :END:
+
+上述便可以实现一个 RecycleView，但我们往往喜欢在 view 中加一些动画效果。
+
+FadeInItemAnimator.java
+
+#+BEGIN_SRC java
+    public class FadeInItemAnimator extends SimpleItemAnimator {
+        private List<RecyclerView.ViewHolder> pendingAddViewHolderList = new ArrayList<>();
+        private List<RecyclerView.ViewHolder> addAnimationViewHolderList = new ArrayList<>();
+        @Override
+        public boolean animateRemove(RecyclerView.ViewHolder holder) {
+            return false;
+        }
+        @Override
+        public boolean animateAdd(RecyclerView.ViewHolder holder) {
+            View view = holder.itemView;
+            ViewCompat.setAlpha(view, 0);
+            pendingAddViewHolderList.add(holder);
+            return true;
+        }
+        @Override
+        public boolean animateMove(RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
+            return false;
+        }
+        @Override
+        public boolean animateChange(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder, int fromLeft, int fromTop, int toLeft, int toTop) {
+            return false;
+        }
+        @Override
+        public void runPendingAnimations() {
+            for (int i = 0; i < pendingAddViewHolderList.size(); i++) {
+                final RecyclerView.ViewHolder viewHolder = pendingAddViewHolderList.get(i);
+                addAnimationViewHolderList.add(viewHolder);
+                View view = viewHolder.itemView;
+                final ViewPropertyAnimatorCompat animatorCompat = ViewCompat.animate(view);
+                animatorCompat.alpha(1).setDuration(1000).setListener(new ViewPropertyAnimatorListener() {
+                    @Override
+                    public void onAnimationStart(View view) {
+                    }
+                    @Override
+                    public void onAnimationEnd(View view) {
+                        animatorCompat.setListener(null);
+                        ViewCompat.setAlpha(view, 1);
+                        dispatchAddFinished(viewHolder);
+                        addAnimationViewHolderList.remove(viewHolder);
+                        if (!isRunning()) {
+                            dispatchAnimationsFinished();
+                        }
+                    }
+                    @Override
+                    public void onAnimationCancel(View view) {
+                    }
+                }).start();
+            }
+            pendingAddViewHolderList.clear();
+        }
+        @Override
+        public void endAnimation(RecyclerView.ViewHolder item) {
+            View view = item.itemView;
+            ViewCompat.animate(view).cancel();
+            for (int i = 0; i < pendingAddViewHolderList.size(); i++) {
+                RecyclerView.ViewHolder viewHolder = pendingAddViewHolderList.get(i);
+                if (viewHolder == item) {
+                    pendingAddViewHolderList.remove(i);
+                    ViewCompat.setAlpha(view, 1);
+                    dispatchAddFinished(item);
+                }
+            }
+            if (!isRunning()) {
+                dispatchAnimationsFinished();
+            }
+        }
+        @Override
+        public void endAnimations() {
+            for (int i = 0; i < pendingAddViewHolderList.size(); i++) {
+                RecyclerView.ViewHolder viewHolder = pendingAddViewHolderList.get(i);
+                View view = viewHolder.itemView;
+                pendingAddViewHolderList.remove(i);
+                ViewCompat.setAlpha(view, 1);
+                dispatchAddFinished(viewHolder);
+            }
+            for (int i = 0; i < addAnimationViewHolderList.size(); i++) {
+                RecyclerView.ViewHolder viewHolder = addAnimationViewHolderList.get(i);
+                View view = viewHolder.itemView;
+                ViewCompat.animate(view).cancel();
+            }
+        }
+        @Override
+        public boolean isRunning() {
+            return !pendingAddViewHolderList.isEmpty()
+                    || !addAnimationViewHolderList.isEmpty();
+        }
+    }
+#+END_SRC
+
+上述文件配置了一个继承于 SimpleItemAnimator 的动画类，你需要实现 8
+个方法。 额，看着有些多，但其实还好，不需要你每一个都去实现的。
+
+前四个方法是当 ViewHolder 中的 item
+变化时调用的，只要其中一个方法返回值为
+true，便会去调用其他四个方法。上述文件实现了添加 item 时候的动画。
+
+-  runPendingAnimations() 方法为需要调用动画的 item 实现动画效果。
+-  endAnimation() 方法是在当该 ViewHolder 动画结束时调用的
+-  endAnimations() 方法是在所有 ViewHolder 动画结束时调用
+-  isRunning() 方法是在判断动画是否依旧在运行
+
+*** ItemDecoration
+    :PROPERTIES:
+    :CUSTOM_ID: itemdecoration
+    :END:
+
+ListView 如果想要加入 divider 的话，你只需要去布局文件写个 divider
+就好。
+
+但是，悲伤的是：
+
+RecycleView 不行！！！
+
+MainActivity.java
+
+#+BEGIN_SRC java
+    recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+        private Drawable divider = getResources().getDrawable(R.drawable.decoration_drawable);
+        @Override
+        public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+            super.onDraw(c, parent, state);
+            final int childCount = parent.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                View child = parent.getChildAt(i);
+                int top = child.getBottom();
+                int left = child.getLeft();
+                final int bottom = top + 10;
+                int right = child.getRight();
+                divider.setBounds(left, top, right, bottom);
+                divider.draw(c);
+            }
+        }
+        @Override
+        public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
+            super.onDrawOver(c, parent, state);
+        //                final int childCount = parent.getChildCount();
+        //                for (int i = 0; i < childCount; i++) {
+        //                    View child = parent.getChildAt(i);
+        //                    int top = child.getBottom();
+        //                    final int bottom = top + 10;
+        //                    int left = child.getLeft();
+        //                    int right = child.getRight();
+        //
+        //                    divider.setBounds(left, top, right, bottom);
+        //                    divider.draw(c);
+        //                }
+        }
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            super.getItemOffsets(outRect, view, parent, state);
+            outRect.bottom += 10;
+        }
+    });
+#+END_SRC
+
+#+BEGIN_SRC java
+    getItemOffsets() 方法用来拿到每个 view 的范围
+    onDraw() 方法用来画到每个 view 下方
+    onDrawOver() 方法用来画到每个 view 上方
+#+END_SRC
+
+*** OnItemClickListener
+    :PROPERTIES:
+    :CUSTOM_ID: onitemclicklistener
+    :END:
+
+再告知一个不幸的消息，RecycleView 也没有好多 view
+都有的回调方法：OnItemClickListener。
+
+所幸我们可以自己搞一个：
+
+MessageAdapter.java 添加如下：
+
+#+BEGIN_SRC java
+    public interface OnItemClickListern {
+        void onItemClick(RecyclerView.ViewHolder viewHolder, int position);
+    }
+    private OnItemClickListern onItemClickListern;
+    public void setOnItemClickListern(OnItemClickListern onItemClickListern) {
+        this.onItemClickListern = onItemClickListern;
+    }
+#+END_SRC
+
+MessageAdapter.java 中修改onBindViewHolder:
+
+#+BEGIN_SRC java
+    if (onItemClickListern != null) {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemClickListern.onItemClick(holder, position);
+            }
+        });
+    }
+#+END_SRC
+
+MainActivity.java 中设置：
+
+#+BEGIN_SRC java
+    messageAdapter.setOnItemClickListern(new MessageAdapter.OnItemClickListern() {
+        @Override
+        public void onItemClick(RecyclerView.ViewHolder viewHolder, int position) {
+            Log.i("MainActivity", "onItemClick position: " + position);
+        }
+    });
+#+END_SRC
+
+** 感受
+   :PROPERTIES:
+   :CUSTOM_ID: 感受
+   :END:
+
+RecycleView 优点是必须继承 ViewHolder
+这种好的设计方法，让我们的程序更加流畅；缺点是好多原先的方法都不能直接使用，都需要重新自定义一遍。
+
+OVER！
+
+
+
+
+
+

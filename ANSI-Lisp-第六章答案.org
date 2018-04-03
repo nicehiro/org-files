@@ -1,0 +1,197 @@
+[[file:index.org][{back to main page}]]
+#+TITLE: ANSI Lisp 第六章答案
+
+#+DATE: 2017-04-18 22:54:12
+
+学习 ANSI Lisp 第六章。
+
+学习地址：http://www.kancloud.cn/kancloud/acl/60465
+
+#+BEGIN_HTML
+  <!--more-->
+#+END_HTML
+
+**** 定义一个 tokens 版本 (67 页)，接受 :test 与 :start 参数，缺省分别是
+#'constituent 与 0 。(译注: 67 页在 4.5 小节)
+     :PROPERTIES:
+     :CUSTOM_ID: 定义一个-tokens-版本-67-页接受-test-与-start-参数缺省分别是-constituent-与-0-译注-67-页在-4.5-小节
+     :END:
+
+答案：
+
+#+BEGIN_EXAMPLE
+    (defun tokens (str &key (test #'constituent) (start 0))
+      (let ((p1 (position-if test str :start start)))
+        (if p1
+            (let ((p2 (position-if-not test str :start p1)))
+              (cons (subseq str p1 p2)
+                    (if p2
+                        (tokens str :test test :start p2)))))))
+#+END_EXAMPLE
+
+**** 定义一个 bin-search (60 页)的版本，接受 :key , :test , start 与 end
+参数，有着一般的意义与缺省值。(译注: 60 页在 4.1 小节)
+     :PROPERTIES:
+     :CUSTOM_ID: 定义一个-bin-search-60-页的版本接受-key-test-start-与-end-参数有着一般的意义与缺省值译注-60-页在-4.1-小节
+     :END:
+
+答案：
+
+#+BEGIN_EXAMPLE
+    (defun bin-search (obj vec &key (key #'identity) (test #'eql) (start 0) end)
+      (let ((len (or end (length vec))))
+        (and (zerop len)
+             (finder obj vec start (- len 1) key test))))
+
+    (defun finder (obj vec start end key test)
+      (let ((range (- end start)))
+        (if (zerop range)
+            (if (funcall test obj (funcall key (aref vec start)))
+                (aref vec start))
+            (let ((mid (+ start (round (/ range 2)))))
+              (let ((obj2 (funcall key (aref vec mid))))
+                (if (< obj obj2)
+                    (finder obj vec start (- mid 1) key test)
+                    (if (> obj obj2)
+                        (finder obj vec (+ mid 1) end key test)
+                        (aref vec mid))))))))
+#+END_EXAMPLE
+
+上诉两题直接照着书上的案例修改就可以了。
+
+**** 定义一个函数，接受任何数目的参数，并返回传入的参数
+     :PROPERTIES:
+     :CUSTOM_ID: 定义一个函数接受任何数目的参数并返回传入的参数
+     :END:
+
+答案：
+
+#+BEGIN_EXAMPLE
+    (defun ret-args (&rest args)
+      args)
+#+END_EXAMPLE
+
+总有种题目是不是理解错了的感觉。刚开始想着用递归、迭代做。后来一拍脑袋，这不就直接把
+args 输出不就可以了嘛......
+
+**** 修改 most 函数 (105 页)，使其返回 2
+个数值，一个列表中最高分的两个元素。(译注: 105 页在 6.4 小节)
+     :PROPERTIES:
+     :CUSTOM_ID: 修改-most-函数-105-页使其返回-2-个数值一个列表中最高分的两个元素译注-105-页在-6.4-小节
+     :END:
+
+答案：
+
+#+BEGIN_EXAMPLE
+    (defun most (fn lst)
+      (if (= 2 (length lst))
+          (let ((fir (car lst))
+                (sec (car (cdr lst))))
+            (if (> fir sec)
+                (list sec fir)
+                (list fir sec)))
+          (let* ((ret (most fn (cdr lst)))
+                 (first (car lst))  
+                 (fir (car ret))
+                 (sec (car (cdr ret))))
+            (if (> first sec)
+                (if (> first fir)
+                    (list first sec)
+                    (list fir first))
+                ret))))
+#+END_EXAMPLE
+
+递归，思路简单清晰。
+
+**** 用 filter (105 页) 来定义 remove-if （没有关键字）。(译注: 105 页在
+6.4 小节)
+     :PROPERTIES:
+     :CUSTOM_ID: 用-filter-105-页-来定义-remove-if-没有关键字译注-105-页在-6.4-小节
+     :END:
+
+答案：
+
+#+BEGIN_EXAMPLE
+    (defun my-remove-if (fn lst)
+      (filter #'(lambda (x) (not (funcall fn x))) lst))
+#+END_EXAMPLE
+
+**** 定义一个函数，接受一个参数丶一个数字，并返回目前传入参数中最大的那个
+     :PROPERTIES:
+     :CUSTOM_ID: 定义一个函数接受一个参数丶一个数字并返回目前传入参数中最大的那个
+     :END:
+
+答案：
+
+#+BEGIN_EXAMPLE
+    (let (mx)
+      (defun max-so-far (n)
+        (if (or (not mx) (< mx n))
+            (setf mx n)
+           mx)))
+#+END_EXAMPLE
+
+题目都不太懂，但答案却很简单
+
+**** 定义一个函数，接受一个参数丶一个数字，若传入参数比上个参数大时，返回真。函数第一次调用时应返回
+nil
+     :PROPERTIES:
+     :CUSTOM_ID: 定义一个函数接受一个参数丶一个数字若传入参数比上个参数大时返回真函数第一次调用时应返回-nil
+     :END:
+
+答案：
+
+#+BEGIN_EXAMPLE
+    (let ((prev))
+      (defun greater-p (n)
+        (progn
+          (setf ret (and prev (< prev n)))
+          (setf prev n)
+          ret)))
+#+END_EXAMPLE
+
+Lisp 竟然可以知道之前调用的参数！很神奇！
+
+**** 假设 expensive 是一个接受一个参数的函数，一个介于 0 至 100
+的整数（包含 100)，返回一个耗时的计算结果。定义一个函数frugal
+来返回同样的答案，但仅在没见过传入参数时调用 expensive
+     :PROPERTIES:
+     :CUSTOM_ID: 假设-expensive-是一个接受一个参数的函数一个介于-0-至-100-的整数包含-100返回一个耗时的计算结果定义一个函数frugal-来返回同样的答案但仅在没见过传入参数时调用-expensive
+     :END:
+
+答案：
+
+#+BEGIN_EXAMPLE
+    (let ((store (make-array 101)))
+      (defun frugel (n)
+        (if (or (> n 100) (< n 0))
+            nil
+            (or (svref store n)
+                (setf (svref store n) (expensive n))))))
+#+END_EXAMPLE
+
+**** 定义一个像是 apply 的函数，但在任何数字印出前，缺省用 8 进制印出
+     :PROPERTIES:
+     :CUSTOM_ID: 定义一个像是-apply-的函数但在任何数字印出前缺省用-8-进制印出
+     :END:
+
+答案：
+
+#+BEGIN_EXAMPLE
+    (defun my-apply (&rest args)
+      (let ((*print-base* 8))
+        (princ (apply #'apply args))))
+#+END_EXAMPLE
+
+** 感受
+   :PROPERTIES:
+   :CUSTOM_ID: 感受
+   :END:
+
+动态作用域很有趣。
+
+
+
+
+
+

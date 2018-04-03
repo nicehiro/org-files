@@ -1,0 +1,53 @@
+[[file:index.org][{back to main page}]]
+#+TITLE: Java Long & long
+
+#+DATE: 2016-11-16 08:02:30
+
+一大早起来就为解决第二个问题。
+
+问题很小，但不容易发现，但 debug 可以发现苗头！
+
+最近越来越感觉到 debug 的强大了，可以说，debug 是找 bug 的终极工具！
+
+#+BEGIN_HTML
+  <!--more-->
+#+END_HTML
+
+*bug*
+
+搞了一个数据库，用 greendao 生成数据库的一些操作。
+
+其中表里面有一主键，我设为了自动增加：
+
+#+BEGIN_SRC java
+    @Id(autoincrement = true)
+    private long id;
+#+END_SRC
+
+因此，在插入表的数据的时候，我没有考虑插入 id 来使表的所有 id
+不一致，而是打算让它以自动增加的方式符合数据库的数据不一致性。
+
+但程序运行崩溃，给了我这个提示：
+
+#+BEGIN_EXAMPLE
+    android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: CONTACT._id (code 1555)
+#+END_EXAMPLE
+
+它说的意思大概是，数据库唯一的约束无效，也就是 id 出了问题
+
+*fix*
+
+debug 后发现，我插入的数据中，由于 id 没有设置，所以默认的 id 是 0
+
+而老师的 demo 中，id 没有设置，默认的 id 是 null ！！！
+
+进而我发现老师的 id 是 Long 类型，而我的 id 是 long 类型......
+
+因此，我得出几个结论： - long 类型不赋值时，默认会赋值为 0 - Long
+类型是类，不初始化，默认值为 null - greendao 的 autoincrement
+注释是在被注释字段不为空的时候有效
+
+
+
+
+

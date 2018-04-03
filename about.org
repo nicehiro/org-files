@@ -1,0 +1,83 @@
+#+HUGO_BASE_DIR: ~/Documents/blog/
+
+#+hugo_section: page/about
+#+hugo_auto_set_lstmod: t
+
+#+TITLE: about.me
+
+#+DATE: 2018-03-22
+#+OPTIONS: toc:nil
+
+之前一直使用 Hexo 搭建静态博客，使用 Markdown 写文章。自从学习使用 Emacs 之后，对 Orgmode 爱不释手，遂决定基于此搭建新的博客网站。参考了不少文章：
+
++ [[http://forrestchang.com/14824097554043.html][使用Emacs Org-mode + GitHub Pages 来写博客]]
++ [[http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html][Publishing Org-mode files to HTML]]
++ ...
+
+多余步骤不再解释了，基本上上面的文章介绍的十分详细了。我只把我遇到的问题总结一下：
+
+
+*** org-publish-project-alist 函数不存在
+Emacs 我还是萌新一个，找了半天发现是安装的 Emacs 没有 =ox-publish.el= 这个文件，于是到官网下了一个， =load-file= 重新加载进去
+*** 将 =.md= 转为 =.org= 
+最近在啃 shell 编程，编了个简单的脚本实现了：
+
+#+BEGIN_SRC sh 
+#!/bin/bash
+ls -lS --time-style=long-iso | awk -v mdflag=$mdflag 'BEGIN {
+   getline; getline;
+   name=$8;
+}
+{
+  if (match(name, "\.md$"))
+  {
+    temp=name
+    sub(/md/, "org", temp);
+    print temp;
+  }
+  name=$8;
+}' | while read line
+do
+    mdfilename=${line/org/md};
+    pandoc $mdfilename -s -o /home/hiro/tmp/$line;
+done
+#+END_SRC
+
+[[https://pandoc.org/][Pandoc]] 是一个很好用的不同格式文本之间的转换工具。
+*** 为每个文档首部增加返回主页的链接
+同样也是用 shell 脚本实现的，代码和上面差不多，拿到每个文件之后使用 sed 命令添加即可，就不贴了。
+
+*** 添加 Disqus 评论
+参考 Sebastian Emilio Narvaez 的博客 [[http://snarvaez.poweredbygnulinux.com/notes/org-mode-publishing-adding-disqus-code.html][Org-mode publishing - Adding disqus code]]
+译文我写在了其他博文里面。
+
+** About me
+考研失败，打算二战。二战前打算先找个工作。
+email: wfy11235813@gmail.com
+
+*** 兴趣爱好
+- 算法 
+已撸完“算法 4”红皮书，但我发现长时间不看有些算法还是会忘记，所以在用的时候还得重新温习一下。
+- 听歌
+其实想着能单独搞一个我喜欢的歌手分布、听歌Genre等的文章，目前听得较多的摇滚，最喜欢的乐队的 X-JAPAN，最喜欢的女歌手 坂井泉水(ZARD)
+
+*2018-02-16 更新*
+这个歌曲分析的脚本早已经写好了，如下传送门：[[https://github.com/nicehiro/NetEase-Genre][NetEase-Genre]]
+- 打篮球
+在学校，无论如何都要每周打一次篮球。我不喜欢健身，这可以说是我唯一的课外运动了。
+- Emacs+evil+orgmode 党
+当前 Emacs 作为主力编辑器，因为已经熟悉了 Vim 的按键方法所以不再去多花时间学习 Emacs 的那一套 keybinding 了（只要是适合自己的、用着方便的，就是最好的）。
+Orgmode 用来写博客，做时间规划。最详细的 Emacs 下的时间规划教程在这里： [[http://nicehiro.org/%E8%AF%91:Orgmode-for-GTD.html][译：Orgmode for GTD]]
+
+*** LANGUAGE  
+- Java 
+- Python 
+- Elisp
+
+*** 项目
+- [[https://github.com/nicehiro/netease-music][网易云音乐Emacs客户端]]
+- Android 私家藏书
+
+  
+** 博客迁移
+目前迁移到 Hugo 写作，写作链是 org -> md -> html 。使用 ox-hugo 将 org 文件转为 md 文件。

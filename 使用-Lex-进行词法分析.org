@@ -1,0 +1,151 @@
+[[file:index.org][{back to main page}]]
+#+TITLE: 使用 Lex 进行词法分析
+
+#+DATE: 2016-10-09 19:17:07
+
+参考文章：https://www.ibm.com/developerworks/cn/linux/sdk/lex/
+
+说白了，就是通过 Lex
+这个生成扫描器的工具，运用正则表达式识别，匹配文本中的词汇模式，然后便执行相应的操作。
+
+Lex 和 C 是强耦合的。一个 .l 文件通过 Lex 来编译，并生成 .c
+的程序文件，再通过 gcc 编译为词法分析器的可执行版本。
+
+#+BEGIN_HTML
+  <!--more-->
+#+END_HTML
+
+** 前提
+   :PROPERTIES:
+   :CUSTOM_ID: 前提
+   :END:
+
+-  操作系统。最好是使用 Linux 或是 Unix 。Lex 工具本来就是在 Linux
+   下使用的，有人做了移植到 win 下，不过前几年是 bug
+   太多，而现在则是使用方法差不多，最多编译命令参数可能有不同。还有就是
+   win 下那个 dos 窗口实在不如终端好使。
+-  安装 gcc 。即 c 程序编译工具。
+-  安装 flex 。即 Lex 工具。
+-  debian 系：sudo apt-get install flex
+-  熟悉正则表达式的使用。一般来说不同语言的正则表达式的规则是通用的，也就是构造语法不一样吧。需要注意的是，Lex
+   语法不支持正则表达式的非贪婪模式，所以实现的时候要小心。 ## Lex
+
+Lex 文件格式可以分为：
+
+-  全局变量的声明
+-  模式，即正则表达式使用的地方，设计匹配模式
+-  补充 C 函数，一般有 main 函数 这些段都是以 %% 来分界。
+
+举例文件：
+
+#+BEGIN_EXAMPLE
+    %{            //全局声明部分
+    #include <stdio.h>
+    extern char *yytext;
+    extern FILE *yyin;
+    %}
+    %%
+    //非法 boolean
+    (TRUE)|(FALSE)|(True)|(False) {printf("%s\n", yytext);}
+    //number 类型
+    [0-9]+\.([0-9]*)(E\+)?[0-9]+      printf("%s\n", yytext);
+    0(x|X)[a-zA-Z0-9]+                printf("%s\n", yytext);
+    [0-9]*                  printf("%s\n", yytext);
+    //变量
+    [a-zA-Z][a-zA-Z0-9\_]*    {printf("%s\n", yytext);}
+    //特殊字符
+    \+|\-|\.|\=|\!|\/|\*|\(|\)|\,|\<|\>|\=|\;|\[|\]|\{|\}|\&\&|\|\||\<\=|\>\=|\=\=    printf("%s\n", yytext);
+    //非法字符
+    \@|\$|\#|\^|\&|\?|\`|\~         printf("Unrecognized char: %s\n", yytext);
+    //comment 非贪婪模式
+    \"([^"""])*\"                  printf("%s\n", yytext);
+    //换行 回车
+    \n
+    [ \t]+
+    //comment 非贪婪模式
+    \/\/.*
+    \/\*([^*]|(\*[^"/"]))*\*\/
+    %%
+    int main(int avgs, char *avgr[])
+    {
+        yyin = fopen(avgr[1], "r");
+        if (!yyin)
+        {
+            return 0;
+        }
+        yylex();
+        fclose(yyin);
+        return 1;
+    }
+#+END_EXAMPLE
+
+大概实现了就那几种类型的识别。其中需要注意的是非贪婪模式的实现。
+
+#+BEGIN_QUOTE
+  比如说注释，要识别 /.../.../.../ 这种类型的
+  comment，如果直接使用正则表达式/*.**/匹配，则会全部匹配符合，但我们往往需要的是匹配两段（前后两端
+  comment），这时候就需要考虑贪婪模式与非贪婪模式。
+#+END_QUOTE
+
+** 贪婪模式
+   :PROPERTIES:
+   :CUSTOM_ID: 贪婪模式
+   :END:
+
+贪婪嘛，就是要贪，一口吃下全部，如果符合匹配，OK，匹配结束，如果不符合，就一个一个吐出来，直到匹配为止。
+
+** 非贪婪模式
+   :PROPERTIES:
+   :CUSTOM_ID: 非贪婪模式
+   :END:
+
+既然非贪婪，就不贪，一个一个吃数据，如果符合结果，不吃了，匹配结束没如果不符合，就一直吃。
+
+** 非贪婪注释匹配
+   :PROPERTIES:
+   :CUSTOM_ID: 非贪婪注释匹配
+   :END:
+
+首先，两端必有/*和*/；
+
+然后，需要考虑使得中间没有*/：
+
+即[\^*]|(*[\^"/"])
+
+综上，comment 的非贪婪匹配：/*([\^*]|(*[\^"/"]))**/
+
+** 编译运行
+   :PROPERTIES:
+   :CUSTOM_ID: 编译运行
+   :END:
+
+扫描生成 c 程序文件：（默认生成 lex.yy.c）
+
+#+BEGIN_EXAMPLE
+    lex test.l
+#+END_EXAMPLE
+
+生成词法分析器：（test 可执行文件）
+
+#+BEGIN_EXAMPLE
+    gcc lex.yy.c -o test -ll
+#+END_EXAMPLE
+
+对某个文件分析：
+
+#+BEGIN_EXAMPLE
+    ./test mytext
+#+END_EXAMPLE
+
+** 感想
+   :PROPERTIES:
+   :CUSTOM_ID: 感想
+   :END:
+
+还有一些 Lex 文件的变量和函数没有详细了解，待到用的时候再去看吧。
+
+
+
+
+
+

@@ -1,0 +1,533 @@
+[[file:index.org][{back to main page}]]
+#+TITLE: Lingo 学习案例
+
+#+DATE: 2016-09-29 16:01:11
+
+参考 http://blog.sina.com.cn/s/blog\_a16714bf0101deuz.html
+http://www.lai18.com/content/7303735.html
+
+#+BEGIN_HTML
+  <!--more-->
+#+END_HTML
+
+** Lingo 模型结构
+   :PROPERTIES:
+   :CUSTOM_ID: lingo-模型结构
+   :END:
+
+-  集合段 sets endsets
+-  数据段 data enddata
+-  初始段 init endinit
+-  目标与约束段 ### 求解线性整数规划、非线性整数规划
+
+-  线性整数规划
+
+[[http://oeoaak94a.bkt.clouddn.com/lng1.png]]
+
+#+BEGIN_EXAMPLE
+    model:
+    max=x1+x2;
+    x1 + 9/14*x2 <= 51/14;
+    -2*x1 + x2 <= 1/3;
+    gin(x1);        取整约束
+    gin(x2);
+    end
+#+END_EXAMPLE
+
+求解结果只有一个解，但实际上有两个解，可以通过约束来求得另一个解：
+加上下面两个约束：
+
+#+BEGIN_EXAMPLE
+    @abs(x1-2)>0.001;   取绝对值
+    @abs(x2-2)>0.001;
+#+END_EXAMPLE
+
+求解模型时需注意：Lingo中，默认变量均为非负；输出的解可能是最优解中的一组，要判断、检验是否还有其他解（根据具体问题的解的情况或用排除已知最优解的约束条件法）。
+
+-  非线性整数规划
+
+[[http://oeoaak94a.bkt.clouddn.com/lng2.png]]
+
+#+BEGIN_EXAMPLE
+    model:
+    sets:
+    row/1..4/:b;
+    col/1..5/:c1,c2,x;
+    link(row,col):a;
+    endsets
+    data:
+    c1 = 1,1,3,4,2;
+    c2 = -8,-2,-3,-1,-2;
+    a = 1,1,1,1,1
+    1,2,2,1,6
+    2,1,6,0,0
+    0,0,1,1,5;
+    b = 400,800,200,200;
+    enddata
+    max=@sum(col:c1*x^2+c2*x);
+    @for(row(i):
+        @sum(col(j):
+            a(i,j)*x(j))
+    );
+    @for(col:@gin(x));
+    @for(col:@bnd(0,x,99));
+    end
+#+END_EXAMPLE
+
+-  最优选择问题
+
+某钻井队要从10个可供选择的井位中确定5个钻井探油，使总的钻探费用为最小。若10个井位的代号为s1,s2,...,s10,相应的钻探费用c1,c2,...,c10为5,8,10,6,9,5,7,6,10,8.并且井位选择上要满足下列限制条件：
+（1） 或选择s1和s7,或选择钻探s9； （2）
+选择了s3或s4就不能选s5，或反过来也一样； （3）
+在s5,s6,s7,s8中最多只能选两个.
+试建立这个问题的整数规划模型,确定选择的井位。
+取0-1变量s\_i，若s\_i=1,则表示选取第i个井，若s\_i=0,则表示不选取第i个井。
+建立数学模型如下：
+
+[[http://oeoaak94a.bkt.clouddn.com/lng3.png]]
+
+#+BEGIN_EXAMPLE
+    model:
+    sets:
+    variables/1..10/:s,cost;
+    endsets
+    data:
+    cost = 5,8,10,6,9,5,7,6,10,8;
+    enddata
+    min=@sum(variables:cost*s);
+    (s(1)+s(7)-2)*(s(9)-1) = 0;
+    s(3)*s(5)+s(4)*s(5) = 0;
+    @sum(variables(i)|i#ge#5#AND# i #le# 8:s(i)) <= 2;
+    @sum(variables:s) = 5;
+    @for(variables:@bin(s));
+    end
+#+END_EXAMPLE
+
+-  路径和最短问题
+
+设平面上有N个点，求一点，使得这个点到所有点距离之和最小。这里，取N=8。数据点是1~5的随机数。
+lingo代码：
+
+#+BEGIN_EXAMPLE
+    model:
+    sets:
+    position/1..8/:x,y;
+    ab/1/:a,b;
+    endsets
+    data:
+    @text('/home/hiro/code/matlab/data.txt') = x,y;
+    @text('/home/hiro/code/matlab/data1.txt') = a,b;
+    enddata
+    x(1)=1+4*@rand(0.12345);
+    y(1)=1+4*@rand(0.25);
+    @for(position(i)|i#ge#2:x(i)=1+4*@rand(x(i-1)));!随机产生1~5中的8个点;
+    @for(position(i)|i#ge#2:y(i)=1+4*@rand(y(i-1)));
+    [obj]min=@sum(position(i):@sqrt((x(i)-a(1))^2+(y(i)-b(1))^2));!目标函数;
+    @bnd(1,a(1),5);
+    @bnd(1,b(1),5);
+    end
+#+END_EXAMPLE
+
+matlab 画图：
+
+#+BEGIN_EXAMPLE
+    model:
+    sets:
+    position/1..8/:x,y;
+    ab/1/:a,b;
+    endsets
+    data:
+    @text('/home/hiro/code/matlab/data.txt') = x,y;
+    @text('/home/hiro/code/matlab/data1.txt') = a,b;
+    enddata
+    x(1)=1+4*@rand(0.12345);
+    y(1)=1+4*@rand(0.25);
+    @for(position(i)|i#ge#2:x(i)=1+4*@rand(x(i-1)));!随机产生1~5中的8个点;
+    @for(position(i)|i#ge#2:y(i)=1+4*@rand(y(i-1)));
+    [obj]min=@sum(position(i):@sqrt((x(i)-a(1))^2+(y(i)-b(1))^2));!目标函数;
+    @bnd(1,a(1),5);
+    @bnd(1,b(1),5);
+    end
+#+END_EXAMPLE
+
+-  运输加选址问题
+
+某公司有6个建筑工地，位置坐标为(ai, bi) (单位：公里),水泥日用量di
+(单位：吨）
+
+#+BEGIN_EXAMPLE
+    i        1         2          3          4          5           6
+    a       1.25      8.75       0.5        5.75        3           7.25
+    b       1.25      0.75       4.75       5           6.5         7.75
+    d       3          5          4         7           6            11
+#+END_EXAMPLE
+
+(1)现有2料场，位于A (5, 1), B (2, 7),记(xj,yj),j=1,2, 日储量ej各有20吨。
+假设料场和工地之间有直线道路，制定每天的供应计划，即从A,
+B两料场分别向各工地运送多少吨水泥，使总的吨公里数最小。
+取决策变量c\_ij表示i工地从j料场运来的水泥量。模型（线性模型）为：
+
+#+BEGIN_EXAMPLE
+    model:
+    sets:
+    demand/1..6/:a,b,d;
+    supply/1..2/:x,y,e;
+    link(demand,supply):c;
+    endsets
+    data:
+    a=1.25 8.75 0.5 5.75 3 7.25;
+    b=1.25 0.75 4.75 5 6.5 7.75;
+    d=3 5 4 7 6 11;
+    x=5 2;
+    y=1 7;
+    e=20 20;
+    enddata
+    [obj]min=@sum(link(i,j):c(i,j)*@sqrt((a(i)-x(j))^2+(b(i)-y(j))^2));!目标函数;
+    @for(demand(i):@sum(supply(j):c(i,j))=d(i));
+    @for(supply(j):@sum(demand(i):c(i,j))<=e(j));
+#+END_EXAMPLE
+
+2） 改建两个新料场，需要确定新料场位置(xj,yj)和运量cij
+，在其它条件不变下使总吨公里数最小。
+模型一样，未知量变为料场位置(xj,yj)和运量cij ，变为非线性优化问题。
+
+#+BEGIN_EXAMPLE
+    model:
+    sets:
+    demand/1..6/:a,b,d;
+    supply/1..2/:x,y,e;
+    link(demand,supply):c;
+    endsets
+    data:
+    a=1.25 8.75 0.5 5.75 3 7.25;
+    b=1.25 0.75 4.75 5 6.5 7.75;
+    d=3 5 4 7 6 11;
+    e=20 20;
+    enddata
+    init:
+    x=5 2;
+    y=1 7;
+    endinit
+    [obj]min=@sum(link(i,j):c(i,j)*@sqrt((a(i)-x(j))^2+(b(i)-y(j))^2));!目标函数;
+    @for(demand(i):@sum(supply(j):c(i,j))=d(i));
+    @for(supply(j):@sum(demand(i):c(i,j))<=e(j));
+    @for(supply:@free(x);@free(y));
+    end
+#+END_EXAMPLE
+
+-  路径最短问题
+
+[[http://oeoaak94a.bkt.clouddn.com/lng5.png]]
+
+如上图，求从S到T的最短路径。设d(x,y):城市x与城市y之间的直线距离;L(x):城市S到城市x的最优行驶路线的路长。模型为：
+
+min {L(x)+d(x,y)} L(S)=0
+
+#+BEGIN_EXAMPLE
+    model:
+    sets:
+    city/S,A1,A2,A3,B1,B2,C1,C2,T/:L;
+    road(city,city)/S,A1 S,A2 S,A3 A1,B1 A1,B2 A2,B1 A2,B2 A3,B1 A3,B2 B1,C1 B1,C2 B2,C1 B2,C2 C1,T C2,T/:d;
+    endsets
+    data:
+    d=6 3 3
+    6 5 8 6 7 4
+    6 7 8 9
+    5 6;
+    L=0,6,3,3,,,,,;
+    enddata
+    @for(city(j)|j#gt#@index(city,S):L(j)=@min(road(i,j):L(i)+d(i,j)));
+    end
+#+END_EXAMPLE
+
+-  指派问题
+
+四个人完成4项任务所用的时间如下，问如何指派任务使得完成所有任务的时间最短？
+
+#+BEGIN_EXAMPLE
+       任务     t1    t2    t3    t4
+    人员
+    m1          2     15    13    4
+
+    m2          10     4    14    15    
+
+    m3          9      14    16    13
+
+    m4          7      8     11     9
+#+END_EXAMPLE
+
+c\_ij:表示第i个人完成第j项任务所用的时间；
+决策变量x\_ij:若第i个人选择第j项任务则x\_ij=1;否则，x\_ij=0； 模型为：
+
+[[http://oeoaak94a.bkt.clouddn.com/lng6.png]]
+
+#+BEGIN_EXAMPLE
+    model:
+    sets:
+    task/1..4/:t;
+    man/1..4/:m;
+    link(man,task):c,x;
+    endsets
+    data:
+    c=2 15 13 4
+    10 4 14 15
+    9 14 16 13
+    7 8 11 9;
+    enddata
+    [obj]min=@sum(link:c*x);
+    @for(task(j):@sum(man(i):x(i,j))=1);
+    @for(man(i):@sum(task(j):x(i,j))=1);
+    @for(link:@bin(x));
+    end
+#+END_EXAMPLE
+
+-  装配线平衡模型（0-1规划）
+
+11 件任务（A---K）分配到 4
+个工作站（1---4），任务的优先次序如下图，每件任务所花费的时间如下表。目标是为每个工作站分配加工任务，尽可能使每个工作站执行相同的任务量，其最终装配线周期最短。
+
+[[http://oeoaak94a.bkt.clouddn.com/lng7.png]]
+
+#+BEGIN_EXAMPLE
+    任务 A  B  C  D  E  F  G  H  I  J  K
+    时间 45 11 9 50 15 12 12 12 12  8  9
+#+END_EXAMPLE
+
+T(i):为完成第i项任务需要的时间。
+
+#+BEGIN_EXAMPLE
+    model:
+     !装配平衡模型;
+    sets:
+     !任务集合，有一个完成时间属性T;
+     TASK/A B C D E F G H I J K/:T;
+     !人物之间的优先关系集合;
+     PRED(TASK,TASK)/A,B B,C C,F C,G F,J G,J J,K
+         D,E E,H E,I H,J I,J/;
+     !工作站集合;
+     STATION/1..4/;
+     TXS(TASK,STATION):X;
+     !X是派生集TXS的一个属性。如果X(I,K)=I，则表示第I个任务指派给第K个工作站完成;
+    endsets
+    data:
+     !任务A B C D E F G H I J K的完成时间估计如下;
+    T = 45 11 9 50 15 12 12 12 12 8 9;
+    enddata
+     !当任务超过15个时，模型求解将变的很慢：
+     !每一个作业必须指派到一个工作站中;
+    @for(TASK(I):@SUM(STATION(K):X(I,K))=1);
+     !对于每一个存在有限关系的作业来说，前者对应的工作站I必须小于后者对应的工作站J;
+    @for(PRED(I,J):@sum(STATION(K):K*X(J,K)-K*X(I,K))>=0);
+     !对于每一个工作站来说，其花费时间不应大于装配线周期;
+    @for(STATION(K):
+      @SUM(TXS(I,K):T(I)*X(I,K))<+CYCTIME);
+     !目标函数时最小化转配线周期;
+    min=CYCTIME;
+     !指定X(I,J)为0/1变量;
+    @for(TXS:@BIN(X));
+    end
+#+END_EXAMPLE
+
+-  选址问题2
+
+某海岛上有12个主要的居民点，每个居民点的位置（用平面坐标x,y表示，距离单位：km）和居住的人数（r）如下表所示。现在准备在海岛上建一个服务中心为居民提供各种服务，那么服务中心应该建在何处？
+
+#+BEGIN_EXAMPLE
+    x 0 8.20 0.50 5.70 0.77 2.87 4.43 2.58 0.72 9.76 3.19 5.55
+    y 0 0.50 4.90 5.00 6.49 8.76 3.26 9.32 9.96 3.16 7.20 7.88
+    r 600 1000 800 1400 1200 700 600  800  1000 1200 1000 1100
+#+END_EXAMPLE
+
+设建在（a，b）处最合理。建立模型：
+
+[[http://oeoaak94a.bkt.clouddn.com/lng8.png]]
+
+#+BEGIN_EXAMPLE
+    MODEL:
+    SETS:
+    VAR/1..12/:X,Y,R;
+    ENDSETS
+    DATA:
+    X=0 8.20 0.50 5.70 0.77 2.87 4.43 2.58 0.72 9.76 3.19 5.55;
+    Y=0 0.50 4.90 5.00 6.49 8.76 3.26 9.32 9.96 3.16 7.20 7.88;
+    R=600 1000 800 1400 1200 700 600 800 1000 1200 1000 1100;
+    ENDDATA
+    MIN=@SUM(VAR:@SQRT((X-A)^2+(Y-B)^2)*R);
+    END
+#+END_EXAMPLE
+
+-  婚配问题
+
+10对年龄相当的青年，任意一对男女青年配对的概率pij见下表。试给出一个配对方案，使总的配对概率最大。
+
+数据凑活着看吧......
+
+#+BEGIN_EXAMPLE
+        w1        w2        w3        w4        w5        w6        w7        w8        w9        w10
+    m1 0.5828    0.2091    0.4154    0.2140    0.6833    0.4514    0.6085    0.0841    0.1210  0.2319
+    m2 0.4235    0.3798    0.3050    0.6435    0.2126    0.0439    0.0158    0.4544    0.4508  0.2393
+    m3 0.5155    0.7833    0.8744    0.3200    0.8392    0.0272    0.0164    0.4418    0.7159  0.0498
+    m4 0.3340    0.6808    0.0150    0.9601    0.6288    0.3127    0.1901    0.3533    0.8928  0.0784
+    m5 0.4329    0.4611    0.7680    0.7266    0.1338    0.0129    0.5869    0.1536    0.2731  0.6408
+    m6 0.2259    0.5678    0.9708    0.4120    0.2071    0.3840    0.0576    0.6756    0.2548  0.1909
+    m7 0.5798    0.7942    0.9901    0.7446    0.6072    0.6831    0.3676    0.6992    0.8656  0.8439
+    m8 0.7604    0.0592    0.7889    0.2679    0.6299    0.0928    0.6315    0.7275    0.2324  0.1739
+    m9 0.5298    0.6029    0.4387    0.4399    0.3705    0.0353    0.7176    0.4784    0.8049  0.1708
+    m10 0.6405    0.0503    0.4983    0.9334    0.5751    0.6124    0.6927    0.5548    0.9084  0.9943
+    取xx_ij为0-1型决策变量。
+#+END_EXAMPLE
+
+模型为：
+
+[[http://oeoaak94a.bkt.clouddn.com/lng9.png]]
+
+#+BEGIN_EXAMPLE
+    model:
+    sets:
+    man/m1..m10/;
+    woman/w1..w10/;
+    link(man,woman):p,x;
+    endsets
+    data:
+    p=0.5828    0.2091    0.4154    0.2140    0.6833    0.4514    0.6085    0.0841    0.1210    0.2319
+      0.4235    0.3798    0.3050    0.6435    0.2126    0.0439    0.0158    0.4544    0.4508    0.2393
+      0.5155    0.7833    0.8744    0.3200    0.8392    0.0272    0.0164    0.4418    0.7159    0.0498
+      0.3340    0.6808    0.0150    0.9601    0.6288    0.3127    0.1901    0.3533    0.8928    0.0784
+      0.4329    0.4611    0.7680    0.7266    0.1338    0.0129    0.5869    0.1536    0.2731    0.6408
+      0.2259    0.5678    0.9708    0.4120    0.2071    0.3840    0.0576    0.6756    0.2548    0.1909
+      0.5798    0.7942    0.9901    0.7446    0.6072    0.6831    0.3676    0.6992    0.8656    0.8439
+      0.7604    0.0592    0.7889    0.2679    0.6299    0.0928    0.6315    0.7275    0.2324    0.1739
+      0.5298    0.6029    0.4387    0.4399    0.3705    0.0353    0.7176    0.4784    0.8049    0.1708
+      0.6405    0.0503    0.4983    0.9334    0.5751    0.6124    0.6927    0.5548    0.9084   0.9943;
+    enddata
+    max=@prod(man(i):@sum(woman(j):p(i,j)*x(i,j)));
+    @for(woman(j):@sum(link(i,j):x(i,j))=1);
+    @for(man(i):@sum(link(i,j):x(i,j))=1);
+    @for(link:@bin(x));
+    end
+#+END_EXAMPLE
+
+-  护士值班安排问题
+
+某医院，从周一到周日都要有人值班，每天至少需要的护士如表。要求每个护士每周连续上班5天，试问该医院至少需要多少护士？并给出上班安排计划。
+
+#+BEGIN_EXAMPLE
+    周   1    2    3    4    5     6     7
+    人   20   16   13   16   19    14    12
+#+END_EXAMPLE
+
+取决策变量star（i）:周i开始值班的人数； 目标函数:min
+sum[star(i)]（i=1,2,3，...,7)
+约束条件：连续工作五天，周j值班的人数>=required（j）（j=1,2,3,...,7)
+
+#+BEGIN_EXAMPLE
+    model:
+    sets:
+    days/mon..sun/: required,start;
+    endsets
+    data:
+    !每天所需的最少职员数;
+    required = 20 16 13 16 19 14 12;
+    enddata
+    !最小化每周所需职员数;
+    min=@sum(days: start);
+    @for(days(J):@sum(days(I) | I #le# 5:start(@wrap(J+2+I,7))) >= required(J));
+    end
+#+END_EXAMPLE
+
+-  销售员问题
+
+有一个销售员，从城市1出发，要遍访城市2,3，。。。，n个一次，最后返回城市1.已知从城市i到j的旅费为Cij，问他该按怎样的次序访问这些城市，是得总旅费最少？可以用多中方方法把TSP表示成整数规划模型。把该问题的每一个解看做时一个巡回。
+在上述意义下，引入0-1整数变量
+
+[[http://oeoaak94a.bkt.clouddn.com/lng10.png]]
+
+转化：
+
+[[http://oeoaak94a.bkt.clouddn.com/lng11.png]]
+
+这里我们可以利用这个问题来求解一个具体问题
+
+问题1
+现需要一台机器上加工n个零件，这些零件可以按照任意先后顺序在机器上进行加工。我们希望加工完成所有零件的总时间最小。由于加工工艺的要求，加工零件j时机器不许处在相应的状态Sj（如炉温）。设起始未加工任何零件时机器处于状态S0，且当所有零件加工完成后需回复到S0状态。已知从状态Si调整到Sj需要时间Cij。零件j本身加工时间为Pj。为方便起见，引入一个徐零件0，其中加工时间为0，要求状态为S0。则{0,1,2，。。。，n}的一个圈置转换pi就表示对所有零件的一个加工顺序，则完成所有加工所需时间为
+
+#+BEGIN_EXAMPLE
+    model:
+    sets:
+      city/1..5/:u;
+      link(city,city):dist,x;
+    endsets
+      n=@size(city);
+    data:
+      dist=@qrand(1);!随即产生，这里可以改为你要解决的问题的数据;
+    enddata
+     !目标函数;
+    min=@sum(link:dist*x);
+    @for(city(K):
+      @sum(city(I)|I#ne#K:x(I,K))=1;
+      @sum(city(J)|J#ne#K:x(K,J))=1;
+    );
+    !保证不出圈子;
+    @for(city(I)|I#gt#1:
+      @for(city(J)|J#gt#1 #and# I#ne#j:
+         u(I)-u(J)+n*x(I,J)<=n-1);
+    );
+    !定义X为0/1变量;
+    @for(link:@bin(x));
+    end
+#+END_EXAMPLE
+
+-  最短路问题
+
+给定N个点Pi组成集合{Pi}，由集合中任一点Pi到另一点Pj的距离用Cij表示，如果Pi到Pj没有弧连接，则规定Cij=正无穷大，有规定Cii=0，指定一个终点PN，要求从Pi到PN的最短路线。这里我们用动态规划的方法来做。
+
+[[http://oeoaak94a.bkt.clouddn.com/lng13.png]]
+
+#+BEGIN_EXAMPLE
+    model:
+    data:
+      n=10;
+    enddata
+    sets:
+      cities/1..n/:F;
+      roads(cities,cities)/
+        1,2 1,3
+        2,4 2,5 2,6
+        3,4 3,5 3,6
+        4,7 4,8
+        5,7 5,8 5,9
+        6,8 6,9
+        7,10
+        8,10
+        9,10
+    /:D,P;
+    endsets
+    data:
+    D=
+        6 5                 ！该矩阵即为传说中的权重矩阵
+        3 6 9
+        7 5 11
+        9 1
+        8 7 5
+        4 10
+        5
+        7
+        9;
+    enddata
+    F(n)=0;
+    @for(cities(i)|i#lt#n:
+      F(i)=@min(roads(i,j):D(i,j)+F(j));
+    );
+    !显然，如果P(i,j)=1，则点i到点n的最短路径的第一步是i——j，否则就不是
+    由此，我们就可方便的确定出最短路径;
+    @for(roads(i,j):
+        P(i,j)=@if(F(i)#eq#D(i,j)+F(j),1,0)
+    );
+    end
+#+END_EXAMPLE
+
+
+
+
+
+

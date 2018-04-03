@@ -1,0 +1,188 @@
+#+HUGO_BASE_DIR: ~/Documents/blog/
+#+hugo_section: posts
+
+#+TITLE: 译:Orgmode for GTD
+
+#+DATE: 2017-08-29
+#+OPTIONS: toc:nil
+
+本文翻译自Sebastian Emilio Narvaez 的博客 [[http://snarvaez.poweredbygnulinux.com/notes/org-mode-publishing-adding-disqus-code.html][Org-mode publishing - Adding disqus code]]
+
+** 如何添加 disqus 代码到 Emacs Orgmode 生成的静态网页中呢？
+有两个选择，一个是选择使用 [[http://orgmode.org/manual/Macro-replacement.html#Macro-replacement][org-mode MACRO REPLACEMENTS]] 
+
+另一个选择是安装一个过滤(filter)函数[fn:1]。
+
+在这个例子中，我将会使用使用一个 filter 函数。
+
+** 生成一个模板，使他可以包含（include）在你想要显示 disqus 的页面上 
+我将命名这个文件为 =disqus_comments.inc=
+
+我的模板文件代码如下： =disqus_comments.inc= ：
+
+#+BEGIN_SRC js
+#+BEGIN_HTML
+<div id="disqus_thread"></div>
+<script>
+
+var disqus_config = function () {
+  //  page's canonical URL
+  this.page.url = 'http://{{my_site_domain}}{{my_site_baseurl}}{{my_page_url}}';  
+  //  page's unique identifier variable
+  this.page.identifier = '{{my_site_baseurl}}{{my_page_url}}'; 
+};
+
+(function() {  // DON'T EDIT BELOW THIS LINE
+   var d = document, s = d.createElement('script');
+
+   s.src = '//{{my_disqus_shortname}}.disqus.com/embed.js';
+
+   s.setAttribute('data-timestamp', +new Date());
+   (d.head || d.body).appendChild(s);
+})();
+
+</script>
+
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" \n
+rel="nofollow">comments powered by Disqus.</a></noscript>
+#+END_HTML
+#+END_SRC
+
+我们会发现在模板中有 4 个变量需要被我们的 org-mode filter 来替换：
+
+#+BEGIN_SRC 
+{{my_site_domain}}
+
+{{my_site_baseurl}}
+
+{{my_page_url}}
+
+{{my_disqus_shortname}}
+#+END_SRC
+
+同时也需要注意，我们将模板文件用闭合的块来包裹[fn:2]：
+#+BEGIN_SRC 
+#+BEGIN_HTML
+#+END_HTML
+#+END_SRC
+
+** 在适当的地方添加（include）模板
+现在我们已经有了一个模板文件，使用下面这段代码可以在你的 org-mode 文件中插入 disqus 评论：
+#+BEGIN_SRC 
+#+INCLUDE: "disqus_comments.inc"
+#+END_SRC
+
+** 添加 org-mode filter 函数来替换变量
+在 Emacs 中执行下面这段代码将会替换模板中的变量。filter 函数将模板代码作为输入，返回值是被替换了变量的模板。
+
+#+BEGIN_QUOTE
+注意：切记使用你自己的值替换 site-domain, site-baseurl 和 disqus-shortname
+#+END_QUOTE
+
+#+BEGIN_SRC elisp
+(setq site-domain "snarvaez.com.ar" )
+;; configure site-baseurl to "/directory/" if the site is inside a subdirectory.  
+;; Otherwise set it to  "/"
+(setq site-baseurl "/notes/" )
+;; your disqus name
+(setq disqus-shortname "snarvaez-com-ar-libertad")
+
+(defun basename (path)
+  (file-name-nondirectory (directory-file-name path)))
+
+
+;; function to simply replace a regular expression in the output
+(defun my-final-filter(output backend info)
+  ;; inside org exports,  file variable containts a string 
+  ;; with the full path of the output file
+  (setq page-url  (basename file) )
+  (setq output  (replace-regexp-in-string  "{{my_site_domain}}" site-domain output ))
+  (setq output  (replace-regexp-in-string  "{{my_site_baseurl}}" site-baseurl output ))
+  (setq output  (replace-regexp-in-string  "{{my_page_url}}" page-url  output ))
+  (setq output (replace-regexp-in-string  "{{my_disqus_shortname}}" 
+                                                 disqus-shortname  output ))
+  output
+)
+
+(setq org-export-filter-final-output-functions  '(my-final-filter) )
+#+END_SRC
+
+** 最后，构建并生成 html 文件
+发布整个 org-mode 工程需要设置一些 org-mode 的变量。我们可以为每个工程创建一个 elisp 配置。下面的例子是我的 =build.el= 配置文件。当我想要构建这个工程时，我将在 Emacs 中打开 =build.el= 这个文件，通过调用 =M-x eval-buffer= 命令来执行这个 buffer 。
+
+如果想要搞懂如何配置用 org-mode 生成工程，烦请移步：[[http://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html][Publishing Org-mode files to HTML]]
+#+BEGIN_QUOTE
+注意：切记将 =:base-directory= 和 =:publishing-directory= 替换你自己的本地工程目录
+#+END_QUOTE
+
+#+BEGIN_SRC elish
+(require 'ox-publish)
+(setq org-publish-project-alist
+      '(
+
+       ;; ... add all the components here
+        ("org-notes"
+         :base-directory "~/c_workspace/sen-blog/snarvaez_com_ar_notes/org_notes/"
+         :base-extension "org"
+         :publishing-directory "~/c_workspace/sen-blog/snarvaez_com_ar_notes/_site/"
+         :recursive t
+         :publishing-function org-html-publish-to-html
+         :headline-levels 4             ; Just the default for this project.
+         :auto-preamble t
+         :auto-sitemap t                ; Generate sitemap.org automagically...
+         :sitemap-filename "sitemap.org"  ; ... call it sitemap.org (it's the default)...
+         :sitemap-title "Sitemap"         ; ... with title 'Sitemap'.
+         :language "en"
+         :html-head  "<link rel='stylesheet' type='text/css' href='style.css' />"
+         :html-head-extra 
+                  "<meta name='viewport' content='width=device-width, initial-scale=1.0' />"
+         :with-author "Sebastian Emilio Narvaez"
+         :with-email nil
+         ;; :html-preamble  my-preamble-format
+         :exports code
+         ;; :html-postamble my-postamble-format
+         :htmlized-source t    ;; htmlized-source     non-nil means, publish htmlized source
+         )
+
+        ("org-static"
+         :base-directory "~/c_workspace/sen-blog/snarvaez_com_ar_notes/org_notes/"
+         :base-extension "html\\|css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+         :publishing-directory "~/c_workspace/sen-blog/snarvaez_com_ar_notes/_site/"
+         :recursive t
+         :publishing-function org-publish-attachment
+         )
+
+        ("org" :components ("org-notes" "org-static"))
+
+
+      ))
+
+(org-publish-project "org")
+#+END_SRC
+
+在这个例子中，我将我的 org-notes 保存在
+#+BEGIN_SRC 
+~/c_workspace/sen-blog/snarvaez_com_ar_notes/org_notes/
+#+END_SRC
+最后输出的 html 文件保存在：
+#+BEGIN_SRC 
+~/c_workspace/sen-blog/snarvaez_com_ar_notes/_site/
+#+END_SRC
+前往记得根据自己的本地目录来做调整。
+
+最后，你可以使用一个类似 =rsync= 的工具来同步你本地的文件和远程主机的文件。
+
+这是我的同步脚本， =publish.sh=
+#+BEGIN_SRC sh
+#!/bin/bash
+
+rsync  -av  -e "ssh -l the_user -i /home/the_user/.ssh/id_rsa"    
+          ./_site/    the_user@the_domain:/home/vhosts/my_site/public_html/notes/
+#+END_SRC
+
+** 结语
+简短的文章，但解决了我的问题。之前一直使用一些老文章中介绍的方法来配置 disqus，一直不成功；上 disqus 官网查看，原来是脚本代码变了。而我又不懂 js 啥的，就一直拖了好久好久……
+
+[fn:1] 所谓“过滤函数”其实就是使用这个函数为所有的 .org 文件生成 .html 文件时进行操作，比如说添加一段 js 脚本等。
+[fn:2] Org-mode 中的文学(literal)编程
+

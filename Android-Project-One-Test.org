@@ -1,0 +1,166 @@
+[[file:index.org][{back to main page}]]
+#+TITLE: Android Project One Test
+
+#+DATE: 2016-10-04 19:49:03
+
+学的是网易 Android
+开发课程，最近刚做完了第一阶段的大测试，一共有三个编程题目，前两个算是简单题目，第三个题目与困扰了我两天，来记录一下。
+
+
+#+BEGIN_HTML
+  <!--more-->
+#+END_HTML
+
+** 题目
+   :PROPERTIES:
+   :CUSTOM_ID: 题目
+   :END:
+
+请使用ViewPager，Fragment，ListView，RecyclerView实现一个主页框架。
+
+*** 要求：
+    :PROPERTIES:
+    :CUSTOM_ID: 要求
+    :END:
+
+搭建一个两个Activity的应用程序。
+
+1. 第一个Activity要求：参考ViewPager节中的DEMO，必须使用Fragment方式，使用PagerSlidingTabStrip来替代PagerTabStrip来做tab导航。导航TAB文字自由发挥，不限制。
+2. ViewPager中需要两个页面及以上，头两个页面有具体要求，其他的自由发挥。
+3. 第2点中第一个页面要求：使用ListView，并带有HeaderView，FooterView自由发挥。
+4. 第3点中HeaderView显示内容要求：需要有两行内容，第一行要求均分为4个部分，每个部分显示一段文本。第二行显示一个背景和居中显示的按钮。点击按钮后，循环交换显示第一行的4部分内容。注意：这里需要局部刷新，不能刷新整个列表。
+5. 第3点中ListView中每个单元展示要求：背景需要奇偶行不同背景，每行最左端显示图像，最右端显示文本。中间部分分为两行，显示文本，第一行文字大小稍大且加粗，第二行稍小正常。点击某行之后，产生一条通知栏消息。
+6. 第2点中第二个页面要求：基本同第一个页面要求，区别在于要求使用RecyclerView来替代ListView，并结合GestureDetector和OnItemTouchListener实现RecyclerView的OnItemClickListener
+7. 通知栏要求：需要显示ListView单元里所显示的两行文本，做为标题和文本。通知栏点击后启动另一个Activity。
+8. 另一个Activity具体要求：如果有两条以上通知栏出现，点击启动页面，要求页面只能有一个实例。页面展示内容需要包含通知栏上的文本和标题。具体展示两段文本可以自由发挥。
+   ### 项目地址：
+
+https://github.com/nicehiro/Netease\_Andriod/tree/master/MyApplication
+
+** 思路
+   :PROPERTIES:
+   :CUSTOM_ID: 思路
+   :END:
+
+思路其实也谈不上，没这么高大上的......具体还是要看要求，一个功能一个功能添加上去就好了。
+
+*** PagerSlidingTabStrip 的导入
+    :PROPERTIES:
+    :CUSTOM_ID: pagerslidingtabstrip-的导入
+    :END:
+
+这是我第一次接触第三方类库，第一次接触开源源代码，第一次使用开源力量......
+
+上网查了不少资料，最后是照着这篇帖子搞好的：
+
+http://blog.csdn.net/wangsidadehao/article/details/50722149
+
+主要是遇到了这些问题：
+
+**** 从 github 上下载的源码包都需要导入到你自己的工程吗？
+     :PROPERTIES:
+     :CUSTOM_ID: 从-github-上下载的源码包都需要导入到你自己的工程吗
+     :END:
+
+不需要，一般从 github 上下载的源代码工程一般是一个 Project，一个 Project
+包括可以包括很多 Module，而源码包里一般有一个 Library 包和一个 Sample
+包。Library 是我们需要的导入使用的，而 Sample 包里面是一些作者使用这个
+Library 而写的例子程序，用来看下效果的。
+
+**** 导入包后原来没错的工程也开始报错了！
+     :PROPERTIES:
+     :CUSTOM_ID: 导入包后原来没错的工程也开始报错了
+     :END:
+
+这是由于导入包的版本问题。
+
+#+BEGIN_QUOTE
+  将 PagerSlidingTabStripLibrary 中的
+  build.gradle中的compileSdkVersion， buildToolsVersion， minSdkVersion
+  ， targetSdkVersion 后的内容都按你本身项目中的 build.gradle
+  中的改过来，并且将文件最下面的 ”apply from:
+  ‘https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
+  “ 这一行内容删除，然后进行 Gradle project sync 。
+#+END_QUOTE
+
+导包遇到的问题就这些吧。
+
+*** RecyclerView 的 Header 和 Footer 问题
+    :PROPERTIES:
+    :CUSTOM_ID: recyclerview-的-header-和-footer-问题
+    :END:
+
+RecyclerView 不同于 ListView
+可以直接使用addHeader()和addFooter()添加特殊的两个控件，而是需要通过设置不同的
+ViewType 来配置不同的 itemView。（也因为这样 RecyclerView
+的灵活性要远大于 ListView。）
+
+**** 没设置 header 和 footer 时，item 可以显示，但只能显示一个 itemView
+     :PROPERTIES:
+     :CUSTOM_ID: 没设置-header-和-footer-时item-可以显示但只能显示一个-itemview
+     :END:
+
+请注意设置 itemView 的 layout\_height 属性不是 match\_parent !!!
+
+**** 没设置 header 和 footer 时，item
+可以正常显示，但设置之后，只能显式一个 header
+     :PROPERTIES:
+     :CUSTOM_ID: 没设置-header-和-footer-时item-可以正常显示但设置之后只能显式一个-header
+     :END:
+
+请注意设置 header\_view 的 layout\_height 属性不是 match\_parent !!!
+
+总之就是，由于 height
+没设好的原因，然后你就会气急败坏的一遍一遍检查代码，一遍一遍
+debug，然后痛苦的从根本没错的代码中纠那些本不是错的错。
+
+最重要的是，这个错误我犯了两次！！！
+
+所以要有好的码代码意识，这得慢慢培养。
+
+*** Context 问题
+    :PROPERTIES:
+    :CUSTOM_ID: context-问题
+    :END:
+
+**** 关于 context，网上有几个不错的帖子深入的讲了
+context。但我遇到的确实一些低级的错误。比如说，context
+参数该如何传？传哪个 View 的 context？
+     :PROPERTIES:
+     :CUSTOM_ID: 关于-context网上有几个不错的帖子深入的讲了-context但我遇到的确实一些低级的错误比如说context-参数该如何传传哪个-view-的-context
+     :END:
+
+在我现在的理解来看，context 参数传的应该是，你需要在哪个 View 控件
+inflate 新的 View，那 context 就从哪个 View 下拿。
+
+我遇到的一个比较蛋疼的问题：
+
+[[http://oeoaak94a.bkt.clouddn.com/debug.png]]
+
+这是我修改好之后的。之前遇到的问题是所有的那些资源都为空，也就是没有找到对象，然后抛出的异常是
+NullPointerException！
+
+一切都只是由于我没有 inflate 到正确的 layout
+资源文件。但是这样你的编译器并不会报错......
+
+也就是说，即使你没有将你的 java 文件和你需要的 layout
+资源文件相对应，你仍然可以通过findViewById()来找到你想要的控件，并且进行一系列操作而不报错！但是在你运行的时候，就会抛出
+NullPointerException 的错误，而且抛出错误的地方不是真正错误的地方......
+
+你会话费更多时间去找到它！！！
+
+*敲代码的时候仔细一些！*
+
+** 感受
+   :PROPERTIES:
+   :CUSTOM_ID: 感受
+   :END:
+
+唯一的感受就是我好像有 3
+天没更博客了......不是懒而是真的要忙作业，作业都做不完写个屁博客......
+
+
+
+
+
+

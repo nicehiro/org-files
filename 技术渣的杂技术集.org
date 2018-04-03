@@ -1,0 +1,307 @@
+#+HUGO_BASE_DIR: ~/Documents/blog/
+#+hugo_section: notes
+#+hugo_auto_set_lstmod: t
+
+#+TITLE: 技术渣的杂技术集
+
+#+DATE: 2017-02-17
+#+OPTIONS: toc:nil
+
+平日里用到的知识说实话很多，大多数时候都是通过 Google来搜索答案，然后解决。
+但是我不能保证一次解决就记住了那个答案，并且如果下次遇到绝对还要去再次查询，浪费时间。
+这里总结一些零散的知识点。坚持更新。
+
+
+*** 搜狗输入法一个英文两个字符？？？
+    :PROPERTIES:
+    :CUSTOM_ID: 搜狗输入法一个英文两个字符
+    :END:
+
+solutions：shift + space
+
+其实是半角/全角切换的问题。不知道怎么回事困扰了我好久，现在终于解决了。
+
+*** Python 元类理解
+    :PROPERTIES:
+    :CUSTOM_ID: python-元类理解
+    :END:
+
+号称是用 Python 的人在 99%
+的使用中都不会使用的编程方法，但是学习的话就得要搞通它才行嘛
+
+这篇帖子质量很高： http://stackoverflow.com/a/6581949 又中文版本的：
+http://blog.jobbole.com/21351/
+
+*** Python 安装 wxpython 模块失败
+    :PROPERTIES:
+    :CUSTOM_ID: python-安装-wxpython-模块失败
+    :END:
+
+刚刚看到教程中关于 Python 中关于 GUI 的部分，一直自己安装该死的 wx
+库一直失败，老是提示我说需要 C++
+编译器什么的，然后找啊找，找了个方法算是解决了：
+http://stackoverflow.com/questions/14007557/installing-wxpython-on-ubuntu-12-04
+
+需要一句命令：
+=sudo apt-get install python-wxgtk2.8 python-wxtools wx2.8-i18n libwxgtk2.8-dev libgtk2.0-dev=
+
+*** Python 更改默认python版本（2 or 3）
+    :PROPERTIES:
+    :CUSTOM_ID: python-更改默认python版本2-or-3
+    :END:
+
+现在 Python3 刚发布出来，大部分程序都是需要跑在 Python2
+的环境下的，所以需要我们的服务器（本地调试机）同时安装 Python 2 和 3
+的版本，但默认的 Python 执行版本是 2，我们学习使用的版本是
+3，我们就可以这样改它： https://segmentfault.com/q/1010000003713912
+
+alternatives 机制：
+
+#+BEGIN_EXAMPLE
+    sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 100
+    sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 150
+#+END_EXAMPLE
+
+此时已经切换为 python3 如果要切换 python2：
+
+#+BEGIN_EXAMPLE
+    sudo update-alternatives --config python
+#+END_EXAMPLE
+
+*** ubuntu 上E: Sub-process /usr/bin/dpkg returned an error code
+    :PROPERTIES:
+    :CUSTOM_ID: ubuntu-上e-sub-process-usrbindpkg-returned-an-error-code
+    :END:
+
+实话说，这种问题我第一次遇到，一直再用 debain 系的系统将近一年，我的 apt
+从来没有出过问题，知道今天在服务器搭环境的时候遇到了：
+http://blog.csdn.net/yusiguyuan/article/details/24269129
+
+是 dpkg 出问题了，但解决原理是什么我还没弄清楚：
+
+#+BEGIN_EXAMPLE
+    sudo mv /var/lib/dpkg/info /var/lib/dpkg/info.bak
+    sudo mkdir /var/lib/dpkg/info
+    sudo apt update
+#+END_EXAMPLE
+
+*** ubuntu server 上启动 supervisor 时：
+    :PROPERTIES:
+    :CUSTOM_ID: ubuntu-server-上启动-supervisor-时
+    :END:
+
+#+BEGIN_EXAMPLE
+    error: <class 'socket.error'>, [Errno 2] No such file or directory: file: <string> line: 1
+#+END_EXAMPLE
+
+或是：
+
+#+BEGIN_EXAMPLE
+    unix:///var/run/supervisor.sock no such file
+#+END_EXAMPLE
+
+解决方法： https://github.com/Supervisor/supervisor/issues/121
+
+大致就是说是因为 supervisord 进程没启动成功，需要自己启动才行：
+
+#+BEGIN_EXAMPLE
+    sudo supervisord
+#+END_EXAMPLE
+
+*** curl 用法
+    :PROPERTIES:
+    :CUSTOM_ID: curl-用法
+    :END:
+
+知道这个命令的存在，却从来不懂在网络开发中也可以用到。 参考这个文章：
+http://www.ruanyifeng.com/blog/2011/09/curl.html
+
+*** Linux 下结束进程
+    :PROPERTIES:
+    :CUSTOM_ID: linux-下结束进程
+    :END:
+
+每次用的时候都得查一下才行，今天决定把它记下来！
+http://blog.csdn.net/andy572633/article/details/7211546
+
+记下最好用的一个： 查看进程 id：
+
+#+BEGIN_EXAMPLE
+    ➜  ~ pgrep emacs
+    16848
+#+END_EXAMPLE
+
+强制杀：
+
+#+BEGIN_EXAMPLE
+    ➜  ~ kill -s KILL 16848
+#+END_EXAMPLE
+
+*** x86 x64 代表什么？
+    :PROPERTIES:
+    :CUSTOM_ID: x86-x64-代表什么
+    :END:
+
+安装软件的时候经常会选择这东西。x86 就是对所有 =*86=
+系统的一种通配符定义。
+
+简单说，x86 代表 32 位，x64 代表 64 位。
+
+*** Android 应用间唤醒原理
+    :PROPERTIES:
+    :CUSTOM_ID: android-应用间唤醒原理
+    :END:
+
+最近有看了写关于 Android 的书，发现可以通过广播机制来实现 Android
+的应用间唤醒这一流氓功能。
+
+如果在 manifest
+文件里面注册了某个广播接收器（比如说接收开机的广播），开机的时候，该应用就可以在未启动的情况下收到那条广播而做一些其他事。
+
+一个公司的所有产品如果都可以创建一个广播，而且都静态注册了这个广播的接收器，那么在该系一个应用启动时，该应用会发出一条广播，然后该系其他应用就会接收到这条广播而做一些其他事情。
+
+同样，如果某一产品和另一产品有 PY
+交易，那么也可以通过上述方式实现流氓行为。
+
+*** Android 查看本地数据库
+    :PROPERTIES:
+    :CUSTOM_ID: android-查看本地数据库
+    :END:
+
+之前（Android 6.0）一直使用有了 root 权限的 root explorer
+来查看本地数据库，最近刷了 7.1 的 rom
+之后发现原来查看数据库的方法不行了，老是弹出=Could not open database=
+的问题，而我把数据库复制到其他地方又是可以查看的，因此我觉得还是权限的问题。之后又找了一个方法在
+shell 中查看数据库中的内容。
+
+http://blog.csdn.net/napoay/article/details/51263348
+
+#+BEGIN_EXAMPLE
+    切换到数据库所在文件夹：
+    run-as /com/packagename/
+
+    cd databases
+
+    sqlite3 History.db
+
+    然后就可以使用 sql 语句查询了，更多命令可以输 .help 查看
+#+END_EXAMPLE
+
+*** linux 下 man 手册不完整
+    :PROPERTIES:
+    :CUSTOM_ID: linux-下-man-手册不完整
+    :END:
+
+今天试着用了下=man read=，发现竟然没有这个条目，于是上网查了下：
+
+#+BEGIN_EXAMPLE
+    sudo apt install manpages-dev
+#+END_EXAMPLE
+
+如此便解决了。
+
+*** Python ZipFile 读出来的 csv 是 bytes 无法直接使用
+很奇怪，且看代码先：
+
+#+BEGIN_SRC python3
+from zipfile import ZipFile
+import csv
+
+z = ZipFile('filename')
+# 返回 file-like object
+b = z.open(z.namelist()[0])
+b.readline()
+-> b'1,google.com\n'
+
+l = csv.reader(b)
+#+END_SRC
+
+报错是这样的：
+#+BEGIN_SRC 
+_csv.Error: iterator should return strings, not bytes (did you open the file in text mode?)
+#+END_SRC
+
+这就意味着上面代码中的 =b= 是字节型的，只能认为是 =z.open= 方法调用了 =z.read= 来读取 zip 文件，而 =z.read= 返回的确实是字节型数据。那这样 =z.open= 返回的 =file-like= 型数据不能直接用有什么呢还？
+
+解决：
+
+#+BEGIN_SRC python3
+from io import StringIO
+
+data = StringIO(z.open(z.namelist()[0]).read().decode('utf-8'))
+# 或者是直接使用 read
+data2 = StringIO(z.read(z.namelist()[0]).decode('utf-8'))
+data.readline()
+-> '1,google.com\n'
+
+l = csv.reader(data)
+#+END_SRC
+
+*** Python 网络请求出现错误:ConnectionResetError: [Errno 104] Connection reset by peer
+造成错误的原因是 server 的原因。可能是因为短时间内请求过多次。
+
+#+BEGIN_SRC quote
+"Connection reset by peer" is the TCP/IP equivalent of slamming the phone back on the hook. It's more polite than merely not replying, leaving one hanging. But it's not the FIN-ACK expected of the truly polite TCP/IP converseur. (From other SO answer)
+#+END_SRC
+
+*** Linux & Emacs 更换字体
+字体这东西一开始不注意倒是也没什么关系，但你要是突然觉得它丑的不行，那就会浑身难受，不好好配一下真的受不了的。
+
+Linux 下字体配置我就用两种方法。一是直接使用包管理器安装，在 Arch 系的系统中，直接 =sudo pacman -S ttf(Font Name)= 就可以装好使用了，无需其他配置。
+二是需要自己下好 ttf 字体文件，放到系统系统目录中，让它生效。具体操作如下：
+#+BEGIN_SRC sh
+sudo cp 存放字体的目录/font.ttf  /usr/share/fonts/
+cd /usr/share/fonts/
+sudo mkfontscale
+sudo mkfontdir
+# 更新字体缓存
+sudo fc-cache -fv
+#+END_SRC
+
+安装好字体之后，我开始对 Emacs 中的字体进行了设置，这里参考了 xuchunyang 的设置：
+#+BEGIN_SRC elisp
+;; Source Code Pro & STkaiti
+(setq face-font-rescale-alist `(("STkaiti" . ,(/ 16.0 13))))
+
+(set-face-attribute 'default nil
+		    :height 150
+		    :font "Source Code Pro Bold")
+
+(set-fontset-font t 'han      (font-spec :family "STkaiti"))
+(set-fontset-font t 'cjk-misc (font-spec :family "STkaiti"))
+#+END_SRC
+
+设置好之后看起来舒服的不要不要的……
+
+*** 合并两个 repo
+参考这篇博文：http://blog.csdn.net/gouboft/article/details/8450696
+
+其实思想就是伪造一个远程的 repo1 为 repo2 的一个分支，然后合并进来。
+
+*** Linux 下包管理器安装时候发生冲突时怎么办？
+在安装 python 的 basemap 模块时，arch 下可以直接使用 =sudo pacman -S python-basemap= 来安装，它会自动解决依赖包的问题。那么这个时候就会出现问题：以前使用 pip 工具安装的包不会被 pacman 识别，pacman 就会傻傻的报错：file exists in filesystem。
+
+解决的方法很简单，暴力解决！直接查看你安装那个包时的所有依赖包，然后在 pip 中将那些包删掉就可以了。
+*** Linux 中的 tty 是什么意思？
+tty(取自TeleTYperwritter)，是与文本终端想关联的设备文件。当用户生成一个新终端时，对应的设备文件就会出现在/dev/pts/中/可以通过输入并执行tty这个命令获得当前终端的设备路径。
+*** Java JDBC 导入成功却无法找到？？
+解决方法：https://stackoverflow.com/questions/1585811/classnotfoundexception-com-mysql-jdbc-driver
+The most common cause is that you have some conflict in where your classes are loaded from. For example if you have 2 locations and one has JDBC drivers and the other one not then if your classloader loads from the 1st location and some class from the 1st location wants to use the driver - the driver is not there. So look for the duplicate JARs that are using your driver
+
+需要把 mysql 的 jdbc 包放到其他 jar 包一起。
+#+BEGIN_SRC sh
+sudo cp mysql-connector-java-5.1.45/mysql-connector-java-5.1.45-bin.jar /usr/lib/jvm/java-8-openjdk/jre/lib/ext
+#+END_SRC
+*** Emacs url-retrieve-synchronously 出现错误
+这个真的是莫名其妙的错误。前一天晚上刚刚完成一个 api 的请求，返回了合适的 json 数据，但第二天刚开电脑就莫名报错。不知道是什么原因，折腾了一个上午，最后又莫名其妙的好了。
+
+** 不停更新中......
+   :PROPERTIES:
+   :CUSTOM_ID: 不停更新中
+   :END:
+
+
+
+
+
+

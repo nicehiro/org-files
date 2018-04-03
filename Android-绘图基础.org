@@ -1,0 +1,417 @@
+[[file:index.org][{back to main page}]]
+#+TITLE: Android 绘图基础
+
+#+DATE: 2016-10-12 18:46:26
+
+好长时间没写点东西了，因为这几天学到的东西在太多了......
+
+网易的绘画基础课很是享受！接下来便一个一个的总结起来，具体项目可以看我的
+github：
+
+#+BEGIN_QUOTE
+  https://github.com/nicehiro/Netease\_Andriod/tree/master/DrawTest
+#+END_QUOTE
+
+#+BEGIN_HTML
+  <!--more-->
+#+END_HTML
+
+** ImageView
+   :PROPERTIES:
+   :CUSTOM_ID: imageview
+   :END:
+
+应该是很常见的一个控件了，但是，你真正会用它么？
+
+*** 设置图片
+    :PROPERTIES:
+    :CUSTOM_ID: 设置图片
+    :END:
+
+**** 从 xml 文件中设
+     :PROPERTIES:
+     :CUSTOM_ID: 从-xml-文件中设
+     :END:
+
+很简单很常见的方法，只是列出来充个数。
+
+**** Java 代码中设置 resource
+     :PROPERTIES:
+     :CUSTOM_ID: java-代码中设置-resource
+     :END:
+
+`imageView.setImageResource(R.drawable.pic);`` #### Java 代码中设置
+drawable
+
+所有的图片可以转化为 drawable，你也可以直接自己写一个 drawable xml
+文件。
+
+#+BEGIN_SRC java
+    Drawable drawable = getDrawable(R.drawable.lenna);
+    imageView.setImageDrawable(drawable);
+#+END_SRC
+
+**** 从存储器中拿
+     :PROPERTIES:
+     :CUSTOM_ID: 从存储器中拿
+     :END:
+
+获取存储器路径：
+
+=String path = Environment.getExternalStorageDirectory().getPath();=
+
+设置图片 Uri：（只能设置本地图片，不能设置网络图片）
+
+Uri uri = Uri.fromFile(new File(path + "/pic.jpg"));
+imageView.setImageURI(uri); #### 从 Bitmap 文件拿
+
+先用 BitmapFactory 解码成 bitmap
+
+#+BEGIN_SRC java
+    String path = Environment.getExternalStorageDirectory().getPath();
+    Bitmap bm = BitmapFactory.decodeFile(path + "tiger.jpg");
+    imageView.setImageBitmap(bm);
+#+END_SRC
+
+**** 从系统相册拿
+     :PROPERTIES:
+     :CUSTOM_ID: 从系统相册拿
+     :END:
+
+先搞一个可以获取系统相册的 Intent，类型设为
+image，动作设为ACTION\_GET\_CONTENT，然后重写onActivityResult方法，从data.getData()获取
+content
+
+#+BEGIN_SRC java
+    public void getImageIntent() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_IMAGE_SELECT);
+    }
+
+    //获取系统相册的 content
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+
+        if (requestCode == REQUEST_IMAGE_SELECT) {
+            content = data.getData();
+            setFromAlbum();
+        }
+    }
+
+    //设置图片
+    private void setFromAlbum() {
+        imageView.setImageURI(content);
+    }
+#+END_SRC
+
+*** ScaleType 填充模式
+    :PROPERTIES:
+    :CUSTOM_ID: scaletype-填充模式
+    :END:
+
+很想贴图好好说明一下，但懒得很，看以后可以补充吧！
+
+-  center：原始大小，不变形，居中
+
+-  fitstart：从左上角开始自适应，不变形
+
+-  fitcenter：从中心开始自适应，不变形
+
+-  fitend：从右下角开始自适应，不变形
+
+-  fitXY：撑满整个屏幕，变形
+
+-  centerCrap：撑满整个屏幕。不变形
+
+-  centerInside：自适应居中，不变形
+
+*** Matrix
+    :PROPERTIES:
+    :CUSTOM_ID: matrix
+    :END:
+
+这里的 Matrix 指的是处理图像的 Matrix，具体就是一个 3*3 的矩阵：
+
+#+BEGIN_VERSE
+  MSCALE\_X | MSKEW\_X | MTRANS\_X | | MSKEW\_Y | MSCALE\_Y | MTRANS\_Y | | MPERSP\_0 | MPERSP\_1 | MPERSP\_2 |
+#+END_VERSE
+
+-  scale：缩放
+
+-  rotate：旋转
+
+-  translate：移动 ```java //ratio 是计算得来的一个缩放 pic 的值 float
+   ratio = scale(imageView); Matrix matrix = new Matrix();
+
+matrix.setRotate(45, viewWidth/2, viewHeight/2); matrix.postScale(ratio,
+ratio); matrix.postTranslate(100, -100);
+imageView.setImageMatrix(matrix); ``` ### tint
+
+为 imageview 的 picture 上色！可以有透明度
+
+=android:tint="#A01E88E5"= ## Bitmap
+
+*** 从文件 decode
+    :PROPERTIES:
+    :CUSTOM_ID: 从文件-decode
+    :END:
+
+参考文章：
+
+#+BEGIN_QUOTE
+  http://46aae4d1e2371e4aa769798941cef698.devproxy.yunshipei.com/u014045181/article/details/51567176
+#+END_QUOTE
+
+需要获取图片大小时，我们需要先把图片转化为 bitmap，再用 bitmap
+的getWidth()和getHeight()获取
+
+=Bitmap bitmap = BitmapFactory.decodeFile(path + "/tiger.jpg", options);=
+
+但又会遇到新的问题：一个小图片通过上面的方法转化时都会变成几百兆，显然是不可行的。
+
+这时，我们就可以通过设置 options 参数来缩小 bitmap 的体积。
+
+其中的 options来源于 BitmapFactory.Options.
+
+#+BEGIN_SRC java
+    BitmapFactory.Options options = new BitmapFactory.Options();
+
+    //If set to true, the decoder will return null (no bitmap), but the out fields will still be set, allowing the caller to query the bitmap without having to allocate the memory for its pixels.
+    如果是 true，只返回宽和高，bitmap = null
+    options.inJustDecodeBounds = false;
+
+    //If set to a value > 1, requests the decoder to subsample the original image, returning a smaller image to save memory.
+    也就是说，如果 inSampleSize=2，真实图片的 1 dp = 转化后的 2 dp
+    options.inSampleSize = 2;
+
+    //Config 有多种，常用的（默认）有 ARGB_8888，但很明显那是4个字节，用了 RGB_565，那便是2个字节
+    options.inPreferredConfig = Bitmap.Config.RGB_565;
+#+END_SRC
+
+*** 其他
+    :PROPERTIES:
+    :CUSTOM_ID: 其他
+    :END:
+
+还可以从 assets 文件夹获取，可以从 drawable
+下的图片转化，可以从文件流中转化。具体见 github 项目，很简单。
+
+** Drawable
+   :PROPERTIES:
+   :CUSTOM_ID: drawable
+   :END:
+
+这个主要说下除了直接上图片以外,还可以有点9图,可以自定义 drawable
+
+*** layer-list
+    :PROPERTIES:
+    :CUSTOM_ID: layer-list
+    :END:
+
+是用来实现 多个图层叠加效果的,先绘制的被压在下面.
+
+#+BEGIN_EXAMPLE
+    <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <item>
+            <shape android:shape="rectangle">
+                <solid android:color="#FF0000"/>
+            </shape>
+        </item>
+
+        <item android:bottom="20dp">
+            <shape android:shape="rectangle">
+                <solid android:color="#00FF00"/>
+            </shape>
+        </item>
+
+    </layer-list>
+#+END_EXAMPLE
+
+*** selector
+    :PROPERTIES:
+    :CUSTOM_ID: selector
+    :END:
+
+用来选择在不同状态下显示不同样式.
+
+#+BEGIN_EXAMPLE
+    <selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <item android:drawable="@drawable/shape_example"
+          //被按压并没有聚焦时
+            android:state_pressed="true"
+            android:state_focused="false"/>
+          //控件可用时
+        <item android:drawable="@color/gray"
+            android:state_enabled="false" />
+          //聚焦时
+        <item android:drawable="@color/light"
+            android:state_focused="true"/>
+
+    </selector>
+#+END_EXAMPLE
+
+*** level-list
+    :PROPERTIES:
+    :CUSTOM_ID: level-list
+    :END:
+
+有不同的 level,可以为不同的 level 设置设置不同的效果.比如说,不同的
+image.
+
+#+BEGIN_EXAMPLE
+    <level-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <item
+            android:drawable="@drawable/unhappy"
+            android:maxLevel="0"/>
+
+        <item
+            android:drawable="@drawable/happy"
+            android:maxLevel="1"/>
+
+        <item
+            android:drawable="@drawable/very_happy"
+            android:maxLevel="2"/>
+
+    </level-list>
+#+END_EXAMPLE
+
+** Canvas 画图
+   :PROPERTIES:
+   :CUSTOM_ID: canvas-画图
+   :END:
+
+canvas 相当于是一个画布,你用画笔(paint)画到画布上去后,还需要再次把 画布
+canvas 保存到 imageview 或是存储器.
+
+*** 获取 canvas
+    :PROPERTIES:
+    :CUSTOM_ID: 获取-canvas
+    :END:
+
+#+BEGIN_SRC java
+    bitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
+    canvas = new Canvas(bitmap);
+#+END_SRC
+
+*** 画图 draw
+    :PROPERTIES:
+    :CUSTOM_ID: 画图-draw
+    :END:
+
+画图的时候用到的函数都是见名知意的，符合 android api
+一贯的风格，要画什么，就设好画笔 paint，用 canvas
+对应的方法去画，最后保存。
+
+比如说要画一条路径 path：
+
+#+BEGIN_SRC java
+    //设置画笔
+    Paint paint = new Paint();
+    paint.setColor(Color.RED);
+    paint.setStrokeWidth(2);
+    paint.setStyle(Paint.Style.STROKE);
+
+    //设置 path
+    int start = PADDING + 150;
+    Path path = new Path();
+    path.moveTo(start, HEIGHT-PADDING-values[0]*100);
+
+    for (int i=1; i<=growths.length; ++i) {
+        float x = start + 150*i;
+        float y = HEIGHT - PADDING - growths[i-1] * 100;
+        path.lineTo(x, y);
+    }
+
+    //画
+    canvas.drawPath(path, paint);
+
+    //保存
+    saveBitmap();
+#+END_SRC
+
+上面的 saveBitmap() 方法可以是直接保存到你要显示的
+imageview，也可以顺便保存到存储器：
+
+#+BEGIN_SRC java
+    private void saveBitmap() {
+        imageView.setImageBitmap(bitmap);
+
+        String path = Environment.getExternalStorageDirectory().getPath() + "/canvas.png";
+        try {
+            FileOutputStream fos = new FileOutputStream(path);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    compress():
+
+    boolean compress (Bitmap.CompressFormat format,
+                    int quality,
+                    OutputStream stream)
+#+END_SRC
+
+#+BEGIN_QUOTE
+  Write a compressed version of the bitmap to the specified
+  outputstream. If this returns true, the bitmap can be reconstructed by
+  passing a corresponding inputstream to BitmapFactory.decodeStream().
+#+END_QUOTE
+
+#+BEGIN_QUOTE
+  返回如果是 true，重构 bitmap，也就是生成新的图片并保存到指定的文件。
+#+END_QUOTE
+
+** 感受
+   :PROPERTIES:
+   :CUSTOM_ID: 感受
+   :END:
+
+*** Android 6.0 权限问题 & debug 能力
+    :PROPERTIES:
+    :CUSTOM_ID: android-6.0-权限问题-debug-能力
+    :END:
+
+接触 Android 不多，说实话，第一次遇到权限问题。照着老师的 demo
+运行一个上课的例子程序时发现，老师的可以用，我的却不能运行，一闪而过。
+
+按照以往我的性格，会一句一句代码的瞧，看哪里出问题了。首先申明，不是我不会
+debug
+调试，而是不习惯用，不想用。同样，今天也没例外，可惜的是没能查到哪里出了问题。被逼无奈吧，只能硬着头皮尝试
+debug，对比老师与我的程序执行情况，终于是发现了这权限的问题。然后，在手机上一看权限信息，印证了我的想法。
+
+debug 真的很高效！
+
+*** 获取手机存储器路径方法
+    :PROPERTIES:
+    :CUSTOM_ID: 获取手机存储器路径方法
+    :END:
+
+不同手机有不同的存储路径，不要自以为是的认为保存到了某个地方你可以找到的！！！
+
+** 想法
+   :PROPERTIES:
+   :CUSTOM_ID: 想法
+   :END:
+
+看到群里有同学学到了凌晨4:00，实在是拼，正当想加夜班搞点事情时，想起理工规定：
+
+工作日24:00之后断网！ 悻悻睡觉去了......
+
+
+
+
+
+

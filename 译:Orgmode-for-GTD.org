@@ -1,0 +1,198 @@
+#+HUGO_BASE_DIR: ~/Documents/blog/
+#+hugo_section: posts
+
+#+TITLE: 译:Orgmode for GTD
+
+#+DATE: 2017-07-16
+#+OPTIONS: toc:nil
+
+本文翻译自[[https://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.html][Orgmode for GTD]]，作者：[[https://twitter.com/NicolasPetton?ref_src=twsrc%5Etfw&ref_url=https%3A%2F%2Femacs.cafe%2Femacs%2Forgmode%2Fgtd%2F2017%2F06%2F30%2Forgmode-gtd.html][Nicolas Petton]]
+
+在过去 4 年，我一直使用 Orgmode 来落实[[https://www.wikiwand.com/en/Getting_Things_Done][GTD 方法学]]。
+
+在这篇博文里我不想解释 GTD 这个方法本身或是 Orgmode 是怎么工作的，我想具体的说一
+下我的如何使用 Orgmode 来实现 GTD[fn:1] 。
+
+如果你还不知道 Orgmode 但是你对他又非常好奇，那么你应该去[[http://orgmode.org/][它的官网]] 看看先。
+
+** 那些 orgmode 文件
+我将我的 GTD 划分为四个独立的文件: 
+- =index.org= : 这里汇总所有的东西;
+- =gtd.org= : 这里放我所有的计划、项目;
+- =someday.org= : 所有待定的计划——将来那天心情好了可能去做的，但是我不想每天都看到这些东西;
+- =tickler.org= : 把我大的、难的、（一时半会解决不了的）工作加上时间戳放到这个文件，让它可以在正确的时间提醒我。
+
+将上诉文件加入到 agenda 文件，像下面这样：
+
+#+BEGIN_EXAMPLE
+(setq org-agenda-files '("~/gtd/inbox.org" "~/gtd/gtd.org" "~/gtd/tickler.org"))
+#+END_EXAMPLE
+
+*** GTD 收件箱
+GTD 一个很重要的特性就是收件箱（inbox）。你的每一个想法都必须收集在这里，然后再
+被处理。
+
+#+ATTR_HTML: :width 600 
+[[https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/GTDcanonical.png/1280px-GTDcanonical.png]]
+
+Orgmode 有一个很好的特性来实现这个特性：[[http://orgmode.org/manual/Capture.html][org-capture]].
+
+要想捕捉你的想法只需要简单的按下 =C-c c= [fn:2]，这是会有一个捕捉窗口会在 Emacs
+里弹出。一旦你完成了捕捉你的想法，再按下 =C-c C-c= 将会将这些想法保存到收件箱里。
+
+[[https://emacs.cafe/img/gtd-capture.png]]
+
+我是这样配置的：
+
+#+BEGIN_EXAMPLE
+(setq org-capture-templates '(("t" "Todo [inbox]" entry
+                               (file+headline "~/gtd/inbox.org" "Tasks")
+                               "* TODO %i%?")
+                              ("T" "Tickler" entry
+                               (file+headline "~/gtd/tickler.org" "Tickler")
+                               "* %i%? \n %U")))
+#+END_EXAMPLE
+上面捕捉模板的解释在[[http://orgmode.org/manual/Capture-templates.html#Capture-templates][这里]]。 它提供了很多自定义的选项。
+
+按下 =C-c c t= 我可以在我的收件箱（inbox）中添加一个条目，而按下 =C-c c T= 则是
+在 tickler 文件中添加一个条目。
+
+现在我的收件箱（inbox）长这样：
+
+ [[https://emacs.cafe/img/gtd-inbox.png]]
+
+接下来我的收件箱将会被处理，并且每天都会自动清空。每当在处理收件箱（inbox）中的
+内容时，对于那些可执行的、属于一个项目（project）的条目，我会使用 =C-c C-w= 把它
+重新提交，把这个条目移动到合适的地方。如果需要的话，我会创建一个在它外面创建一个
+新的项目。
+
+我设置了一个关于重新提交目标的函数：
+
+#+BEGIN_EXAMPLE
+(setq org-refile-targets '(("~/gtd/gtd.org" :maxlevel . 3)
+                           ("~/gtd/someday.org" :level . 1)
+                           ("~/gtd/tickler.org" :maxlevel . 2)))
+#+END_EXAMPLE
+
+这样，在按下 =C-c C-w= 之后就会提醒我想要重新提交到哪个项目（project），是重要、
+难以处理的项目（tickler），还是暂时无足轻重的、将来可又能会实现的事呢。
+
+*** 项目（project）文件
+我最主要的文件是 =gtd.org= 。在那里我保存我所有的活跃的（正在执行中）的项目。通
+常，这里会有 30+ 个项目同时处于活跃状态。
+
+每一个项目都包含要被执行的一些动作。每一个项目中的第一个动作（行动）被称为是“下一步”，当我开始一个项目的时候，那也通常是我做这个项目的第一步。一旦任务完成，我就使用 =DONE= 这个 todo 关键字标记它。
+
+就像这样：
+
+#+ATTR_HTML: :width 600
+[[https://emacs.cafe/img/gtd-project-example.png]]
+
+在截图中你看到的完成进度（[33%]）是 Orgmode 的[[http://orgmode.org/manual/Checkboxes.html][另一个特性]]。
+
+**** 标签（Tags）
+在标题上使用 =C-c C-c= 就可以对该标题加标签，无论它是一个项目还是一个动作。通常，我会这样使用标签：
+- 常规类别，像是 =:emacs:= 、 =:writing:=;
+- 用来联系别人的标签，像是 =:daniel:=;
+- GTD 的情境（工作环境）
+
+GTD 情境只是一些以 =@= 开头的常规标签，我在[[http://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html][自定义 Agenda 命令]]中大量使用他们。
+
+我的好多情境标签都会随着时间而有所改动，但有些通常是不留不变的。比如说，我通常使用 =@home= 、 =@office= 、 =@traveling= 、 =@phone= 、 =@email= 、 =@errands= 标签根据我当前的位置来过滤我的下一个动作。
+
+**** TODO 关键字
+在所有的项目条目中我都加入了 todo 关键字。并且，以下关键字是我使用频率最高的： =TODO= 、 =WAITING= 、 =DONE= 还有 =CANCELED= 。前两个表示未完成状态，后两个表示以完成状态。
+
+#+BEGIN_EXAMPLE
+(setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELED(c)")))
+#+END_EXAMPLE
+当光标移到标题行时，按下 =C-c C-t= 就可以设置 TODO 关键字。
+
+**** 时间戳，时间调度和截至时间
+在我的项目里我尽可能的避免使用时间戳。原因很简单：除非这个条目是一个约定（比如说去看牙医），或者这个条目有一个固定的截至日期（比如说和顾客约定好发布的一个版本），否则，我都应该根据当前情境决定该干什么（除其他事项之外）。这样做使我的日程表很干净，没有那些虚假的或是自我强加的截至日期和约定日期（schedule）。
+
+但是有时候你加个时间调度还是可以的。在一个条目上按下 =C-c C-s= 可以添加日期和/或时间。如果你要添加截止日期，可以按下 =C-c C-d= 。这里想提一下，Orgmode 可以智能识别你输入的时间，如果你不是很了解这个功能，可以查看[[http://orgmode.org/manual/Deadlines-and-scheduling.html][帮助文档]]。
+
+**** 过滤（查询）项目 & 行动                                             
+当决定好要做什么项目时，我要么使用[[http://orgmode.org/manual/Sparse-trees.html][稀疏数 ]]—— 这个特性让过滤整个 GTD 项目变得超级简单， 它可以通过 tags 过滤，也可以是其他查询条件；要么我使用[[http://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html][自定义议程命令]]。 当我们发掘 Orgmode 的功能时，大多数人认为它的 agenda 和普通的 agenda 没什么区别。这么说吧，它可以显示每周/每日的日程，但同时，它也可以提供更多其他的命令。官方是这么介绍的：
+
+#+BEGIN_QUOTE
+Org-mode’s built-in agenda commands are powerful tools for searching your notes and for gathering, sorting, filtering, and displaying your tasks.
+#+END_QUOTE
+
+我使用自定义 agenda 命令大多数时候是得到一个通过情境或是标签过滤得到的行动表项的预览。这里有一个命令将会显示所有 =@offic= 情境的行动表项（actions）：
+
+#+BEGIN_EXAMPLE
+(setq org-agenda-custom-commands
+      '(("o" "At the office" tags-todo "@office"
+         ((org-agenda-overriding-header "Office")))))
+#+END_EXAMPLE
+
+根据 GTD 原则，我真正想要的是 Emacs 可以只显示 =office= 这个标签下每个项目第一个将要执行的命令（或者是下一个命令）。
+
+我们可以设置一个显示跳过条件的函数实现上诉功能：
+
+#+BEGIN_EXAMPLE
+(defun my-org-agenda-skip-all-siblings-but-first ()
+  (let (should-skip-entry)
+    (unless (org-current-is-todo)
+      (setq should-skip-entry t))
+    (save-excursion
+      (while (and (not should-skip-entry) (org-goto-sibling t))
+        (when (org-current-is-todo)
+          (setq should-skip-entry t))))
+    (when should-skip-entry
+      (or (outline-next-heading)
+          (goto-char (point-max))))))
+
+(defun org-current-is-todo ()
+  (string= "TODO" (org-get-todo-state)))
+#+END_EXAMPLE
+
+写自定义的议程命令刚开始有些难度[fn:3]，这里有个简单的方法直接通过命令 =M-x customize-variable RET org-agenda-custom-commands= 来个性化你的命令。
+
+在 Emacs 中呼出议程菜单可以按下 =C-c a= [fn:4]。
+
+*** "Someday/Maybe" 列表
+你有注意到 =someday.org= 文件没有设置在 =org-agenda-files= 里面吗？
+
+那是因为我不想看到这个文件中的任何一个条目出现在我的议程缓冲里面，当然在我做每周回顾的时候除外。那才是“Someday/Maybe”文件真正的目的。
+
+这个文件应该每周查看一次，把它作为一周的总结就可以了（我通常在周日晚上搞定它）。
+
+在每周的回顾中，我会改动一些项目的状态，这个项目的进度是前进了还是我已经放弃这个项目了，把它们的状态在“活跃”（ =gtd.org= ）和“稍后”（ =someday.org= ）之间切换。
+
+举个例子，如果一个项目已经有了一个实质性的进展，但是由于某些原因我需要停滞一段时间，我就把它移动到 =someday.org= 文件中。过一段时间后再次回顾时，我又想重新启动那个项目了，就把它移动回 =gtd.org= 文件中是它状态再次活跃。
+
+来回移动项目的时候，我会使用重新提交这个功能。
+
+** The tickler（没想好怎么翻译） 
+我认为 tickler 是 GTD 最棒的部分。
+
+比如说你需要在一个月内还一笔钱。如果你不想要错过的话最好加入你的 GTD 项目中。但你又不想又每次在浏览你的 GTD 项目的时候都看到那烦人的消息：兄弟，该还钱了！
+
+这时候就是 tickler 起作用的时候了：把这个烦人的表项加入到你的 tickler 文件中，再加上时间戳，然后就啥也不用管了！
+
+当时间到了的时候，那个加入 tickler 中的条目将会出现在你的 Org 议程中，提醒你该要付钱了，并且这些你将要做的条目都会自动移动到你的收件箱中。这样，你就可以放心去搞其他事而不用把思想放在这个任务上。
+
+** 参考
+所有的参考文档都放在了我 Orgmode 文件旁边的文件夹 =references= 。它们都和一个固定的缓存区相连接（使用 =org-store-link= ），可以在我的项目中快速访问。
+
+我也使用 =org-store-link= 链接邮箱（可能会在 Emacs 中读邮件）。
+
+** 存档
+在每周的回顾中，我将所有已完成的项目通过使用 =C-c C-x C-a= 来存档（ =org-archive-subtree-default= ）存档，也就是将整个项目条目移到一个存档文件中。
+
+这样做就可以保持我的 GTD 文件整洁并且我可以不用删除任何数据。
+
+** 结语
+这是一个非常宽泛的话题，显然我不可能覆盖到每一个细节，但是我希望可以通过这篇文章总结出我使用 Orgmode 实现 GTD 的一些方法[fn:5]。
+
+这只是我使用 Orgmode 的一种方式。Orgmode 是一个可塑性很强的工具，肯定不会有完全相同的设置。
+
+[fn:1] Get things done
+[fn:2] 这个快捷键默认是不存在的，需要自己绑定，参见文档[[http://orgmode.org/manual/Setting-up-capture.html#Setting-up-capture][设置 capture]]
+[fn:3] 如果不懂 lisp 语法其实也可以照着实例函数慢慢写，多琢磨
+[fn:4] 又来一个默认不绑定的快捷键，可以参照上面第二个脚注设置
+[fn:5] 这是真的谦虚了……我看了好多关于 Orgmode 的文章，一直没有找到称心的。要么是只有傻瓜式的语法教程，要么是只有 GTD 的方法学（没有切合 Orgmode 的特性讲），这篇文章真的给了我一个完整的 Orgmode 实现 GTD 的认识。
+

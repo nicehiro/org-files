@@ -1,0 +1,91 @@
+#+HUGO_BASE_DIR: ~/Documents/blog/
+#+hugo_section: posts
+#+hugo_auto_set_lstmod: t
+
+#+TITLE: 译：Autoloads in Emacs Lisp
+
+#+DATE: 2017-03-17
+#+OPTIONS: toc:nil
+
+本文翻译自 [[https://www.lunaryorn.com/posts/autoloads-in-emacs-lisp][Autoloads-in-Emacs-Lisp]] 作者：[[https://www.lunaryorn.com/about/][Sebastian Wiesner]] 
+
+Emacs Lisp 提供一个 [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Autoload.html#Autoload][autoload mechanism]] （自动加载机制）来根据需求加载库函数。通常，这使得交互性的命令可用于用户，而不用完全的去加载对应的库。这篇文章将会介绍 autoloads 是如何工作的，以及 Emacs Lisp 是如何使用 autoloads 提高加载速度的。
+
+** Autoloads
+[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Autoload.html#index-autoload-1][autoload]] 这个函数创造了 autoloads，举个例子来说：Magit 里的 =magit-status= 函数：
+
+#+BEGIN_SRC emacs-lisp
+(autoload 'magit-status "magit" "Open a Magit status buffer [...]" t nil)
+#+END_SRC
+
+当 =magit-status= 第一次被调用——不管是从 lisp 文件调用还是通过 =M-x magit-status= 交互性的调用，执行这个函数将会告诉 Emacs 从 =load-path= 自动去加载 =magit.el= 这个库。你可以手动的在你的 init.el 文件中添加 autoloads 去添加第三方库函数，在 package.el 出现之前，这是一种常用的方法。
+
+重点注意一下 =evaluation= （我感觉翻译成执行较为合适）。单单只在某些地方写下这个函数并不会产生任何的 autoloads。Emacs 必须先执行它，我们可以认为是 Emacs 使用这个表达式加载来文件。
+
+用 autoloads 加载(put ... into ...)已经 autoload 过的、已经有了确切定义的文件中是不合适的。那样的话 Emacs 也会加载文件的其余部分，使得定义可以立即使用，但是这种导致 autoloads 的是很荒谬的。
+
+Autoloads 应该被放在一个单独的文件中，那里只包含 autoloads，这样才能使得加载更快。Emacs 管这些文件叫做“autoloads 文件”。
+
+** Autoloads cookies
+手动维护自动加载文件来使它们和库文件中函数的实际定义保持一直是很令人厌烦而且也很容易出错的，所以 Emacs 允许使用函数自动执行 [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Autoload.html#index-update_002dfile_002dautoloads][update-file-autoloads]] 和 [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Autoload.html#index-update_002ddirectory_002dautoloads][update-directory-autoloads]] 来自动执行这个过程。
+
+update-file-autoloads 会检查源文件中特殊的注释，称为“autoload cookies”。这些 cookies 可以在相应的定义中声明 autoloads。magit-status 的一个 autoload cookie 长这样：
+
+#+BEGIN_SRC emacs-lisp
+;;;###autoload
+(defun magit-status ()
+  "Open a Magit status buffer […]"
+  (interactive)
+  ;; …
+)
+#+END_SRC
+
+update-file-autoloads 会对每一个类似上面展示的 cookie 自动生成 autoload，并且把他写入 autoload 文件中。update-directory-autoloads 将会对一个文件夹内所有的文件实施上诉操作。
+
+上诉命令只会生成 autoload 文件。你依旧需要明确的去 load 这些生成的文件来使 autoload 可用。
+
+如果一个 autoload cookie 出现在了一个不支持 autoload 的表达式上，update-file-autoloads 将会逐字复制整个表达式。这常用来在特殊的 Emacs 扩展点注册库，例如：auto-modes-alist。
+（我还没见过此类的例子，我也是萌新）
+
+** 软件包自动加载
+Emacs 的软件包管理器 package.el 会进一步执行（即在上诉步骤之上进一步执行），会在软件包安装的时候自动生成 autoloads 文件——其实只是简单的调用 update-directory-autoloads 函数。这减轻了包维护者手动更新 autoload 文件并将其包装在软件包中的繁琐工作，即使是单一文件也可以启动自动加载。
+
+同样， =package-initialize= 从所有已安装包中自动加载 autoload 文件，使所有的 autoload 都可用。
+
+** autoload 啥？
+通常的规则是去自动加载一个包的交互式的“入口点”。交互式入口点一般有以下几种：
++ major mode & minor mode 的定义
++ 用户将要开始使用某些特定包的交互式命令（比如：gun、magit-status）
++ 提供通用功能的交互式命令（比如：ace-jump-mode）
+
+如果你的包只提供一个用 Emacs Lisp 写的库，你就不应该添加任何的 autoload。库通常是被相关依赖库 =required= 所以 autoload 就显得多余了。
+
+如果你的包应该自动注册自己到一个特定的 Emacs 扩展点，那么你也应该为这些扩展点添加自动加载，来保证在包初始化期间运行（evaluate）它。一个典型的例子就是添加一个模式到 =auto-mode-alist= ：
+
+#+BEGIN_SRC emacs-lisp
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.pp\\'" . puppet-mode))
+#+END_SRC
+
+上诉代码将会添加 =puppet-mode= 到 =auto-mode-alist= 当 Emacs 启动时，这样就会使所有以 =.pp= 结尾的文件自动的加载 =Puppet Mode= 。
+
+同样的，颜色主题使用 autoload cookie 将自己添加到主题搜索路径中：
+
+#+BEGIN_SRC emacs-lisp
+;;;###autoload
+(when (and (boundp 'custom-theme-load-path) load-file-name)
+  (add-to-list 'custom-theme-load-path
+               (file-name-as-directory (file-name-directory load-file-name))))
+#+END_SRC
+
+** Emacs Lisp API for autoloads
+Emacs Lisp 有一些关于 autoloads 的命令。除了 autoload 去创建自动加载之外，还有 =autoloadp= & =autoload-do-load= 。第一个命令用来查看一个对象是否是 autoload 对象，第二个命令加载 autoload 的基础库。
+
+这两个函数都适用与自动加载对象，而不适用于自动加载的符号。因此， =autoloadp 'foo= 在检查一个符号是否被加载时，回答是 =n= 。那个符号根本没有被加载，它要不是被读者直接创建的，(or explicitly with intern)。(不懂将 intern 翻译成什么好？)
+
+要检查 =foo= 是否指向一个 autoloaded 的函数，你需要去检查 =foo= 函数的定义：
+
+#+BEGIN_SRC emacs-lisp
+(autoloadp (function-definition 'foo))
+#+END_SRC
+
