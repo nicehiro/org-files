@@ -1,0 +1,219 @@
+#+HUGO_BASE_DIR: ~/Documents/hugo-static/
+#+hugo_section: notes
+#+hugo_auto_set_lstmod: t
+
+#+TITLE: Git 笔记
+
+#+DATE: 2018-03-31
+#+OPTIONS: toc:nil
+
+** 版本控制系统
+- 集中化版本控制 CVCS
+  一台集中管理的服务器保存所有文件的修改，协同工作的人连接到这台服务器工作，提交更新或是获取新版本。
+- 分布式版本控制 DVCS
+  每个客户端都拥有完整的代码仓库。
+
+** Git 特点
+- 直接记录快照，而非差异比较
+  非 Git 的版本控制记录的是每个版本中文件变化的差异，而 Git 保存的是每个版本中文件的快照——未修改的文件不做保存快照，只是生成一个链接指向这个文件。
+
+- 本地执行
+  一般的 =add= 等操作都是本地直接执行，只有在 push 的时候需要与服务器同步。
+
+- Git 目录的三个状态
+  已提交、已暂存、已修改
+  三种目录：.git 目录、暂存区、工作目录
+
+** Git 基础
+*** 文件状态变化周期
+最开始 new 的新文件 a，状态：untracked，区域：工作目录；通过 =git add= 之后，状态：staged，区域：暂存区；通过 =git commit= 之后，状态：commited 、unmodified，区域：.git ；此时若 a 被修改，状态：modified，区域：暂存区。
+
+*** 基本命令
+#+BEGIN_SRC sh
+# 查看当前状态
+git status
+
+# 跟踪新文件
+git add ./file_name
+
+# 暂存 到 暂存区
+git add ./file_name
+
+# 查看已修改和暂存区的不同
+git diff
+
+# 查看暂存区和已提交的不同
+git diff --staged
+
+# 提交
+git commit -m "commit comment"
+
+# 跳过暂存区直接提交
+git commit -a "commit comment"
+
+# 从暂存区中删除，连同本地文件一起
+git rm ...
+# 如果删除的文件不在暂存区（已跟踪但被修改），使用 --force 强制删除
+git rm --force ...
+
+# 只从 git 跟踪文件中删除文件，不在磁盘上删除
+git rm --cache ...
+
+# 移动文件
+git mv file_from file_to
+# 也就是下面三条命令一起使用：
+mv file_from file_to
+git rm file_from
+git add file_to
+
+# 查看 log
+git log
+# 参数： -p 显示每次提交的内容差异
+        -2 显示最近两次提交
+        -stat 列出所有被修改的文件
+        --pretty=oneline/format/raw 自定义显示内容
+        --graph 使用 ASCII 字符美化
+        --since 显示最近几天的提交
+        --author 显示该作者的提交
+        -- grep 显示搜索匹配的提交
+
+# 在上次提交之后没有任何改动，只不过是你想要修改提交信息时；
+# 或者是你忘记了暂存某些文件
+# 最终只会有一个提交
+git commit --amend "commit comment"
+
+# 取消暂存的文件
+git reset HEAD <file>
+
+# 撤销对文件的修改
+git checkout -- <file>
+
+# 从远程仓库抓取
+git fetch <remote>
+git pull <remote>
+
+# 推送
+git push <remote-name> <branch-name>
+
+# 远程仓库重命名
+git remote rename pb paul
+
+# 删除远程仓库
+git remote rm paul
+
+# 打标签
+git tag -a v1.0 -m "description"
+
+# 查看某个标签
+git show v1.0
+
+# git 推送 tags
+git push --tags
+#+END_SRC
+    
+*** .gitignore
+规则如下：
+- 空行或以 # 开头的行都被忽略
+- 以 =/= 开头的表示目录
+- 可以使用 shell 中的简化的正则表达式匹配
+- 忽略指定模式以外的文件或目录，在模式匹配行前加 =!=
+
+一般要写 =.gitignore= 可以到 [[https://github.com/github/gitignore][gitignore]] 查看事例写法。
+
+** 分支
+Git 鼓励经常使用分支以提高开发效率。有人称它为必杀级特性，而我在开发中一直都没有用过……
+*** 提交对象
+Git 进行提交操作时，会保存一个提交对象，该提交对象包含一个指向暂存内容的指针、作者的姓名和邮箱、提交时输入的信息以及指向它父对象的指针。首次提交没有父对象，多个分支合并的有多个父对象。
+
+*** 分支创建
+三个指针，HEAD、master、branch 指针。
+- HEAD 指针指向的分支是当前工作目录的分支
+- master 指针指向的分支是最开始创建的，一般放稳定的代码仓库
+- branch 是其他指针，你可以切换 HEAD 到其他分支工作
+
+#+BEGIN_SRC sh
+# 创建分支
+git branch devlop
+
+# 切换分支
+git checkout devlop
+
+# 创建同时切换分支
+git checkout -b devlop
+#+END_SRC
+
+分支切换原则：切换分支之前保证当前分支工作区的干净状态（All commited）
+
+*** 分支合并
+有三种情况：
+- 如果当前分支的直接上游（当前分支的父对象）是 master 分支，可以直接合并
+- 否则，如果两个要合并的分支没有对同一部分不同的修改，那么 git 可以自动合并
+- 否则，需要手动处理 diff
+
+#+BEGIN_SRC sh
+# 合并
+git merge branch
+
+# 指定 merge tool
+git config --global merge.tool vimdiff
+
+# 使用 mergetool 合并
+git mergetool
+#+END_SRC
+
+*** 分支开发工作流
+**** 长期分支
+可以选择维护多个分支，例如：master 表示稳定的工作流；develop 表示正在开发的工作流，一般开发流比较稳定了，可以合并到 master 上去；如果有需要 hotfix 的，在 develop 上新建分支修复。多个分支长期存在。
+
+**** 特性分支
+此分支适用于任何规模的项目。它被用来实现单一特性或是其相关的工作。由于 Git 分支建立实在太方便了（不需要拷贝文件只要建立链接就可以），所以在任何分支，只要你有好的想法，就可以新建一个分支去工作。
+
+**** 远程分支
+相当于一个中心服务器，多人协作开发的时候需要用到。在本地 clone 的仓库中，默认的远程分支名为：origin/master，一般来说，我们提交的时候，其他人已经对远程仓库提交过了，所以本地的 origin/master 分支就会落后于远程分支，需要进行一次 merge 才行。
+
+#+BEGIN_SRC sh
+# 从远程获取本地仓库没有的文件
+git fetch origin
+
+# 推送本地分支到远程
+git push origin serverfix
+git push <remote> <branch>
+#+END_SRC
+
+如果远程仓库有本地没有的分支， =git fetch origin= 抓取时会在本地仓库生成新的远程分支，但是，这个远程分支是不可以被修改的，只是一个指向 origin/branch 的指针。
+
+#+BEGIN_SRC sh
+# 抓取新的分支到本地
+git checkout -b new_branch origin/new_branch
+#+END_SRC
+
+其实上面这种做法是非常好的（个人的理解）—— 当你只需要工作在 develop 分支，你可以不需要去管其他分支的情况，多分支工作的话会非常舒服。
+
+Git 默认的跟踪分支是 origin/master，也就是说，你每次的 =git pull= 抓取默认是从 origin/master 分支抓取的。
+
+#+BEGIN_SRC sh
+# 切换追踪的分支
+git checkout --track origin/branch
+
+# 抓取仓库所有分支
+git fetch --all
+#+END_SRC
+
+** Tips
+*** pull & fetch
+=git pull= 包括 =git fetch= 和 =git merge= ，它会自动帮你 merge
+
+*** 变基
+提供了一种除了 merge 之外的分支合并方法，但其实原理还是 merge。
+所谓变基就是将分支的基点（自命名，也就是分叉点）移到 master 的位置，变基之后，merge 就会很方便，无非移动 master 指针的事。
+
+变基是将一系列提交按照原有次序一次应用到另一分支上，而合并是把最终结果合在一起。变基的好处就是使得项目管理很条例。
+
+#+BEGIN_SRC sh
+# 将 server 并到 master
+git rebase master server
+#+END_SRC
+
+注意：不要在远程仓库执行变基。
+
+** Git 原理

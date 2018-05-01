@@ -1,8 +1,0 @@
-#+HUGO_BASE_DIR: ~/Documents/hugo-static/
-#+hugo_section: notes
-#+hugo_auto_set_lstmod: t
-
-#+TITLE: Git 学习笔记
-
-#+DATE: 2018-03-31
-#+OPTIONS: toc:nil

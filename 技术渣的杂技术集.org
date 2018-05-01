@@ -295,6 +295,13 @@ sudo cp mysql-connector-java-5.1.45/mysql-connector-java-5.1.45-bin.jar /usr/lib
 *** Emacs url-retrieve-synchronously 出现错误
 这个真的是莫名其妙的错误。前一天晚上刚刚完成一个 api 的请求，返回了合适的 json 数据，但第二天刚开电脑就莫名报错。不知道是什么原因，折腾了一个上午，最后又莫名其妙的好了。
 
+*** Linux Emacs 无法输入中文
+我的桌面环境是 i3wm，修改 =~/.xprofile= 老是无效，最后直接修改 =/etc/locale.conf= 文件，加了这两行才奏效：
+#+BEGIN_SRC sh
+export LC_CTYPE=zh_CN.UTF-8
+export LC_ALL=zh_CN.UTF-8
+#+END_SRC
+
 ** 不停更新中......
    :PROPERTIES:
    :CUSTOM_ID: 不停更新中
