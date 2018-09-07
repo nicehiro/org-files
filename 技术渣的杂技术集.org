@@ -302,6 +302,35 @@ export LC_CTYPE=zh_CN.UTF-8
 export LC_ALL=zh_CN.UTF-8
 #+END_SRC
 
+*** Arch rabbitmq server 无法正常启动
+查看错误 log，发现是 =.erlang.cookie= 的问题，复制一份之后，还需要把这个文件的权限设为 rabbitmq:rabbitmq 才行。具体参考这个：
+https://stackoverflow.com/questions/24610367/unable-to-start-rabbitmq-server-on-ubuntu-10-04
+
+
+*** Arch 蓝牙失效
+<2018-09-07 Fri>
+今天买的静电容蓝牙键盘到手了，刚开始蓝牙可以使用，但过了一会电脑蓝牙就整个没用了。设置里显示没有蓝牙可以使用，非常奇怪。
+
+使用 =systemctl start bluetooth= 启动不了服务：
+#+BEGIN_SRC
+● bluetooth.service - Bluetooth service
+   Loaded: loaded (/usr/lib/systemd/system/bluetooth.service; enabled; vendor preset: disabled)
+   Active: inactive (dead)
+     Docs: man:bluetoothd(8)
+#+END_SRC
+
+查找之后，这个帖子解决了我的问题：[[https://bbs.archlinux.org/viewtopic.php?id=233023][Bluetooth does not work]]
+
+方法也很简单，首先加载通用蓝牙驱动模块：
+#+BEGIN_SRC
+sudo modprobe btusb
+#+END_SRC
+启动蓝颜 service：
+#+BEGIN_SRC
+sudo systemctl restart bluetooth
+#+END_SRC
+最后，冷启动（shutdown，热启动的：reboot）就 OK 了。
+
 ** 不停更新中......
    :PROPERTIES:
    :CUSTOM_ID: 不停更新中

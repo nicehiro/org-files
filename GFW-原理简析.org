@@ -7,8 +7,7 @@
 #+DATE: 2017-06-05
 #+OPTIONS: toc:nil
 
-看完了计算机网络就想了解一下防火长城（The Great
-Firewall）的原理，于是网上找了不少文章，简单总结一下。 纯技术角度
+看完了计算机网络就想了解一下防火长城（The GreatFirewall）的原理，于是网上找了不少文章，简单总结一下。 纯技术角度
 :expressionless:
 
 #+TOC: headlines 2
