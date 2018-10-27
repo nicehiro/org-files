@@ -1,5 +1,4 @@
-#+OPTIONS:
 #+TITLE: 高数总结
-
-#+DATE: 2018-10-18
 #+OPTIONS: toc:nil
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
+#+DATE: 2018-10-18
