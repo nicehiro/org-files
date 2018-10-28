@@ -95,12 +95,19 @@
     - 周期函数可以由一个序列的正弦型函数叠加得到
     - 函数的区间在\([-\pi, \pi]\)，\(f(x) = \frac{a_0}{2} + \sum_{n=1}^{\infty} (a_ncosnx + b_nsinnx)\)，其中，\(a_0 = \frac{1}{\pi} \int_{-\pi}^{\pi} f(x) dx\)，\(a_n = \frac{1}{\pi} \int_{-\pi}^{\pi} f(x)cosnx dx\)，\(b_n = \frac{1}{\pi}\int_{-\pi}^{pi} f(x)sinnx dx\)
     - x 为连续点，\(S(x) = f(x)\)；x 为间断点，\(\frac{f(x-0)+f(x+0)}{2}\)；\(x = \pm \pi\)，\(S(x) = \frac{f(-\pi + 0) + f(\pi - 0)}{2}\)
+    - 推广到任意区间\([-l, l]\)，使用变换\(x=\frac{l}{\pi}t\)，分别计算系数
 * 多元函数微分
 1. 连续性 \(\lim\limits_{x \rightarrow x_0, y \rightarrow x_0} = f(x_0, y_0)\)
 2. 偏导是否存在 使用定义证明
 3. 偏导是否连续 使用定义求的偏导是否和公式求的偏导值相同
 4. 是否可微 \(\lim\limits_{\Delta x \rightarrow 0, \Delta y \rightarrow 0} \frac{\Delta z - (A\Delta x - B\Delta y)}{\sqrt{(\Delta x)^2 + (\Delta y)^2}}\)
 5. 隐函数存在定理： \(\frac{dy}{dx} = - \frac{F'_x}{F'_y}\), \(F'_y\) 不为0
+* 立体几何
+1. 数量积为0，垂直
+2. 向量积为0，平行
+3. 三向量共面，组成的行列式秩为0
+4. 平面束方程：\(A_1x + B_1y + C_1z + D_1 + \lambda(A_2x + B_2y + C_2z + D_2) = 0\)，使用时需要验证第二个平面是否满足条件
+5.
 * 二重、三重、特殊积分
 1. 二重积分的几何背景是曲顶柱体的体积
 2.
