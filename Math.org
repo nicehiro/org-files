@@ -91,6 +91,9 @@
     \[b = y + \frac{1+y'^2}{y''}\]
 12. 抽水做功：\(W = \int_a^b dw = \int_a^b \rho A(x) dx g x = \rho g \int_a^b xA(x) dx\)
 13. 旋转曲面的面积：\(S = 2\pi \int_a^b|y(x)| \sqrt{1+(y'(x))^2} dx\)
+14. 傅里叶级数
+    - 周期函数可以由一个序列的正弦型函数叠加得到
+    - \(f(x) = \frac{a_0}{2} + \sum_n=1^{\infty} (a_ncosnx + b_nsinnx)\)，其中，\(a_0 = \frac{1}{\pi} \int_{-\pi}^{pi} f(x) dx\)，\(a_n = \frac{1}{\pi} \int_{-\pi}^{\pi} f(x)cosnx dx\)，\(b_n = \frac{1}{\pi}\int_{-\pi}^{pi} f(x)sinnx dx\)
 * 多元函数微分
 1. 连续性 \(\lim\limits_{x \rightarrow x_0, y \rightarrow x_0} = f(x_0, y_0)\)
 2. 偏导是否存在 使用定义证明
