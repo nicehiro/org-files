@@ -94,6 +94,7 @@
 14. 傅里叶级数
     - 周期函数可以由一个序列的正弦型函数叠加得到
     - \(f(x) = \frac{a_0}{2} + \sum_{n=1}^{\infty} (a_ncosnx + b_nsinnx)\)，其中，\(a_0 = \frac{1}{\pi} \int_{-\pi}^{\pi} f(x) dx\)，\(a_n = \frac{1}{\pi} \int_{-\pi}^{\pi} f(x)cosnx dx\)，\(b_n = \frac{1}{\pi}\int_{-\pi}^{pi} f(x)sinnx dx\)
+    - x 为连续点，\(S(x) = f(x)\)；x 为间断点，\(\frac{f(x-0)+f(x+0)}{2}\)；\(x = \pm \pi\)，\(S(x) = \frac{f(-\pi + 0) + f(\pi - 0)}{2}\)
 * 多元函数微分
 1. 连续性 \(\lim\limits_{x \rightarrow x_0, y \rightarrow x_0} = f(x_0, y_0)\)
 2. 偏导是否存在 使用定义证明
