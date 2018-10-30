@@ -143,7 +143,7 @@
       + 可以将曲面方程代入计算
       + \(\Sigma\)方向为上侧取正
       + 投影不能重合
-    - 高斯公式 \(\iint_{\Sigma} Pdydz + Qdxdz + Rdxdy = \iiint_{\Omega} \frac{\partial P}{}\)
+    - 高斯公式 \(\iint_{\Sigma} Pdydz + Qdxdz + Rdxdy = \iiint_{\Omega} (\frac{\partial P}{\partial x} + \frac{\partial Q}{\partial y} + \frac{\partial R}{\partial z}) dv = \iint_{\Omega} Pcos\alpha + Qcos\beta + Rcos\gamma\)
 * TODO 需要查资料
 1. 等价无穷小可以替换的条件
 2. 平面上曲线积分与积分区域无关
