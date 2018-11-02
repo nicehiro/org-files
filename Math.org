@@ -71,7 +71,7 @@
 3. 积分收敛并不能推出无穷大的极限为0
 4. 把\(\infty\)和使得函数无意义的点（瑕点）统称为积点
 5. 分部积分方法的推广方法（不容易出错）：
-   -----图片-----
+   [[/home/hiro/Pictures/DSC_0052.JPG][斯托柯克公式]]
 6. 有理函数的积分：
    \[\frac{1}{(ax+b)^k} = \frac{A_1}{ax+b} + \frac{A_2}{(ax+b)^2} + \frac{A_3}{(ax+b)^3} + ... + \frac{A_k}{(ax+b)^k}\]
 7. 常见积分：
@@ -148,6 +148,37 @@
       + 投影不能重合
     - 高斯公式 \(\iint_{\Sigma} Pdydz + Qdxdz + Rdxdy = \iiint_{\Omega} (\frac{\partial P}{\partial x} + \frac{\partial Q}{\partial y} + \frac{\partial R}{\partial z}) dv = \iint_{\Omega} (Pcos\alpha + Qcos\beta + Rcos\gamma) dS\)
       + 第一型曲面积分和第二型曲面积分之间的关系
+11. 空间第二型曲线积分计算 斯托克斯公式 --图片--
+12. 梯度 \(grad u = (\frac{\partial u}{x}, \frac{\partial u}{y}, \frac{\partial u}{z})\)
+13. 散度 \(div A = \frac{\partial P}{x}+\frac{\partial Q}{y}+\frac{\partial R}{z}\)
+14. 旋度 \(rot A = 叉乘\)
+* 级数
+1. 级数收敛 => 无穷大极限为0，不能反推
+2. 正向级数判别方法：
+   - 比较判别 两个正向级数，大的收敛则小的也收敛；小的发散则大的也发散
+   - 比值判别 \(\lim\limits_{u \rightarrow \infty} \frac{u_{n+1}}{u_n} = \rho\)，\(\rho\)小于1时收敛
+   - 根植判别 \(\lim\limits_{u \rightarrow \infty} \sqrt[n]{u_n} = \rho\)，\(\rho\)小于1时收敛
+3. 交错级数判别 单调不增 无穷大处趋于0
+4. 阿贝尔定理（幂级数收敛半径）
+5. 收敛区间是开区间，收敛域有可能时闭区间
+6. 求导或者积分后，收敛半径不变，收敛域可能减小或变大
+7. 常见幂级数展开式：
+   - \(e^x = 1 + x + \frac{x^2}{2!} + ... = \sum\limits_{n=0}^{\infty} \frac{x^n}{n!}\)
+   - \(\frac{1}{x+1} = 1-x+x^2-... = \sum\limits_{n=0}^{\infty} (-1)^nx^n\)
+   - \(\frac{1}{1-x} = 1+x+x^2+... = \sum\limits_{n=0}^{\infty} x^n\)
+   - \(ln(1+x) = x - \frac{x^2}{2}+\frac{x^3}{3}-... = \sum\limits_{n=1}{\infty} \frac{x^n}{N}\)
+   - \(sinx = x - \frac{x^3}{3!} + ... = \sum\limits_{n=0}^{\infty} (-1)^n \frac{x^{2n+1}}{(2n+1)!}\)
+   - \(cosx = \sum\limits_{n=0}^{\infty} (-1)^n \frac{x^{2n}}{(2n)!}\)
+   - \((1+x)^{\alpha} = 1 + \alpha x + \frac{\alpha(\alpha-1)}{2!}x^2 + ... + \frac{\alpha(\alpha-1)...(\alpha-n+1)}{n!}x^n\)
+     + \(\alpha \leq -1, x \in (-1,1)\)
+     + \(-1 < \alpha < 0, x \in (-1,1]\)
+     + \(\alpha > 0, x \in [-1, 1]\)
+8. 正向级数只谈收敛与发散，没有绝对收敛与条件收敛之分
+* 常微分方程
+1. 一阶线性微分方程求解 形如\(y' + p(x)y = q(x)\)的方程，\(y=e^{-\int p(x)dx}[\int e^{\int p(x)dx}q(x)dx + C]\)
+2. 伯努利方程 形如\(y' + p(x)y = q(x)y^{n}\)的方程，化为上个方程的形式
+3. 二阶常系数齐次线性微分方程，形如\(y'' + p(x)y' + q(x)y = 0\)
+4. 二阶常系数非齐次线性微分方程特解 --图片--
 * TODO 需要查资料
 1. 等价无穷小可以替换的条件
 2. 平面上曲线积分与积分区域无关

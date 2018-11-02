@@ -1,0 +1,10 @@
+#+TITLE: 计算机网络总结
+#+OPTIONS: toc:nil
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
+#+DATE: 2018-11-01
+
+* 计算机网络体系结构
+1. 计算机网络最重要的功能：连通性、共享
+2. Internet特指因特网，采用TCP/IP，前身时美国的ARPANET
+3. IXP因特网交换点，工作在数据链路层，通过交换机实现两个网络直接相连交换分组
+4.
