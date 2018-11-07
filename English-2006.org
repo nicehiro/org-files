@@ -1,0 +1,18 @@
+#+TITLE: English Words 2006
+#+OPTIONS: toc:nil
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
+#+DATE: 2018-11-03
+
+1. homogenizing 使统一，使平均
+2. absence 缺席
+3. deference 顺从
+4. intimate 私密的
+5. unprecedent 史无前例的
+6. assimilation 同化
+7. intermarriage 近亲结婚
+8. bilingual 会说双语的
+9. be immune to 对……免疫
+10. divisive 分裂的，分歧的
+11. seethe 火热的
+12. indices index复数形式，指示，迹象
+13. deteriorate 退化，恶化
