@@ -1,0 +1,176 @@
+#+TITLE: 数据结构
+#+OPTIONS: toc:nil
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
+#+DATE: 2018-11-10
+
+* 基础知识点
+- 数据元素 数据项 学生记录是一个数据元素，一个学生记录由多个数据项组成
+- 数据类型有：原子类型、结构类型、抽象数据类型（数据对象、数据关系、基本操作）
+- 数据结构有：逻辑结构、存储结构、数据的运算
+- 逻辑结构：线性结构（栈、广义表等）、非线性结构（集合、树形、网状）
+- 存储结构：顺序存储（随机存取）、链式存储（顺序存取）、索引存储（随机）、散列存储（随机，有冲突）
+- 易错点：循环队列是用顺序表（顺序存储结构的单链表）表示的队列；栈是一种逻辑结构，可以使用顺序存储或者链式存储实现
+- \(T(n) = T_1(n) + T_2(n) = O(max(f(n),g(n)))\)
+- \(T(n) = T_1(n) * T_2(n) = O(f(n)*g(n))\)
+* 线性表（逻辑结构）
+- 顺序表：线性表的顺序存储
+- 动态分配 =L.data = (ElemType*) malloc (sizeof(ElemType)*InitSize);=
+* 伪代码（C）
+** 线性表
+- 线性表中的元素是从1开始的，而数组中的顺序是从0开始的
+- 线性表的顺序存储类型表述（数组定义）（静态分配）
+  #+BEGIN_SRC c
+    #define MaxSize 50
+    typedef struct {
+      ElemType data[MaxSize];
+      int length;
+    } SqList;
+  #+END_SRC
+- 线性表的顺序存储类型表述（数组定义）（动态分配）
+  #+BEGIN_SRC c
+    #define InitSize 20
+    typedef struct {
+      // 指针
+      ElemType *data;
+      int MaxSize, length;
+    } SeqList;
+    // 动态分配
+    L.data = (ElemType) malloc(sizeof(ElemType) *InitSize);
+    // C++ 动态分配
+    L.data = new ElemType[InitSize]
+  #+END_SRC
+- 顺序表的插入
+  #+BEGIN_SRC C
+    bool ListInsert(SqList &L, int i, ElemType e) {
+      // 将元素e插入到L的第i个位置；i从1开始
+      if (i < 1 || i > L.length + 1)
+        return false;
+      if (L.length >= MaxSize)
+        return false;
+      // 后移
+      for (int j=L.length; j>=i; j--) {
+        L.data[j] = L.data[j-1];
+      }
+      L.data[i-1] = e;
+      L.length ++;
+      return true;
+    }
+  #+END_SRC
+- 顺序表的删除
+  #+BEGIN_SRC C
+    bool ListDelete(SqList &L, int i, ElemType &e) {
+      // 将L中第i个元素删除，赋值给e
+      if (i < 1 || i > L.length)
+        return false;
+      e = L.data[i-1];
+      // 前移
+      for (int j=i; j<L.length; j++)
+        L.data[j-1] = L.data[j];
+      L.length --;
+      return false;
+    }
+  #+END_SRC- 线性表的顺序存储类型表述（数组定义）（静态分配）
+  #+BEGIN_SRC c
+    #define MaxSize 50
+    typedef struct {
+      ElemType data[MaxSize];
+      int length;
+    } SqList;
+  #+END_SRC
+- 线性表的顺序存储类型表述（数组定义）（动态分配）
+  #+BEGIN_SRC c
+    #define InitSize 20
+    typedef struct {
+      // 指针
+      ElemType *data;
+      int MaxSize, length;
+    } SeqList;
+    // 动态分配
+    L.data = (ElemType) malloc(sizeof(ElemType) *InitSize);
+    // C++ 动态分配
+    L.data = new ElemType[InitSize]
+  #+END_SRC
+- 顺序表的插入
+  #+BEGIN_SRC C
+    bool ListInsert(SqList &L, int i, ElemType e) {
+      // 将元素e插入到L的第i个位置；i从1开始
+      if (i < 1 || i > L.length + 1)
+        return false;
+      if (L.length >= MaxSize)
+        return false;
+      // 后移
+      for (int j=L.length; j>=i; j--) {
+        L.data[j] = L.data[j-1];
+      }
+      L.data[i-1] = e;
+      L.length ++;
+      return true;
+    }
+  #+END_SRC
+- 顺序表的删除
+  #+BEGIN_SRC C
+    bool ListDelete(SqList &L, int i, ElemType &e) {
+      // 将L中第i个元素删除，赋值给e
+      if (i < 1 || i > L.length)
+        return false;
+      e = L.data[i-1];
+      // 前移
+      for (int j=i; j<L.length; j++)
+        L.data[j-1] = L.data[j];
+      L.length --;
+      return false;
+    }
+  #+END_SRC
+
+- 线性表的顺序存储类型表述（数组定义）（静态分配）
+  #+BEGIN_SRC c
+    #define MaxSize 50
+    typedef struct {
+      ElemType data[MaxSize];
+      int length;
+    } SqList;
+  #+END_SRC
+- 线性表的顺序存储类型表述（数组定义）（动态分配）
+  #+BEGIN_SRC c
+    #define InitSize 20
+    typedef struct {
+      // 指针
+      ElemType *data;
+      int MaxSize, length;
+    } SeqList;
+    // 动态分配
+    L.data = (ElemType) malloc(sizeof(ElemType) *InitSize);
+    // C++ 动态分配
+    L.data = new ElemType[InitSize]
+  #+END_SRC
+- 顺序表的插入
+  #+BEGIN_SRC C
+    bool ListInsert(SqList &L, int i, ElemType e) {
+      // 将元素e插入到L的第i个位置；i从1开始
+      if (i < 1 || i > L.length + 1)
+        return false;
+      if (L.length >= MaxSize)
+        return false;
+      // 后移
+      for (int j=L.length; j>=i; j--) {
+        L.data[j] = L.data[j-1];
+      }
+      L.data[i-1] = e;
+      L.length ++;
+      return true;
+    }
+  #+END_SRC
+- 顺序表的删除
+  #+BEGIN_SRC C
+    bool ListDelete(SqList &L, int i, ElemType &e) {
+      // 将L中第i个元素删除，赋值给e
+      if (i < 1 || i > L.length)
+        return false;
+      e = L.data[i-1];
+      // 前移
+      for (int j=i; j<L.length; j++)
+        L.data[j-1] = L.data[j];
+      L.length --;
+      return false;
+    }
+  #+END_SRC
