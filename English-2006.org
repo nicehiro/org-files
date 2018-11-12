@@ -1,6 +1,7 @@
 #+TITLE: English Words 2006
 #+OPTIONS: toc:nil
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
+#+EXPORT_FILE_NAME: ~/Documents/org-files/org-html/English-2006.html
 #+DATE: 2018-11-03
 
 1. homogenizing 使统一，使平均

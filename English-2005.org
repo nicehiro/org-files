@@ -1,5 +1,6 @@
 #+TITLE: English Words 2001
 #+OPTIONS: toc:nil
+#+EXPORT_FILE_NAME: ~/Documents/org-files/org-html/English-2001.html
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
 
 1. a fat pay raise 升薪
