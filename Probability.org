@@ -11,27 +11,120 @@
 - 易错点：没有条件概率的条件概率这种定义（贝叶斯公式使用）
 - \(\sum\limits_{i=0}^{k} C_m^i C_n^{k-i} = C_{m+n}^{k}\)
 * 一维随机变量及其分布
-- 分布函数的性质（充要条件）
-  + 单调不减
-  + 右连续
-  + 最左为0，最右为1
+- 分布函数的性质（充要条件）:单调不减 右连续 最左为0，最右为1
 - 离散型随机变量分布
-  | 分布                    | 概率分布                                                                |
-  |-------------------------+-------------------------------------------------------------------------|
-  | 0-1 分布 B(1, p)        | \(P{X=1}=p\)                                                            |
-  | 二项分布 B(n, p)        | \(P{X=k}=C_n^k p^k (1-p)^{n-k}\)                                        |
-  | 泊松分布 P(\(\lambda\)) | \(P{X=k}=\frac{\lambda^{k}}{k!} e^{-\lambda} (k=0,1,2...;\lambda > 0)\) |
-  | 几何分布                | \(P{X=k}=q^{k-1}p\)                                                     |
-  | 超几何分布 H(n, N, M)   | \(P{X=k}=\frac{C^k_M C^{n-k}_{N-M}}{C_N^n} (k=0,1,2...)\)               |
-  |-------------------------+-------------------------------------------------------------------------|
+  | 分布                    | 概率分布                                                                | 期望             | 方差                              |
+  |-------------------------+-------------------------------------------------------------------------+------------------+-----------------------------------|
+  | 0-1 分布 B(1, p)        | \(P{X=1}=p\)                                                            | p                | p(1-p)                            |
+  | 二项分布 B(n, p)        | \(P{X=k}=C_n^k p^k (1-p)^{n-k}\)                                        | np               | np(1-p)                           |
+  | 泊松分布 P(\(\lambda\)) | \(P{X=k}=\frac{\lambda^{k}}{k!} e^{-\lambda} (k=0,1,2...;\lambda > 0)\) | \(\lambda\)      | \(\lambda\)                       |
+  | 几何分布                | \(P{X=k}=q^{k-1}p\)                                                     | \(\frac{1}{p}\)  | \(\frac{1-p}{p^2}\)               |
+  | 超几何分布 H(n, N, M)   | \(P{X=k}=\frac{C^k_M C^{n-k}_{N-M}}{C_N^n} (k=0,1,2...)\)               | \(n\frac{M}{N}\) | \(\frac{nM(N-M)(N-n)}{N^2(N-1)}\) |
+  |-------------------------+-------------------------------------------------------------------------+------------------+-----------------------------------|
 - 泊松定理：当n很大，p很小，\(\lambda=np\)适中时，泊松分布可近似表示二项分布\(C^k_n p^k (1-p)^{n-k} = \frac{\lambda}{k!}e^{-\lambda}\)
 - 连续型随机变量
-  | 分布                     | 密度函数                                                                     | 分布函数                            |
-  | 均匀分布U(a,b)           | \(f(x)=\frac{1}{b-a},a<x<b\)                                                 | \(F(x)=\frac{x-a}{b-a}\)            |
-  | 指数分布\(E(\lambda)\)   | \(f(x)=\lambda e^{-\lambda x}, x>0\)                                         | \(F(x)=1-e^{-\lambda x}, x \geq 0\) |
-  | 正态分布N(\mu, \sigma^2) | \(f(x)=\frac{1}{\sqrt{2\pi}\sigma} e^{\frac{1}{2}(\frac{x-\mu}{\sigma})^2}\) | \(\Phi(x)\)                         |
+  | 分布                     | 密度函数                                                                     | 分布函数                                                           | 期望                  | 方差                     |
+  |--------------------------+------------------------------------------------------------------------------+--------------------------------------------------------------------+-----------------------+--------------------------|
+  | 均匀分布U(a,b)           | \(f(x)=\frac{1}{b-a},a<x<b\)                                                 | \(F(x)=\frac{x-a}{b-a}\)                                           | \(\frac{a+b}{2}\)     | \(\frac{(b-a)^2}{12}\)   |
+  | 指数分布\(E(\lambda)\)   | \(f(x)=\lambda e^{-\lambda x}, x>0\)                                         | \(F(x)=1-e^{-\lambda x}, x \geq 0\)                                | \(\frac{1}{\lambda}\) | \(\frac{1}{\lambda ^2}\) |
+  | 正态分布N(\mu, \sigma^2) | \(f(x)=\frac{1}{\sqrt{2\pi}\sigma} e^{\frac{1}{2}(\frac{x-\mu}{\sigma})^2}\) | \(F(X)=\frac{1}{\sqrt{2\pi}} \int_{-\infty}^x e^{-\frac{1}{2} t^2} dt\) | \(\mu\)               | \(\sigma ^2\)            |
 - 技巧 正态函数的比较需要换做标准正态解决
 - 连续行随机变量的分布函数一定是连续的；离散型随机变量分布一定是阶梯型函数
 - 易错点 写密度函数或者分布函数不要忘记写其他情况（为0或为1）
 * 二维随机变量
 - 条件分布函数：\(F_{Y|X}(y|x)=\int_{-\infty}^y f_{Y|X}(v|x) dv\)
+- 二维正态随机变量 \(f(x,y)=\frac{1}{2\pi \sigma_1 \sigma_2 \sqrt{1-\rho^2}} exp\{-\frac{1}{2(1-\rho^2)}[(\frac{x-\mu_1}{\sigma_1})^2-2\rho(\frac{x-\mu_1}{\sigma_1})(\frac{x-\mu_2}{\sigma_2})+(\frac{y-\mu_2}{\sigma_2})^2]\}\)
+  + X Y 的条件分布也都是正态分布
+  + aX+bY 也是正态分布
+  + X Y 相互独立的充要条件是X和Y不相关（其他分布没有这个性质）
+- 技巧 求离散型的随机分布直接求某点的概率P即可
+- 相互独立随机变量函数的分布 \((X,Y)\sim f(x,y)\)
+  + 可以先求出\(F_Z(z)\)的随机变量
+  + 和的分布 \(Z=X+Y, f_Z(z) = \int_{-\infty}^{+\infty} f(x, z-x) dx = \int_{-\infty}^{+\infty} f(z-y, y) dy\)
+  + 差的分布 \(Z=X-Y, f_Z(z) = \int_{-\infty}^{+\infty} f(x, x-z) dx = \int_{-\infty}^{+\infty} f(y+z, y) dy\)
+  + 积的分布 \(Z=XY, f_Z(z) = \int_{-\infty}^{+\infty} \frac{1}{|x|}f(x, \frac{z}{x}) dx = \int_{-\infty}^{+\infty} \frac{1}{|y|}f(\frac{z}{y}, y) dy\)
+  + 商的分布 \(Z=\frac{X}{Y}, f_Z(z) = \int_{-\infty}^{+\infty} |y|f(yz, y) dy\)
+- 常见分布的可加性（相互独立）
+  + \(X \sim B(n,p), Y \sim B(m, p), then X+Y \sim B(n+m, p)\)
+  + \(X \sim P(\lambda_1), Y \sim P(\lambda_2), then X+Y \sim P(\lambda_1+\lambda_2)\)（证明需要用到 \((a+b)^n = \sum\limits_{i=0}^{n} C_n^i a^i b^{n-i}\)）
+- 技巧 一个离散型，一个连续型随机变量分布问题，先确定随机变量的分布范围；再按照离散型变量分情况求概率，注意两个变量是否属于包含情况或者不是独立
+* 随机变量的数字特征
+- 数学期望E(X)如果不收敛，那么期望不存在（无穷）
+- 期望的实际意义：概率的平均值（非样本）
+- 期望相关公式
+  + \(E(\sum\limits_{i=1}^{n}a_i X_i) = \sum\limits_{i=1}^n a_i E(X_i) \)
+  + \(Ec = c\) （均值为常数c）
+  + \(E(aX+bY) = aEX + bEY\)
+  + 当X Y相互独立，\(E(XY)=E(X)E(Y)\)
+- 方差的实际意义：概率分布的离散程度
+- 方差相关公式
+  + \(DX = E(X-EX)^2 = E(X^2) - (EX)^2\)
+  + \(Dc=0\)
+  + \(D(aX+c) = a^2DX + c\)
+  + \(D(X \pm Y) = DX + DY \pm 2Cov(X,Y)\)
+  + *对于任意常数，\(DX = E(X-EX)^2 \leq E(X-c)^2\)*
+- 切比雪夫不等式\\
+  \(P{|X-EX| \geq \varepsilon} \leq \frac{DX}{\varepsilon}\\
+  P{|X-EX| < \varepsilon} \geq 1-\frac{DX}{\varepsilon}\)\\
+  实际意义：方差越小，X越趋于EX
+- 协方差
+  + 实际意义 刻画X Y 之间偏差的关联程度；\(\rho=\pm 1\)表示X Y之间有线性关系；\(\rho=0\)不表示X Y之间不存在相依关系
+  + \(Cov(X, Y) = Cov(Y, X)\)\\
+    \(Cov(X, X) = DX\)
+  + \(Cov(X, c) = 0; Cov(aX+b, Y) = aCov(X, Y)\)
+  + \(Cov(X_1+X_2, Y) = Cov(X_1, Y) + Cov(X_2, Y)\)
+  + \(D(X+Y) = DX + DY + 2Cov(X,Y) = DX + DY + 2\rho \sqrt{DX} \sqrt{DY}\)
+- 矩与协方差矩阵
+  + k阶原点矩：\(E(X^k)\)
+  + k阶中心矩：\(E[(X-EX)^k]\) （方差是 2阶中心矩）
+  + 二维随机变量的协方差矩阵
+- 技巧 圆周类的均匀分布，要以角度为单位
+- 易错点 独立 \(\longrightarrow\) 不相关，相关 \(\longrightarrow\) 不独立；反之不可
+* 大数定律
+- 伯努利大数定律 \(\lim\limits_{n \rightarrow \infty} P\{|\frac{U_n}{n} - p| < \varepsilon\} = 1\)
+- 辛钦大数定律 \(\lim\limits_{n \rightarrow \infty} P\{|\frac{1}{n} \sum\limits_{i=1}{n} X_i - \mu| < \varepsilon\} = 1\)
+- 实质 做\(n(n \rightarrow \infty)\)次实验，实验结果趋于 EX
+* 中心极限定理
+- 列维-林德伯格定理（独立同分布中心极限定理）\\
+  \(\lim\limits_{n \rightarrow \infty} P\{\frac{\sum\limits_{i=1}{n} X_i - n\mu}{\sqrt n \sigma} \leq x\} = \Phi(x)\)
+- 棣莫弗-拉普拉斯定理（n项伯努利分布）\\
+  \(\lim\limits_{n \rightarrow \infty} P\{\frac{Y_n-np}{\sqrt{np(1-p)}} \leq x\} = \Phi(x)\)
+- 实质 做\(n(n \rightarrow \infty)\)次重复实验，\(X(\sum\limits_{i=1}{n} X_i)\)的结果可以使用正态分布刻画
+- 技巧 对于二项分布B(n, p)，做n次重复实验，事件A发生次数的最大可能值为：
+  + (n+1)p为整数，\(k_0 = (n+1)p, (n+1)p -1\)
+  + (n+1)p为偶数，\(k_0 = [(n+1)p]\)
+* 数理统计
+- 样本数字特征
+  + 样本均值 \(\overline X = \frac{1}{n} \sum\limits_{i=1}{n} X_i\)
+  + 样本方差 \(S^2 = \frac{1}{n-1} \sum\limits_{i=1}^{n} (X_i - \overline X)^2 = \frac{1}{n-1} (\sum\limits_{i=1}^{n} X_i^2 - n\overline X)\)
+  + 样本k阶原点矩 \(\frac{1}{n} \sum\limits_{i=1}^{n} X_i^k\)
+  + 样本k阶中心矩 \(\frac{1}{n} \sum\limits_{i=1}^{n} (X_i - \overline X)^k\)
+  + 第k顺序量 将样本值按从小到大的顺序排列，其中\(F_{(n)}(x) = [F(x)]^n\)
+- 常用统计量的性质（通用）
+  + \(EX = E\overline X = \mu; DX = \sigma ^2; D\overline X = \frac{\sigma ^2}{n}; E(S^2) = \sigma ^2\)
+- \(\chi ^2\)分布（取上\(\alpha\)分位）
+  + \(X_i\)相互独立，服从标准正态分布，\(X = \sum\limits_{i=1}{n} X_i^2\)服从\(\chi ^2\)分布
+  + 自由度 和式中独立变量的个数
+  + EX = n；DX = 2n
+- t 分布（取上\(\alpha\)分位）
+  + \(X \sim N(0, 1), Y \sim \chi ^2(n)\)，X Y相互独立，\(t = \frac{X}{\sqrt{Y/n}}\)
+  + 图像关于 x=0 对称，EX=0
+- F 分布
+  + \(X \sim \chi ^2(n_1), Y \sim \chi ^2(n_2), F = \frac{X/n_1}{Y/n_2}\)
+  + 若\(F \sim F(n_1, n_2)\)，那么\(\frac{1}{F} \sim F(n_2, n_1)\) （使用公式证明）
+  + \(F_{1-\alpha}(n_1, n_2) = \frac{1}{F_{\alpha}(n_2, n_1)}\)
+- 单正态总体（\(X_i\)服从\(N(0,1)\)）
+  + \(\overline X \sim N(\mu, \frac{\sigma ^2}{n})\)
+  + \(\frac{1}{\sigma ^2} \sum\limits_{i=1}{n} (X_i-\mu)^2 \sim \chi ^2(n)\)
+  + \(\frac{(n-1)S^2}{\sigma ^2} = \sum\limits_{i=1}^{n} (\frac{X_i-\overline X}{\sigma})^2 \sim \chi ^2\)
+  + \(\overline X , S^2\)相互独立，\(\frac{(\overline X - \mu)}{\frac{S}{\sqrt n}} \sim t(n-1)\)
+- 双正态总体
+  + \(\overline X - \overline Y \sim N(\mu_1 - \mu_2, \frac{\sigma_1 ^2}{m}+\frac{\sigma_2 ^2}{n})\)
+  + \(\frac{\sum\limits_{i=1}{n} (X_i-\mu_1)^2/m\sigma_1 ^2}{\sum\limits_{i=1}{n} (Y_i-\mu_2)^2/n\sigma_2 ^2} \sim F(m, n)\)
+  + \(\frac{S_X^2/\sigma_1^2}{S_Y^2/\sigma_2^2} = \frac{\sum\limits_{i=1}{n} (X_i-\overline X)^2/(m-1)\sigma_1 ^2}{\sum\limits_{i=1}{n} (Y_i-\overline Y)^2/(n-1)\sigma_2 ^2} \sim F(m, n)\)
+- 统计量 不含任何未知参数的样本函数
+* 参数估计
+- 矩估计法 求\(EX^t = \frac{1}{n}\sum\limits_{i=1}^{n} X_i^t; t=1,2,3...\)
+- 最大似然估计法 通过样本观测值估计概率最大的参数作为估计值。可以通过求最大似然函数，确定参数的估计值，这个参数需要使最大似然函数值最大
+- 估计标准 无偏性 有效性 一致性（相合性）
+- 置信区间
