@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2018-11-15 四 22:45 -->
+<!-- 2018-11-16 五 15:13 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>线性代数</title>
@@ -254,13 +254,9 @@ for the JavaScript code in this tag.
 <div id="content">
 <h1 class="title">线性代数</h1>
 
-<div id="outline-container-org5994c91" class="outline-2">
-<h2 id="org5994c91"><span class="section-number-2">1</span> 行列式</h2>
+<div id="outline-container-orgd9f2a0f" class="outline-2">
+<h2 id="orgd9f2a0f"><span class="section-number-2">1</span> 行列式</h2>
 <div class="outline-text-2" id="text-1">
-</div>
-<div id="outline-container-org6199953" class="outline-3">
-<h3 id="org6199953"><span class="section-number-3">1.1</span> 基本概念</h3>
-<div class="outline-text-3" id="text-1-1">
 <ul class="org-ul">
 <li>逆序数 一个排列中逆序的排列的总数 \(\tau (231546) = 3\)</li>
 <li>奇排列 逆序数是奇数的叫做奇排列；反之为偶排列</li>
@@ -279,14 +275,9 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-</div>
-<div id="outline-container-orgc8589d9" class="outline-2">
-<h2 id="orgc8589d9"><span class="section-number-2">2</span> 矩阵</h2>
+<div id="outline-container-org8883ce9" class="outline-2">
+<h2 id="org8883ce9"><span class="section-number-2">2</span> 矩阵</h2>
 <div class="outline-text-2" id="text-2">
-</div>
-<div id="outline-container-org30fbbd7" class="outline-3">
-<h3 id="org30fbbd7"><span class="section-number-3">2.1</span> 基本概念</h3>
-<div class="outline-text-3" id="text-2-1">
 <ul class="org-ul">
 <li>矩阵性质（区别于行列式）
 <ul class="org-ul">
@@ -309,12 +300,13 @@ for the JavaScript code in this tag.
 <li>\((A+B)^T = A^T + B^T\)</li>
 <li>\((AB)^T = B^T A^T\)</li>
 </ul></li>
-<li>非对称矩阵 满足 \(A^T = -A, a_{ij} = -a_{ji} & a{ii} = 0\)</li>
+<li>非对称矩阵 满足 \(A^T = -A; a_{ij}=-a_{ji} \& a_{ii}=0\)</li>
 <li>逆矩阵 满足\(AB = BA = E\)，（A、B可逆，满秩，\(|A| \neq 0\)，可交换）
 <ul class="org-ul">
 <li>\((AB)^{-1} = B^{-1}A^{-1}\)</li>
 <li>\((A^T)^{-1} = (A^{-1})^T\)</li>
 <li>\(|A^{-1}| = |A|^{-1}\)</li>
+<li>\(A^{-1}, A^*\)都可逆，但\(A^T\)不可逆</li>
 <li>易错点 <b>A+B 不一定可逆</b></li>
 </ul></li>
 <li>技巧 求\(A^n\) 观察矩阵可否化为\(A=\alpha ^T \beta\)；尝试计算\(A^2, A^3\)</li>
@@ -329,14 +321,127 @@ for the JavaScript code in this tag.
 <li>\(|A^*| = |A|^{n-1}\)</li>
 <li>\((A^*)^* = |A|^{n-1}A\)</li>
 </ul></li>
+<li>初等矩阵 由单位矩阵经过一次初等变换得到的矩阵称为初等矩阵
+<ul class="org-ul">
+<li>\(E_2(k)A\) 将第二行乘k倍；\(AE_2(k)\) 将第二列乘k倍</li>
+<li>\(E_{12}A\) 将第一行和第二行互换；\(AE_2(k)\) 将第一列和第二列互换</li>
+<li>\(E_{31}(k)A\) 将第一行的k倍加到第三行上；\(AE_{31}(k)\) 将第三列的k倍加到第一列上</li>
+</ul></li>
+<li>等价矩阵 存在可逆矩阵P Q使得\(PAQ = B\)，则A B等价\(A \cong B\)</li>
+<li>矩阵的秩
+<ul class="org-ul">
+<li>\(r(AB) \leq min({r(A), r(B)})\)</li>
+<li>\(r(AB) \geq r(A) + r(B) -n\)</li>
+</ul></li>
 </ul>
 </div>
+</div>
+<div id="outline-container-org871dc14" class="outline-2">
+<h2 id="org871dc14"><span class="section-number-2">3</span> 向量</h2>
+<div class="outline-text-2" id="text-3">
+<ul class="org-ul">
+<li>线性相关 存在一组不为0的数，使得\(k_1\alpha _1 + k_2\alpha _2 + ... + k_n\alpha _2\)</li>
+<li>含有零向量或者成比例向量的向量组必线性相关</li>
+<li>线性相关 非齐次线性方程组有解 齐次方程组有解</li>
+<li>等价向量组 两组向量都可以被互相表出</li>
+<li>过渡矩阵 基1到基2的变换，基2=基1*C，C为过渡矩阵</li>
+<li>正交 向量点乘为0</li>
+<li>标准正交向量组 \(\alpha_{ii}=1, 其余为0\)</li>
+<li>施密特标准正交化
+<ul class="org-ul">
+<li>\(\beta_1 = \alpha_1\)</li>
+<li>\(\beta_2 = \alpha_2 - \frac{(\alpha_2, \beta_1)}{(\beta_1, \beta_1)}\beta_1\)</li>
+<li>\(\beta_n = \alpha_n - ... - \frac{(\alpha_n, \alpha_i)}{(\alpha_i, \alpha_i)}\beta_i\)</li>
+</ul></li>
+<li>正交矩阵 \(A^TA=E, A^T=A^{-1}\)，A的行列向量组都是标准正交向量，\(|A| = 1\)</li>
+<li>易错点 <b>线性无关不能推出两两正交 正交向量组必线性无关</b></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org6161a94" class="outline-2">
+<h2 id="org6161a94"><span class="section-number-2">4</span> 线性方程组</h2>
+<div class="outline-text-2" id="text-4">
+<ul class="org-ul">
+<li>\(r(A)=n\)，齐次方程组有唯一0解；\(r(A)<n\)，齐次方程组有\(n-r\)个线性无关的解</li>
+<li>基础解系 方程组的解都可以由这个解系表出；通解由基础解系构成</li>
+<li>\(r(A)=r(A|b)=n\)，非齐次线性方程组有唯一解；\(r(A)=r(A|b)<n\)，非齐次线性方程组有无穷多解；\(r(A)<r(A|b)\)，非齐次线性方程组无解</li>
+<li>技巧 证明\(\beta\)是\(Ax=0\)的基础解系
+<ul class="org-ul">
+<li>证明\(\beta\)是\(Ax=0\)的解</li>
+<li>证明\(\beta\)线性无关</li>
+<li>证明\(\beta\)元素数量为A的秩</li>
+</ul></li>
+<li>非齐次线性方程组的通解 = 对应齐次线性方程组的通解 + 特解</li>
+<li>同解方程组 两个方程组有完全相同的解
+<ul class="org-ul">
+<li>\(r(A)=r(B)\)，A的解满足B的解</li>
+<li>\(r(A)=r(B)=r(\left[\begin{array}{cccc} A \\ B \end{array}\right])\)</li>
+</ul></li>
+<li>特征值 \(A\xi = \lambda \xi\)
+<ul class="org-ul">
+<li>\(\sum\limits_{i=1}^n \lambda_i = \sum\limits_{i=1}{n} a_{ii}\)</li>
+<li>\(\prod\limits_{i=1}^{n} \lambda_i = |A|\)</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org3147097" class="outline-2">
+<h2 id="org3147097"><span class="section-number-2">5</span> 相似矩阵</h2>
+<div class="outline-text-2" id="text-5">
+<ul class="org-ul">
+<li>存在可逆矩阵P \(P^{-1}\)，使得\(PAP^{-1}=B\)，那么\(A \sim B\)</li>
+<li>\(A \sim B, A^m \sim B^m, f(A) \sim f(B)\)</li>
+<li>\(A \sim B\)，若A可逆，\(A^{-1} \sim B^{-1}, f(A^{-1}) \sim f(B^{-1})\)</li>
+<li>矩阵相似对角化 存在可逆矩阵P，\(P^{-1}AP=\Lambda\)，\(\Lambda\)是对角矩阵，称A可相似对角化，\(\Lambda\)是A的相似对角形
+<ul class="org-ul">
+<li>一定有 n 个线性无关的特征向量，不一定有 n 个特征值</li>
+</ul></li>
+<li>实对称矩阵 矩阵的元素都是实数的对称矩阵
+<ul class="org-ul">
+<li>属于不同特征值的特征向量相互正交</li>
+<li>必相似于对角矩阵\(diag(\lambda_1, \lambda_2, ... , \lambda_n)\)</li>
+<li>存在正交矩阵Q \(Q^{-1}AQ = Q^T A Q = \Lambda\)，相似并合同于对角矩阵</li>
+</ul></li>
+<li>技巧 判断一个矩阵是否相似于对角矩阵
+<ul class="org-ul">
+<li>判断是否是实对称矩阵</li>
+<li>判断特征值是否是单根</li>
+<li>r 重特征值是否有r重特征向量</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org713d904" class="outline-2">
+<h2 id="org713d904"><span class="section-number-2">6</span> 二次型矩阵</h2>
+<div class="outline-text-2" id="text-6">
+<ul class="org-ul">
+<li>二次型矩阵 \(f(x) = a_{11}x_1^2 + 2a_{12}x_1x_2 + ..., f(x)=x^T A x\)，A是实对称矩阵，被称为f(x)的二次型矩阵</li>
+<li>线性变换 \(x=Cy, f(x)=x^TAx = (Cy)^TA(Cy) = y^T(C^TAC)y\)</li>
+<li>矩阵合同 \(B = C^T A C\)，称\(A \simeq B\)，A合同B</li>
+<li>二次型的标准型 二次型中只有斜对角线元素</li>
+<li>二次型的规范性 二次型中只有斜对角线元素且只有 -1，0，1</li>
+<li>惯性定理 正惯性系数（标准型中正数的个数）</li>
+<li>两个二次型（实对称矩阵）合同的充要条件是：有相同的正负惯性数；或者有相同的正（负）惯性数和秩</li>
+<li>正定二次型 对于任意的x，都有\(x^TAx>0\)，f(x)为正定二次型，A是正定矩阵</li>
+<li>二次型正定的充要条件
+<ul class="org-ul">
+<li>正惯性系数p=n</li>
+<li>A 的所有顺序主子式 &gt; 0</li>
+<li>A 的特征值 \(\lambda_i>0\)</li>
+<li>\(A \simeq E\)</li>
+</ul></li>
+<li>二次型正定的必要条件
+<ul class="org-ul">
+<li>\(a_{ii} > 0\)</li>
+<li>\(|A| > 0\)</li>
+</ul></li>
+</ul>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: hiro</p>
-<p class="date">Created: 2018-11-15 四 22:45</p>
+<p class="date">Created: 2018-11-16 五 15:13</p>
 <p class="validation"></p>
 </div>
 </body>
