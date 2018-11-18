@@ -1,0 +1,68 @@
+#+TITLE: English 2010
+#+OPTIONS: toc:nil
+#+EXPORT_FILE_NAME: ~/Documents/org-files/org-html/English-2010.html
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
+
+- the most far-reaching 影响最深远的
+- inexorable 不可阻挡的
+- coverage 覆盖；新闻
+- marvel 感到神奇的
+- marble 大理石
+- circulation 传播
+- daily 日报
+- ornament 装饰品
+- calling 职业；欲望
+- keep/hold their own end up 在困难面前坚持下去
+- a term of contempt 轻视
+- cricket 板球
+- foremost 最好的
+- stylist 设计师
+- autobiography 自传
+- knight 骑士
+- amateur 业余的
+- vast 巨大的；广阔的
+- revival 复兴；恢复
+- postmodern 后现代的
+- retreat 后退
+- casual 非正式的
+- elaborate 精心制作的
+- horizon 地平线；视野
+- allocation 分配
+- scale back 减少数量
+- authorize 授权
+- eliminate 撤消，消除
+- claim 提出要求；申请
+- curb 控制；勒马
+- explosion 爆发
+- defensive move against 针对……的防御措施
+- hedging 限制
+- practice 实践
+- hear a case 审理案件
+- in the wake of 随着某事到来
+- uphold 支持
+- attorney 律师
+- tiny minority 极少数
+- epidemic 流行的（传染病）
+- influential 有影响力的人
+- embrace 拥抱
+- plausible 接口解释的；貌似有理的
+- cursory 粗略的
+- presence 出席
+- cascade 瀑布
+- in turn 反过来
+- propagate 传播；传送
+- simulation 模拟
+- manipulate 暗中操作
+- readiness 准备就绪的；愿意的
+- overall plan 总体计划
+- on the wrong planet 不合实际
+- skeptical 害怕的
+- bad debts 坏账
+- paralysis 瘫痪的
+- bargain 交易；便宜货
+- combative 好战的
+- buy up 全部买进
+- give in to 屈服；让步
+- make more concession 做出让步
+- hostility 敌意
+- clean up 清理
