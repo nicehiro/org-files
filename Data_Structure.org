@@ -1,6 +1,7 @@
 #+TITLE: 数据结构
 #+OPTIONS: toc:nil
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
+#+EXPORT_FILE_NAME: ~/Documents/org-files/org-html/Data-structure.html
 #+DATE: 2018-11-10
 
 * 基础知识点
@@ -14,8 +15,48 @@
 - \(T(n) = T_1(n) * T_2(n) = O(f(n)*g(n))\)
 * 线性表（逻辑结构）
 - 顺序表：线性表的顺序存储
-- 动态分配 =L.data = (ElemType*) malloc (sizeof(ElemType)*InitSize);=
+- 单链表：线性表的链式存储（非随机存取）
+- 引入头结点的优点：无需对第一个结点进行特殊处理
+- 双链表：既有next又有prior
+- 循环单链表：单链表尾指针指向头结点
+- 循环双链表
+- 静态链表：以next=-1作为结束的标志；顺序存储，顺序存取；插入删除和其他链表一样，不移动元素，只修改指针
+- 当顺序表无序，时间复杂度O(n)；顺序表有序时，时间复杂度O(log(n))
+- 建立一个有序链表的最小时间复杂度是O(nlog(n))
+* 栈（逻辑结构）
+- 只能一端插入、删除的线性表
+- 共享栈 为了有效的利用存储空间，让两个栈共享一个存储空间；对存储效率没有影响
+- 易错点：注意开始时候栈顶元素的位置
+- 技巧 对于n个元素进栈，出栈序列为 \(\frac{1}{n+1} C_{2n}^n\)
+- 易错点：C语言中标识符的规定 第一个字符必须是大小写英文字母或者下划线，不能是数字
+- 中缀表达式（对应中序遍历，左中右）
+- 栈的应用 进制转换、迷宫求解、递归
+* 队列
+- 只允许在表的一端插入，另一端删除
+- 队列操作 rear 进，front 出（rear 中不存放元素）
+  + 初始条件 Q.front = Q.rear = 0
+  + 进队操作 SqQueue[Q.rear] = x; Q.rear ++;
+  + 出队操作 x = SqQueue[Q.front]; Q.front ++;
+- 循环队列操作
+  + 初始条件 Q.front = Q.rear = 0
+  + 进队操作 SqQueue[Q.rear] = x; Q.rear = (Q.rear+1)%MaxSize
+  + 出队操作 x = SqQueue[Q.front]; Q.front = (Q.front+1)%MaxSize
+  + 队列长度 (Q.rear+MaxSize-Q.front)%MaxSize
+  + 队空条件 Q.front = Q.rear
+- 队满条件
+  + 牺牲一个单元（rear所在的单元不放元素） (Q.rear+1)%MaxSize = Q.front
+  + 增设表示元素个数的数据成员 Q.size = MaxSize
+  + 增设 tag 表示是否队满
+- 能由输入受限的双端队列得到而不能由输出受限的双端队列得到的是 4,1,3,2
+- 能由输出受限的双端队列得到而不能由输入受限的双端队列得到的是 4,2,1,3
+- 既不能由输出受限的双端队列得到也不能由输入受限的双端队列得到的是 4,2,3,1
+- 易错点：用链表形式存储队列时，一般情况下，删除操作只需要修改头指针即可；但如果队列中只有一个元素，删除后队列为空，需要修改尾指针Q.rear=Q.front
+- 队列的应用 缓存区
+* 树与二叉树
 * 伪代码（C）
+** 代码常识
+- 指针 存储数据所在位置，地址
+- 引用 数据
 ** 线性表
 - 线性表中的元素是从1开始的，而数组中的顺序是从0开始的
 - 线性表的顺序存储类型表述（数组定义）（静态分配）
@@ -69,108 +110,82 @@
       L.length --;
       return false;
     }
-  #+END_SRC- 线性表的顺序存储类型表述（数组定义）（静态分配）
-  #+BEGIN_SRC c
+  #+END_SRC
+** 单链表
+- 结点定义
+  #+BEGIN_SRC C
+    typedef struct LNode {
+      ElemType data;
+      struct LNode *next;
+    } LNode, *LinkedList;
+  #+END_SRC
+- 头插法
+  #+BEGIN_SRC C
+    LinkedList createList1(LinkList &L) {
+      // 带头结点的单链表
+      LNode *s; int x;
+      L = (LinkedList)malloc(sizeof(LNode));
+      L -> next = null;
+      scanf("%d", &x);
+      while (x != 9999) {
+        s = (LNode*)malloc(sizeof(LNode));
+        s -> data = x;
+        s -> next = L -> next;
+        L -> next = s;
+        scanf("%d", &x);
+      }
+      return L;
+    }
+  #+END_SRC
+- 尾插法
+  #+BEGIN_SRC C
+    LinkedList createList2(LinkedList &L) {
+      int x;
+      // malloc 分配出来的是指针类型
+      L = (LinkedList)malloc(sizeof(LNode));
+      LNode *s, *r = L;
+      scanf("%s", x);
+      while(x != 9999) {
+        s = (LNode*)malloc(sizeof(LNode));
+        s -> data = x;
+        r -> next = s;
+        r = s;
+        scanf("%d", x);
+      }
+      r -> next = NULL;
+      return r;
+    }
+  #+END_SRC
+- 双链表
+  #+BEGIN_SRC C
+    typedef struct DNode {
+      ElemType data;
+      Struct DNode *prior, *next;
+    } DNode, *DLinkList;
+  #+END_SRC
+- 静态链表
+  #+BEGIN_SRC C
     #define MaxSize 50
     typedef struct {
-      ElemType data[MaxSize];
-      int length;
-    } SqList;
+      ElemType data;
+      int next;
+    } SLinkList[MaxSize];
   #+END_SRC
-- 线性表的顺序存储类型表述（数组定义）（动态分配）
-  #+BEGIN_SRC c
-    #define InitSize 20
-    typedef struct {
-      // 指针
-      ElemType *data;
-      int MaxSize, length;
-    } SeqList;
-    // 动态分配
-    L.data = (ElemType) malloc(sizeof(ElemType) *InitSize);
-    // C++ 动态分配
-    L.data = new ElemType[InitSize]
-  #+END_SRC
-- 顺序表的插入
+** 栈
+- 顺序栈（顺序存储）
   #+BEGIN_SRC C
-    bool ListInsert(SqList &L, int i, ElemType e) {
-      // 将元素e插入到L的第i个位置；i从1开始
-      if (i < 1 || i > L.length + 1)
-        return false;
-      if (L.length >= MaxSize)
-        return false;
-      // 后移
-      for (int j=L.length; j>=i; j--) {
-        L.data[j] = L.data[j-1];
-      }
-      L.data[i-1] = e;
-      L.length ++;
-      return true;
-    }
-  #+END_SRC
-- 顺序表的删除
-  #+BEGIN_SRC C
-    bool ListDelete(SqList &L, int i, ElemType &e) {
-      // 将L中第i个元素删除，赋值给e
-      if (i < 1 || i > L.length)
-        return false;
-      e = L.data[i-1];
-      // 前移
-      for (int j=i; j<L.length; j++)
-        L.data[j-1] = L.data[j];
-      L.length --;
-      return false;
-    }
-  #+END_SRC
-
-- 线性表的顺序存储类型表述（数组定义）（静态分配）
-  #+BEGIN_SRC c
     #define MaxSize 50
     typedef struct {
-      ElemType data[MaxSize];
-      int length;
-    } SqList;
+      ElemType data;
+      int top;
+    } SqStack;
   #+END_SRC
-- 线性表的顺序存储类型表述（数组定义）（动态分配）
-  #+BEGIN_SRC c
-    #define InitSize 20
+** 队列
+- 顺序队列
+  #+BEGIN_SRC C
+    #define MaxSize 50
     typedef struct {
-      // 指针
-      ElemType *data;
-      int MaxSize, length;
-    } SeqList;
-    // 动态分配
-    L.data = (ElemType) malloc(sizeof(ElemType) *InitSize);
-    // C++ 动态分配
-    L.data = new ElemType[InitSize]
-  #+END_SRC
-- 顺序表的插入
-  #+BEGIN_SRC C
-    bool ListInsert(SqList &L, int i, ElemType e) {
-      // 将元素e插入到L的第i个位置；i从1开始
-      if (i < 1 || i > L.length + 1)
-        return false;
-      if (L.length >= MaxSize)
-        return false;
-      // 后移
-      for (int j=L.length; j>=i; j--) {
-        L.data[j] = L.data[j-1];
-      }
-      L.data[i-1] = e;
-      L.length ++;
-      return true;
-    }
-  #+END_SRC
-- 顺序表的删除
-  #+BEGIN_SRC C
-    bool ListDelete(SqList &L, int i, ElemType &e) {
-      // 将L中第i个元素删除，赋值给e
-      if (i < 1 || i > L.length)
-        return false;
-      e = L.data[i-1];
-      // 前移
-      for (int j=i; j<L.length; j++)
-        L.data[j-1] = L.data[j];
-      L.length --;
-      return false;
-    }
+      ElemType data;
+      int front, rear;
+    } SqQueue;
   #+END_SRC

@@ -1,0 +1,65 @@
+#+TITLE: English 2009
+#+OPTIONS: toc:nil
+#+EXPORT_FILE_NAME: ~/Documents/org-files/org-html/English-2009.html
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
+
+- mindlessly 不费心思的；愚蠢的
+- auto-pilot 自动驾驶
+- unreflecting herd 缺乏思考的人群，herd：兽群
+- paradoxical 矛盾的（潘多拉魔盒）
+- parallel 平行的，相似的
+- innovative tracks 创新的轨道
+- dismiss 遣散，解雇；不予理会
+- rut 惯例
+- bypass 绕过
+- fascination 着迷
+- worn 磨损的
+- procedurally 按流程的
+- foster commonness 促进平凡
+- perpetuated 延续
+- boost 增加
+- kit 成套工具
+- shell out 还账
+- prescription 处方
+- rage 愤怒，狂躁；风行，流行
+- passionate 热情的
+- genealogist 系谱专家
+- swab saliva 蘸口水
+- chromosome 染色体
+- hawk 沿街叫卖
+- pass down 传下来
+- lump together 合起来考虑
+- estimate 判断
+- overlap 重复
+- priority 优先权
+- deride 嘲笑
+- automotive-assemble 自动组装
+- suspect 推测；怀疑
+- complex 复杂的
+- illiterate 文盲的
+- substantial 大量的；实质的，本质的；内容充实的
+- foreseeable 可预知的
+- constrain 驱使；强迫；限制
+- groundless 无根据的
+- discipline 学科，纪律
+- follow 前面随着后面
+- thorough 彻底的
+- distinction 独特的
+- crown 王国
+- civility 文明礼仪
+- virtuosity 技艺
+- dependent 侍从
+- servant 仆人
+- intellectual earnestness 渴望求知
+- extensive 广泛的
+- sexual confusion 性困惑
+- economic frustration 经济挫折
+- literary composition 文学作品
+- let alone 更不用说
+- sermon 说教；传教
+- religious commitment 宗教信仰
+- mock 嘲弄
+- clergyman 牧师
+- folk 普通百姓
+- obsess 沉迷
+- illusory 虚幻的
