@@ -53,6 +53,19 @@
 - 易错点：用链表形式存储队列时，一般情况下，删除操作只需要修改头指针即可；但如果队列中只有一个元素，删除后队列为空，需要修改尾指针Q.rear=Q.front
 - 队列的应用 缓存区
 * 树与二叉树
+- 结点的度 一个结点的子结点的个数
+- 树的度 一棵树中结点的最大度数
+- 结点的层次 从根结点开始为第一层
+- 结点的高度 从根结点开始自低向上增加
+- 结点的深度 从根结点开始自上向下增加
+- 树的高度（深度） 从1开始
+- 路径长度 路径上经过的边的个数
+- 树的路径长度 所有路径长度的总和
+- 易错点 度为2的树至少有三个结点；而二叉树可以为空；二叉树区分左右子树
+- 二叉树的性质 \(N_0 + N_1 + N_2 = 2N_2 + N_1 + 1 => N_0 = N_2 + 1\)
+- 具有n个结点的 *完全* 二叉树的高度为 \(log_2N +1\)
+- 二叉树中不可能存在奇数个的度为1的结点
+-
 * 伪代码（C）
 ** 代码常识
 - 指针 存储数据所在位置，地址
@@ -188,4 +201,35 @@
       ElemType data;
       int front, rear;
     } SqQueue;
+  #+END_SRC
+** 二叉树
+- 先序遍历
+  #+BEGIN_SRC C
+    void PreOrder(BiTree T) {
+      if (T != NULL) {
+        visit(T);
+        PreOrder(T -> lchild);
+        PreOrder(T -> rchild);
+      }
+    }
+  #+END_SRC
+- 中序遍历
+  #+BEGIN_SRC C
+    void InOrder(BiTree T) {
+      if (T != NULL) {
+        inOrder(T -> lchild);
+        visit(T);
+        inOrder(T -> rchild);
+      }
+    }
+  #+END_SRC
+- 后序遍历
+  #+BEGIN_SRC C
+    void PostOrder(BiTree T) {
+      if (T != NULL) {
+        PostOrder(T -> lchild);
+        PostOrder(T -> rchild);
+        visit(T);
+      }
+    }
   #+END_SRC
