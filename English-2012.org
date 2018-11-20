@@ -1,0 +1,71 @@
+#+TITLE: English 2012
+#+OPTIONS: toc:nil
+#+EXPORT_FILE_NAME: ~/Documents/org-files/org-html/English-2012.html
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
+
+- whispered message 耳语
+- contend 竞争；主张
+- perceptive 敏锐的；有洞察力的
+- lameness 残废的；有缺陷的
+- critique 批评
+- take a page from 向某人学习
+- general effectiveness 整体效果
+- glaring 明显的
+- exert 运用；发挥
+- subtle 微妙的；不易察觉的
+- steer 引导
+- virtuous 有道德的
+- tactic 策略
+- break up 拆开
+- undesirable 不良的；不受欢迎的
+- stimulus 刺激
+- justify outrage 合理的愤怒
+- constitution 宪法
+- desperate 不顾一切的
+- renege on 食言
+- longstanding commitment 长期的承诺
+- extension 扩展；延期
+- foresee 可预见的
+- partial 部分的
+- leakage 泄漏
+- obscure 模糊的；分辨不清的
+- patchwork 补丁
+- pledge 保证；誓言
+- condemning 谴责
+- reaffirm 重申
+- dishonoring 违背
+- secure 安全的；获取
+- vision 视力；远见
+- defy 藐视
+- withdraw 撤回
+- prior knowledge 先验知识
+- subsequent 随后的
+- self-deception 自欺的
+- protoscience 原始科学
+- mine 采矿
+- duplication 重复
+- refutation 辩驳
+- physiologist 生理学家
+- revise 校正
+- corresponds 相当于
+- conception 理解
+- deceptiveness 欺骗的
+- inspection 审查
+- evolution 发展
+- civil servant 公务员
+- unionize 使加入工会
+- suffer much in the way of consequences 承担太多的后果
+- dominate 支配
+- patrol 巡逻
+- keep an eye on 留意
+- pay deal 工资协定
+- generous 大量的
+- academy 学院
+- notorious 出名的
+- clamp down 镇压
+- civil service 行政部门
+- stay out 保持不变
+- fat pay 丰厚工资
+- illegally secured 非法获取
+- augment 增加
+- excessively 过度的

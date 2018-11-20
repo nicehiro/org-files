@@ -1,0 +1,67 @@
+#+TITLE: English 2013
+#+OPTIONS: toc:nil
+#+EXPORT_FILE_NAME: ~/Documents/org-files/org-html/English-2013.html
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
+
+- scold 责骂
+- descend 下落
+- anticipate demand 预测需求
+- doubtless 无疑的
+- feverish 发热
+- indictment 控告
+- add odds with 与……想矛盾
+- turnaround 转变
+- inventory 存货
+- disposable 可任意处理的
+- accustom 习惯于
+- strain 滥用
+- knit 编织
+- massive amount of 大量的
+- order in volumes 大量下订单
+- fill with hunger and need 满足食欲和需求
+- towards the ends of 在……即将结束之时
+- take ... to do 花费……做某事
+- knock off 迅速而轻松的完成
+- curb their impact on 控制对……的影响
+- vanity 虚荣心
+- satire 讽刺
+- an old saying has it that ... 常言道
+- fraction 部分
+- fine-grain 精准的
+- illustrate 阐明
+- set off the row 挑起争论
+- crack on 加快做某事
+- the chief executive 最高层管理者
+- human nature being what it is 人性使然
+- oblige 迫使某人做某事
+- comply with 顺从
+- huge selling point 大卖点
+- on that count 在那一方面
+- indulgence 放纵
+- threaten species 濒危物种
+- So what does our deep future hold?
+- flagship 旗舰
+- willful 任性固执的
+- futurologist 未来学家
+- envisage 想象
+- fiction 小说
+- dedicat 致力于
+- assurance 保证
+- descendant 后裔
+- rosy 蔷薇；美好的
+- a passing fad 一时的风尚
+- constitution 宪法
+- knock out 破坏；使无效
+- overturn 推翻
+- provision 规定；条款
+- deliberate 谨慎的
+- intrude on 违背
+- law enforcement 执法
+- verify 核实
+- robust 强健的
+- legitimate 合法的
+- comply with 服从
+- invalidate 使无效
+- exclusive 唯一的
+- in essence 实际上
+- go against 与……抵触
