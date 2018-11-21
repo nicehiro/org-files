@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2018-11-20 二 23:34 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>数据结构</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="hiro" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">数据结构</h1>
+
+<div id="outline-container-org796bcf4" class="outline-2">
+<h2 id="org796bcf4"><span class="section-number-2">1</span> 基础知识点</h2>
+<div class="outline-text-2" id="text-1">
+<ul class="org-ul">
+<li>数据元素 数据项 学生记录是一个数据元素，一个学生记录由多个数据项组成</li>
+<li>数据类型有：原子类型、结构类型、抽象数据类型（数据对象、数据关系、基本操作）</li>
+<li>数据结构有：逻辑结构、存储结构、数据的运算</li>
+<li>逻辑结构：线性结构（栈、广义表等）、非线性结构（集合、树形、网状）</li>
+<li>存储结构：顺序存储（随机存取）、链式存储（顺序存取）、索引存储（随机）、散列存储（随机，有冲突）</li>
+<li>易错点：循环队列是用顺序表（顺序存储结构的单链表）表示的队列；栈是一种逻辑结构，可以使用顺序存储或者链式存储实现</li>
+<li>\(T(n) = T_1(n) + T_2(n) = O(max(f(n),g(n)))\)</li>
+<li>\(T(n) = T_1(n) * T_2(n) = O(f(n)*g(n))\)</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org721f110" class="outline-2">
+<h2 id="org721f110"><span class="section-number-2">2</span> 线性表（逻辑结构）</h2>
+<div class="outline-text-2" id="text-2">
+<ul class="org-ul">
+<li>顺序表：线性表的顺序存储</li>
+<li>单链表：线性表的链式存储（非随机存取）</li>
+<li>引入头结点的优点：无需对第一个结点进行特殊处理</li>
+<li>双链表：既有next又有prior</li>
+<li>循环单链表：单链表尾指针指向头结点</li>
+<li>循环双链表</li>
+<li>静态链表：以next=-1作为结束的标志；顺序存储，顺序存取；插入删除和其他链表一样，不移动元素，只修改指针</li>
+<li>当顺序表无序，时间复杂度O(n)；顺序表有序时，时间复杂度O(log(n))</li>
+<li>建立一个有序链表的最小时间复杂度是O(nlog(n))</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgbf9725c" class="outline-2">
+<h2 id="orgbf9725c"><span class="section-number-2">3</span> 栈（逻辑结构）</h2>
+<div class="outline-text-2" id="text-3">
+<ul class="org-ul">
+<li>只能一端插入、删除的线性表</li>
+<li>共享栈 为了有效的利用存储空间，让两个栈共享一个存储空间；对存储效率没有影响</li>
+<li>易错点：注意开始时候栈顶元素的位置</li>
+<li>技巧 对于n个元素进栈，出栈序列为 \(\frac{1}{n+1} C_{2n}^n\)</li>
+<li>易错点：C语言中标识符的规定 第一个字符必须是大小写英文字母或者下划线，不能是数字</li>
+<li>中缀表达式（对应中序遍历，左中右）</li>
+<li>栈的应用 进制转换、迷宫求解、递归</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org69eb004" class="outline-2">
+<h2 id="org69eb004"><span class="section-number-2">4</span> 队列</h2>
+<div class="outline-text-2" id="text-4">
+<ul class="org-ul">
+<li>只允许在表的一端插入，另一端删除</li>
+<li>队列操作 rear 进，front 出（rear 中不存放元素）
+<ul class="org-ul">
+<li>初始条件 Q.front = Q.rear = 0</li>
+<li>进队操作 SqQueue[Q.rear] = x; Q.rear ++;</li>
+<li>出队操作 x = SqQueue[Q.front]; Q.front ++;</li>
+</ul></li>
+<li>循环队列操作
+<ul class="org-ul">
+<li>初始条件 Q.front = Q.rear = 0</li>
+<li>进队操作 SqQueue[Q.rear] = x; Q.rear = (Q.rear+1)%MaxSize</li>
+<li>出队操作 x = SqQueue[Q.front]; Q.front = (Q.front+1)%MaxSize</li>
+<li>队列长度 (Q.rear+MaxSize-Q.front)%MaxSize</li>
+<li>队空条件 Q.front = Q.rear</li>
+</ul></li>
+<li>队满条件
+<ul class="org-ul">
+<li>牺牲一个单元（rear所在的单元不放元素） (Q.rear+1)%MaxSize = Q.front</li>
+<li>增设表示元素个数的数据成员 Q.size = MaxSize</li>
+<li>增设 tag 表示是否队满</li>
+</ul></li>
+<li>能由输入受限的双端队列得到而不能由输出受限的双端队列得到的是 4,1,3,2</li>
+<li>能由输出受限的双端队列得到而不能由输入受限的双端队列得到的是 4,2,1,3</li>
+<li>既不能由输出受限的双端队列得到也不能由输入受限的双端队列得到的是 4,2,3,1</li>
+<li>易错点：用链表形式存储队列时，一般情况下，删除操作只需要修改头指针即可；但如果队列中只有一个元素，删除后队列为空，需要修改尾指针Q.rear=Q.front</li>
+<li>队列的应用 缓存区</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgf5a6b50" class="outline-2">
+<h2 id="orgf5a6b50"><span class="section-number-2">5</span> 树与二叉树</h2>
+<div class="outline-text-2" id="text-5">
+<ul class="org-ul">
+<li>结点的度 一个结点的子结点的个数</li>
+<li>树的度 一棵树中结点的最大度数</li>
+<li>结点的层次 从根结点开始为第一层</li>
+<li>结点的高度 从根结点开始自低向上增加</li>
+<li>结点的深度 从根结点开始自上向下增加</li>
+<li>树的高度（深度） 从1开始</li>
+<li>路径长度 路径上经过的边的个数</li>
+<li>树的路径长度 所有路径长度的总和</li>
+<li>易错点 度为2的树至少有三个结点；而二叉树可以为空；二叉树区分左右子树</li>
+<li>二叉树的性质 \(N_0 + N_1 + N_2 = 2N_2 + N_1 + 1 => N_0 = N_2 + 1\)</li>
+<li>具有n个结点的 <b>完全</b> 二叉树的高度为 \(log_2N +1\)</li>
+<li>二叉树中不可能存在奇数个的度为1的结点</li>
+<li>由二叉树的中序和先序、后序、层次遍历可以唯一的确定一颗二叉树</li>
+<li>线索二叉树是加上线索的链表结构，他是一种物理结构</li>
+<li>先序二叉树中查找前驱需要知道结点的双亲；后序二叉树中查找后继也需要知道结点的双亲</li>
+<li>树的存储结构
+<ul class="org-ul">
+<li>双亲表示法 静态链表，有一个单元存储双亲的位置</li>
+<li>孩子表示法 每个结点一个链表，链表中有结点的孩子结点</li>
+<li>孩子兄弟表示法 每个结点包含结点值，指向结点第一个孩子结点的指针，指向结点下一个兄弟结点的指针</li>
+</ul></li>
+<li>易错点 树的后根遍历相当于二叉树的中序遍历（左根右）</li>
+<li>二叉排序树的删除操作
+<ul class="org-ul">
+<li>叶结点 直接删除</li>
+<li>只有一颗左子树或者右子树，使用右子树或者左子树替代</li>
+<li>有左和右子树，找右子树最左边的或者左子树最右边的替代</li>
+</ul></li>
+<li>平衡二叉树的插入
+<ul class="org-ul">
+<li>每次调整的对象都是最小不平衡子树</li>
+<li>\(N_h\)表示深度为h的平衡树中含有的最小结点数，\(N_h = N_{h-1} + N_{h-2} + 1, N_0 = 0, N_1 = 1, N_2 = 2\)</li>
+<li>含有n个结点的平衡二叉树的最大深度是 \(log_2n\)</li>
+<li>平均查找长度 \(log_2n\)</li>
+</ul></li>
+<li>非前缀编码 任何一个编码都不是其他编码的前缀</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org6c7df62" class="outline-2">
+<h2 id="org6c7df62"><span class="section-number-2">6</span> 伪代码（C）</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-org3482efe" class="outline-3">
+<h3 id="org3482efe"><span class="section-number-3">6.1</span> 代码常识</h3>
+<div class="outline-text-3" id="text-6-1">
+<ul class="org-ul">
+<li>指针 存储数据所在位置，地址</li>
+<li>引用 数据</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orga46ec1a" class="outline-3">
+<h3 id="orga46ec1a"><span class="section-number-3">6.2</span> 线性表</h3>
+<div class="outline-text-3" id="text-6-2">
+<ul class="org-ul">
+<li>线性表中的元素是从1开始的，而数组中的顺序是从0开始的</li>
+<li><p>
+线性表的顺序存储类型表述（数组定义）（静态分配）
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #cc99cc;">#define</span> <span style="color: #ffcc66;">MaxSize</span> 50
+<span style="color: #99cc99;">typedef</span> <span style="color: #99cc99;">struct</span> <span style="color: #cccccc;">{</span>
+  <span style="color: #6699cc;">ElemType</span> <span style="color: #ffcc66;">data</span><span style="color: #66cccc;">[</span>MaxSize<span style="color: #66cccc;">]</span>;
+  <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">length</span>;
+<span style="color: #cccccc;">}</span> <span style="color: #6699cc;">SqList</span>;
+</pre>
+</div></li>
+<li><p>
+线性表的顺序存储类型表述（数组定义）（动态分配）
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #cc99cc;">#define</span> <span style="color: #ffcc66;">InitSize</span> 20
+<span style="color: #99cc99;">typedef</span> <span style="color: #99cc99;">struct</span> <span style="color: #cccccc;">{</span>
+  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#25351;&#38024;</span>
+  <span style="color: #6699cc;">ElemType</span> *<span style="color: #ffcc66;">data</span>;
+  <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">MaxSize</span>, <span style="color: #ffcc66;">length</span>;
+<span style="color: #cccccc;">}</span> <span style="color: #6699cc;">SeqList</span>;
+<span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#21160;&#24577;&#20998;&#37197;</span>
+L.data = <span style="color: #cccccc;">(</span><span style="color: #6699cc;">ElemType</span><span style="color: #cccccc;">)</span> malloc<span style="color: #cccccc;">(</span><span style="color: #99cc99;">sizeof</span><span style="color: #66cccc;">(</span>ElemType<span style="color: #66cccc;">)</span> *InitSize<span style="color: #cccccc;">)</span>;
+<span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">C++ &#21160;&#24577;&#20998;&#37197;</span>
+L.data = new ElemType<span style="color: #cccccc;">[</span>InitSize<span style="color: #cccccc;">]</span>
+</pre>
+</div></li>
+<li><p>
+顺序表的插入
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #6699cc;">bool</span> <span style="color: #f99157;">ListInsert</span><span style="color: #cccccc;">(</span>SqList &amp;L, <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">i</span>, <span style="color: #6699cc;">ElemType</span> <span style="color: #ffcc66;">e</span><span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
+  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#23558;&#20803;&#32032;e&#25554;&#20837;&#21040;L&#30340;&#31532;i&#20010;&#20301;&#32622;&#65307;i&#20174;1&#24320;&#22987;</span>
+  <span style="color: #99cc99;">if</span> <span style="color: #66cccc;">(</span>i &lt; 1 || i &gt; L.length + 1<span style="color: #66cccc;">)</span>
+    <span style="color: #99cc99;">return</span> <span style="color: #6699cc;">false</span>;
+  <span style="color: #99cc99;">if</span> <span style="color: #66cccc;">(</span>L.length &gt;= MaxSize<span style="color: #66cccc;">)</span>
+    <span style="color: #99cc99;">return</span> <span style="color: #6699cc;">false</span>;
+  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#21518;&#31227;</span>
+  <span style="color: #99cc99;">for</span> <span style="color: #66cccc;">(</span><span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">j</span>=L.length; j&gt;=i; j--<span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
+    L.data<span style="color: #ffcc66;">[</span>j<span style="color: #ffcc66;">]</span> = L.data<span style="color: #ffcc66;">[</span>j-1<span style="color: #ffcc66;">]</span>;
+  <span style="color: #66cccc;">}</span>
+  L.data<span style="color: #66cccc;">[</span>i-1<span style="color: #66cccc;">]</span> = e;
+  L.length ++;
+  <span style="color: #99cc99;">return</span> <span style="color: #6699cc;">true</span>;
+<span style="color: #cccccc;">}</span>
+</pre>
+</div></li>
+<li><p>
+顺序表的删除
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #6699cc;">bool</span> <span style="color: #f99157;">ListDelete</span><span style="color: #cccccc;">(</span>SqList &amp;L, <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">i</span>, ElemType &amp;e<span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
+  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#23558;L&#20013;&#31532;i&#20010;&#20803;&#32032;&#21024;&#38500;&#65292;&#36171;&#20540;&#32473;e</span>
+  <span style="color: #99cc99;">if</span> <span style="color: #66cccc;">(</span>i &lt; 1 || i &gt; L.length<span style="color: #66cccc;">)</span>
+    <span style="color: #99cc99;">return</span> <span style="color: #6699cc;">false</span>;
+  e = L.data<span style="color: #66cccc;">[</span>i-1<span style="color: #66cccc;">]</span>;
+  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#21069;&#31227;</span>
+  <span style="color: #99cc99;">for</span> <span style="color: #66cccc;">(</span><span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">j</span>=i; j&lt;L.length; j++<span style="color: #66cccc;">)</span>
+    L.data<span style="color: #66cccc;">[</span>j-1<span style="color: #66cccc;">]</span> = L.data<span style="color: #66cccc;">[</span>j<span style="color: #66cccc;">]</span>;
+  L.length --;
+  <span style="color: #99cc99;">return</span> <span style="color: #6699cc;">false</span>;
+<span style="color: #cccccc;">}</span>
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org6a03fbd" class="outline-3">
+<h3 id="org6a03fbd"><span class="section-number-3">6.3</span> 单链表</h3>
+<div class="outline-text-3" id="text-6-3">
+<ul class="org-ul">
+<li><p>
+结点定义
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #99cc99;">typedef</span> <span style="color: #99cc99;">struct</span> <span style="color: #6699cc;">LNode</span> <span style="color: #cccccc;">{</span>
+  <span style="color: #6699cc;">ElemType</span> <span style="color: #ffcc66;">data</span>;
+  <span style="color: #99cc99;">struct</span> <span style="color: #6699cc;">LNode</span> *<span style="color: #ffcc66;">next</span>;
+<span style="color: #cccccc;">}</span> <span style="color: #6699cc;">LNode</span>, *<span style="color: #6699cc;">LinkedList</span>;
+</pre>
+</div></li>
+<li><p>
+头插法
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #6699cc;">LinkedList</span> <span style="color: #f99157;">createList1</span><span style="color: #cccccc;">(</span>LinkList &amp;L<span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
+  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#24102;&#22836;&#32467;&#28857;&#30340;&#21333;&#38142;&#34920;</span>
+  <span style="color: #6699cc;">LNode</span> *<span style="color: #ffcc66;">s</span>; <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">x</span>;
+  L = <span style="color: #66cccc;">(</span><span style="color: #6699cc;">LinkedList</span><span style="color: #66cccc;">)</span>malloc<span style="color: #66cccc;">(</span><span style="color: #99cc99;">sizeof</span><span style="color: #ffcc66;">(</span>LNode<span style="color: #ffcc66;">)</span><span style="color: #66cccc;">)</span>;
+  L -&gt; next = null;
+  scanf<span style="color: #66cccc;">(</span><span style="color: #66cccc;">"%d"</span>, &amp;x<span style="color: #66cccc;">)</span>;
+  <span style="color: #99cc99;">while</span> <span style="color: #66cccc;">(</span>x != 9999<span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
+    s = <span style="color: #ffcc66;">(</span><span style="color: #6699cc;">LNode</span>*<span style="color: #ffcc66;">)</span>malloc<span style="color: #ffcc66;">(</span><span style="color: #99cc99;">sizeof</span><span style="color: #99cc99;">(</span>LNode<span style="color: #99cc99;">)</span><span style="color: #ffcc66;">)</span>;
+    s -&gt; data = x;
+    s -&gt; next = L -&gt; next;
+    L -&gt; next = s;
+    scanf<span style="color: #ffcc66;">(</span><span style="color: #66cccc;">"%d"</span>, &amp;x<span style="color: #ffcc66;">)</span>;
+  <span style="color: #66cccc;">}</span>
+  <span style="color: #99cc99;">return</span> L;
+<span style="color: #cccccc;">}</span>
+</pre>
+</div></li>
+<li><p>
+尾插法
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #6699cc;">LinkedList</span> <span style="color: #f99157;">createList2</span><span style="color: #cccccc;">(</span>LinkedList &amp;L<span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
+  <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">x</span>;
+  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">malloc &#20998;&#37197;&#20986;&#26469;&#30340;&#26159;&#25351;&#38024;&#31867;&#22411;</span>
+  L = <span style="color: #66cccc;">(</span><span style="color: #6699cc;">LinkedList</span><span style="color: #66cccc;">)</span>malloc<span style="color: #66cccc;">(</span><span style="color: #99cc99;">sizeof</span><span style="color: #ffcc66;">(</span>LNode<span style="color: #ffcc66;">)</span><span style="color: #66cccc;">)</span>;
+  <span style="color: #6699cc;">LNode</span> *<span style="color: #ffcc66;">s</span>, *<span style="color: #ffcc66;">r</span> = L;
+  scanf<span style="color: #66cccc;">(</span><span style="color: #66cccc;">"%s"</span>, x<span style="color: #66cccc;">)</span>;
+  <span style="color: #99cc99;">while</span><span style="color: #66cccc;">(</span>x != 9999<span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
+    s = <span style="color: #ffcc66;">(</span><span style="color: #6699cc;">LNode</span>*<span style="color: #ffcc66;">)</span>malloc<span style="color: #ffcc66;">(</span><span style="color: #99cc99;">sizeof</span><span style="color: #99cc99;">(</span>LNode<span style="color: #99cc99;">)</span><span style="color: #ffcc66;">)</span>;
+    s -&gt; data = x;
+    r -&gt; next = s;
+    r = s;
+    scanf<span style="color: #ffcc66;">(</span><span style="color: #66cccc;">"%d"</span>, x<span style="color: #ffcc66;">)</span>;
+  <span style="color: #66cccc;">}</span>
+  r -&gt; next = <span style="color: #6699cc;">NULL</span>;
+  <span style="color: #99cc99;">return</span> r;
+<span style="color: #cccccc;">}</span>
+</pre>
+</div></li>
+<li><p>
+双链表
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #99cc99;">typedef</span> <span style="color: #99cc99;">struct</span> <span style="color: #6699cc;">DNode</span> <span style="color: #cccccc;">{</span>
+  <span style="color: #6699cc;">ElemType</span> <span style="color: #ffcc66;">data</span>;
+  Struct <span style="color: #6699cc;">DNode</span> *<span style="color: #ffcc66;">prior</span>, *<span style="color: #ffcc66;">next</span>;
+<span style="color: #cccccc;">}</span> <span style="color: #6699cc;">DNode</span>, *<span style="color: #6699cc;">DLinkList</span>;
+</pre>
+</div></li>
+<li><p>
+静态链表
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #cc99cc;">#define</span> <span style="color: #ffcc66;">MaxSize</span> 50
+<span style="color: #99cc99;">typedef</span> <span style="color: #99cc99;">struct</span> <span style="color: #cccccc;">{</span>
+  <span style="color: #6699cc;">ElemType</span> <span style="color: #ffcc66;">data</span>;
+  <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">next</span>;
+<span style="color: #cccccc;">}</span> <span style="color: #6699cc;">SLinkList</span><span style="color: #cccccc;">[</span>MaxSize<span style="color: #cccccc;">]</span>;
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org4d62d73" class="outline-3">
+<h3 id="org4d62d73"><span class="section-number-3">6.4</span> 栈</h3>
+<div class="outline-text-3" id="text-6-4">
+<ul class="org-ul">
+<li><p>
+顺序栈（顺序存储）
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #cc99cc;">#define</span> <span style="color: #ffcc66;">MaxSize</span> 50
+<span style="color: #99cc99;">typedef</span> <span style="color: #99cc99;">struct</span> <span style="color: #cccccc;">{</span>
+  <span style="color: #6699cc;">ElemType</span> <span style="color: #ffcc66;">data</span>;
+  <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">top</span>;
+<span style="color: #cccccc;">}</span> <span style="color: #6699cc;">SqStack</span>;
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgb943aed" class="outline-3">
+<h3 id="orgb943aed"><span class="section-number-3">6.5</span> 队列</h3>
+<div class="outline-text-3" id="text-6-5">
+<ul class="org-ul">
+<li><p>
+顺序队列
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #cc99cc;">#define</span> <span style="color: #ffcc66;">MaxSize</span> 50
+<span style="color: #99cc99;">typedef</span> <span style="color: #99cc99;">struct</span> <span style="color: #cccccc;">{</span>
+  <span style="color: #6699cc;">ElemType</span> <span style="color: #ffcc66;">data</span>;
+  <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">front</span>, <span style="color: #ffcc66;">rear</span>;
+<span style="color: #cccccc;">}</span> <span style="color: #6699cc;">SqQueue</span>;
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org554ee56" class="outline-3">
+<h3 id="org554ee56"><span class="section-number-3">6.6</span> 二叉树</h3>
+<div class="outline-text-3" id="text-6-6">
+<ul class="org-ul">
+<li><p>
+先序遍历
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #6699cc;">void</span> <span style="color: #f99157;">PreOrder</span><span style="color: #cccccc;">(</span><span style="color: #6699cc;">BiTree</span> <span style="color: #ffcc66;">T</span><span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
+  <span style="color: #99cc99;">if</span> <span style="color: #66cccc;">(</span>T != <span style="color: #6699cc;">NULL</span><span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
+    visit<span style="color: #ffcc66;">(</span>T<span style="color: #ffcc66;">)</span>;
+    PreOrder<span style="color: #ffcc66;">(</span>T -&gt; lchild<span style="color: #ffcc66;">)</span>;
+    PreOrder<span style="color: #ffcc66;">(</span>T -&gt; rchild<span style="color: #ffcc66;">)</span>;
+  <span style="color: #66cccc;">}</span>
+<span style="color: #cccccc;">}</span>
+</pre>
+</div></li>
+<li><p>
+中序遍历
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #6699cc;">void</span> <span style="color: #f99157;">InOrder</span><span style="color: #cccccc;">(</span><span style="color: #6699cc;">BiTree</span> <span style="color: #ffcc66;">T</span><span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
+  <span style="color: #99cc99;">if</span> <span style="color: #66cccc;">(</span>T != <span style="color: #6699cc;">NULL</span><span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
+    inOrder<span style="color: #ffcc66;">(</span>T -&gt; lchild<span style="color: #ffcc66;">)</span>;
+    visit<span style="color: #ffcc66;">(</span>T<span style="color: #ffcc66;">)</span>;
+    inOrder<span style="color: #ffcc66;">(</span>T -&gt; rchild<span style="color: #ffcc66;">)</span>;
+  <span style="color: #66cccc;">}</span>
+<span style="color: #cccccc;">}</span>
+</pre>
+</div></li>
+<li><p>
+后序遍历
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #6699cc;">void</span> <span style="color: #f99157;">PostOrder</span><span style="color: #cccccc;">(</span><span style="color: #6699cc;">BiTree</span> <span style="color: #ffcc66;">T</span><span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
+  <span style="color: #99cc99;">if</span> <span style="color: #66cccc;">(</span>T != <span style="color: #6699cc;">NULL</span><span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
+    PostOrder<span style="color: #ffcc66;">(</span>T -&gt; lchild<span style="color: #ffcc66;">)</span>;
+    PostOrder<span style="color: #ffcc66;">(</span>T -&gt; rchild<span style="color: #ffcc66;">)</span>;
+    visit<span style="color: #ffcc66;">(</span>T<span style="color: #ffcc66;">)</span>;
+  <span style="color: #66cccc;">}</span>
+<span style="color: #cccccc;">}</span>
+</pre>
+</div></li>
+<li><p>
+中序遍历的非递归
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #6699cc;">void</span> <span style="color: #f99157;">InOrder2</span><span style="color: #cccccc;">(</span><span style="color: #6699cc;">BiTree</span> <span style="color: #ffcc66;">T</span><span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
+  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#38656;&#35201;&#20511;&#21161;&#26632;</span>
+  InitStack<span style="color: #66cccc;">(</span>S<span style="color: #66cccc;">)</span>;
+  <span style="color: #6699cc;">BiTree</span> <span style="color: #ffcc66;">p</span> = T;
+  <span style="color: #99cc99;">while</span> <span style="color: #66cccc;">(</span>p || <span style="color: #6699cc;">!</span>IsEmpty<span style="color: #ffcc66;">(</span>S<span style="color: #ffcc66;">)</span><span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
+    <span style="color: #99cc99;">if</span> <span style="color: #ffcc66;">(</span>p<span style="color: #ffcc66;">)</span> <span style="color: #ffcc66;">{</span>
+      Push<span style="color: #99cc99;">(</span>S, p<span style="color: #99cc99;">)</span>;
+      p = p -&gt; lchild;
+    <span style="color: #ffcc66;">}</span> <span style="color: #99cc99;">else</span> <span style="color: #ffcc66;">{</span>
+      Pop<span style="color: #99cc99;">(</span>S, p<span style="color: #99cc99;">)</span>;
+      visit<span style="color: #99cc99;">(</span>p<span style="color: #99cc99;">)</span>;
+      p = p -&gt; rchild;
+    <span style="color: #ffcc66;">}</span>
+  <span style="color: #66cccc;">}</span>
+<span style="color: #cccccc;">}</span>
+</pre>
+</div></li>
+<li><p>
+先序遍历的非递归
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #6699cc;">void</span> <span style="color: #f99157;">PreOrder2</span><span style="color: #cccccc;">(</span><span style="color: #6699cc;">BiTree</span> <span style="color: #ffcc66;">T</span><span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
+  InitStack<span style="color: #66cccc;">(</span>S<span style="color: #66cccc;">)</span>;
+  <span style="color: #6699cc;">BiTree</span> <span style="color: #ffcc66;">p</span> = T;
+  <span style="color: #99cc99;">while</span> <span style="color: #66cccc;">(</span>p || IsEmpty<span style="color: #ffcc66;">(</span>S<span style="color: #ffcc66;">)</span><span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
+    <span style="color: #99cc99;">if</span> <span style="color: #ffcc66;">(</span>p<span style="color: #ffcc66;">)</span> <span style="color: #ffcc66;">{</span>
+      visit<span style="color: #99cc99;">(</span>p<span style="color: #99cc99;">)</span>;
+      Push<span style="color: #99cc99;">(</span>p<span style="color: #99cc99;">)</span>;
+      p = p -&gt; lchild;
+    <span style="color: #ffcc66;">}</span> <span style="color: #99cc99;">else</span> <span style="color: #ffcc66;">{</span>
+      Pop<span style="color: #99cc99;">(</span>p<span style="color: #99cc99;">)</span>;
+      p = p -&gt; rchild;
+    <span style="color: #ffcc66;">}</span>
+  <span style="color: #66cccc;">}</span>
+<span style="color: #cccccc;">}</span>
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: 2018-11-10</p>
+<p class="author">Author: hiro</p>
+<p class="date">Created: 2018-11-20 二 23:34</p>
+<p class="validation"></p>
+</div>
+</body>
+</html>
