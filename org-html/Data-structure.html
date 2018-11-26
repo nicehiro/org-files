@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2018-11-24 六 16:12 -->
+<!-- 2018-11-26 一 18:13 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>数据结构</title>
@@ -254,8 +254,8 @@ for the JavaScript code in this tag.
 <div id="content">
 <h1 class="title">数据结构</h1>
 
-<div id="outline-container-org9921d08" class="outline-2">
-<h2 id="org9921d08"><span class="section-number-2">1</span> 基础知识点</h2>
+<div id="outline-container-org57c110a" class="outline-2">
+<h2 id="org57c110a"><span class="section-number-2">1</span> 基础知识点</h2>
 <div class="outline-text-2" id="text-1">
 <ul class="org-ul">
 <li>数据元素 数据项 学生记录是一个数据元素，一个学生记录由多个数据项组成</li>
@@ -269,8 +269,8 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-<div id="outline-container-orgf1b0631" class="outline-2">
-<h2 id="orgf1b0631"><span class="section-number-2">2</span> 线性表（逻辑结构）</h2>
+<div id="outline-container-org3b3c1ec" class="outline-2">
+<h2 id="org3b3c1ec"><span class="section-number-2">2</span> 线性表（逻辑结构）</h2>
 <div class="outline-text-2" id="text-2">
 <ul class="org-ul">
 <li>顺序表：线性表的顺序存储</li>
@@ -285,8 +285,8 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-<div id="outline-container-org1938e23" class="outline-2">
-<h2 id="org1938e23"><span class="section-number-2">3</span> 栈（逻辑结构）</h2>
+<div id="outline-container-orge743a3a" class="outline-2">
+<h2 id="orge743a3a"><span class="section-number-2">3</span> 栈（逻辑结构）</h2>
 <div class="outline-text-2" id="text-3">
 <ul class="org-ul">
 <li>只能一端插入、删除的线性表</li>
@@ -299,8 +299,8 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-<div id="outline-container-orgdfa42de" class="outline-2">
-<h2 id="orgdfa42de"><span class="section-number-2">4</span> 队列</h2>
+<div id="outline-container-org5e8eac9" class="outline-2">
+<h2 id="org5e8eac9"><span class="section-number-2">4</span> 队列</h2>
 <div class="outline-text-2" id="text-4">
 <ul class="org-ul">
 <li>只允许在表的一端插入，另一端删除</li>
@@ -332,8 +332,8 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-<div id="outline-container-org2c3e3bc" class="outline-2">
-<h2 id="org2c3e3bc"><span class="section-number-2">5</span> 树与二叉树</h2>
+<div id="outline-container-org83feeb9" class="outline-2">
+<h2 id="org83feeb9"><span class="section-number-2">5</span> 树与二叉树</h2>
 <div class="outline-text-2" id="text-5">
 <ul class="org-ul">
 <li>结点的度 一个结点的子结点的个数</li>
@@ -373,299 +373,492 @@ for the JavaScript code in this tag.
 </ul></li>
 <li>非前缀编码 任何一个编码都不是其他编码的前缀</li>
 </ul>
+</div>
+</div>
 
-<p>
-*
-</p>
-</div>
-</div>
-<div id="outline-container-org414dbcc" class="outline-2">
-<h2 id="org414dbcc"><span class="section-number-2">6</span> 伪代码（C）</h2>
+<div id="outline-container-org3102945" class="outline-2">
+<h2 id="org3102945"><span class="section-number-2">6</span> 图</h2>
 <div class="outline-text-2" id="text-6">
+<ul class="org-ul">
+<li>表可以是空表，树可以是空树，但图不可以是空图（不能没有一个顶点）</li>
+<li>简单图 1.不存在重复边 2.不存在到自身的边</li>
+<li>无向完全图 无向图任意两个顶点之间都有边 n个顶点的无向完全图中有\(\frac{n(n-1)}{2}\)</li>
+<li>有向完全图 任意两个顶点之间都有方向相反的弧 \(n(n-1)\)</li>
+<li>子图 子图U的所有顶点和边都在原图V的顶点集和边集中（任意有向图的边集和顶点集的子集有可能构不成原有向图的子集）</li>
+<li>连通子图 子图是连通的</li>
+<li>连通分量 极大连通子图</li>
+<li>极小连通子图 既使图连通，又使边数最小</li>
+<li>强连通图 有向图中任意两个顶点可以互相到达</li>
+<li>强连通分量 有向图中的极大强连通子图</li>
+<li>连通图的生成树 包含图中所有顶点的极小连通子图（不连通没有生成树）</li>
+<li>简单路径 顶点不重复出现的路径</li>
+<li>简单回路 只有顶点和终点成环</li>
+<li>有向树 一个顶点入度为0，其他顶点入度均为1</li>
+<li>邻接矩阵 有向图和无向图（唯一） 可以压缩，适合稠密图</li>
+<li>邻接表法 顶点表 边表 顶点表后跟这个顶点相关的顶点 有向图和无向图（不唯一）</li>
+<li>十字链表
+<ul class="org-ul">
+<li>弧结点 尾域tailvex（弧尾在图中的位置） 头域headvex（弧头在图中的位置） hlink（弧头相同的下一个弧结点） tlink（弧尾相同的下一个弧结点） info（弧带的信息）</li>
+<li>顶点结点 以该顶点为弧头的一个弧结点link 以该顶点为弧尾的一个弧结点link 数据</li>
+</ul></li>
+<li>邻接多重表
+<ul class="org-ul">
+<li>边结点 ivex，jvex（边的两个顶点） ilink，jlink（依附于i，j的下一条边）</li>
+<li>顶点结点 顶点信息 一条依附于该顶点的边 （不唯一）</li>
+</ul></li>
+<li>以邻接矩阵为存储结构，时间复杂度\(O(n^2)\)；以邻接表为存储结构，时间复杂度\(O(V+E)\)</li>
+<li>最小生成树
+<ul class="org-ul">
+<li>当权值互不相等时，最小生成树是唯一的</li>
+<li>Prim算法  从一个点出发，每次找出已确定点集中的顶点的最短路径</li>
+<li>Kruskal算法 找图中距离最小的点，如果构成环则舍去</li>
+</ul></li>
+<li>最短路径
+<ul class="org-ul">
+<li>Dijkstra 从顶点开始，每一趟遍历各个顶点，记录最短路径，选出最短的点加入到集合S中；之后的每一次遍历都要绕过新加的点，如果新的路径长那么原路径不变</li>
+<li>Floyd dist[-1] 各点到其余点的路径数组；dist[i] 各点绕i点到其余点的路径，小的保留；直到遍历所有顶点</li>
+</ul></li>
+<li>有向无环图 DAG</li>
+<li>AOV网 DAG图中顶点表示活动，活动有先后顺序</li>
+<li>拓扑排序 深度遍历倒过来就是拓扑排序结果；如果邻接矩阵是三角矩阵，则存在拓扑序列，反之不成立</li>
+<li>AOE网 DAG图中顶点表示事件，边表示活动</li>
+<li>缩短关键路径可以加快活动；但不能随意缩短，可能会使关键路径不再是关键路径</li>
+<li>关键路径不唯一，找多条关键路径的共同关键活动缩短才可以缩短事件</li>
+</ul>
 </div>
-<div id="outline-container-org0ee9c56" class="outline-3">
-<h3 id="org0ee9c56"><span class="section-number-3">6.1</span> 代码常识</h3>
-<div class="outline-text-3" id="text-6-1">
+</div>
+<div id="outline-container-orgfa98904" class="outline-2">
+<h2 id="orgfa98904"><span class="section-number-2">7</span> 查找</h2>
+<div class="outline-text-2" id="text-7">
+<ul class="org-ul">
+<li>静态查找表 不做插入、删除操作的表</li>
+<li><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">查找方法</th>
+<th scope="col" class="org-left">ASL(S)</th>
+<th scope="col" class="org-left">ASL(U)</th>
+<th scope="col" class="org-left">说明</th>
+<th scope="col" class="org-left">时间复杂度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">一般表的线性查找</td>
+<td class="org-left">\(\frac{n+1}{2}\)</td>
+<td class="org-left">\(n+1\)</td>
+<td class="org-left">顺序存储和链式存储都可以；链表的查找只能使用这个</td>
+<td class="org-left">O(n)</td>
+</tr>
+
+<tr>
+<td class="org-left">有序表的顺序查找</td>
+<td class="org-left">\(\frac{n+1}{2}\)</td>
+<td class="org-left">\(\frac{n}{2}+\frac{n}{n+1}\)</td>
+<td class="org-left">顺序存储和链式存储都可以；不成功时最后有两个元素查找为n</td>
+<td class="org-left">O(n)</td>
+</tr>
+
+<tr>
+<td class="org-left">折半查找</td>
+<td class="org-left">n 个结点</td>
+<td class="org-left">n+1 个结点</td>
+<td class="org-left">适合线性表的顺序存储，不适合链式存储；有序，随机存取</td>
+<td class="org-left">O(\(log_2n\))</td>
+</tr>
+
+<tr>
+<td class="org-left">分块查找</td>
+<td class="org-left">X</td>
+<td class="org-left">X</td>
+<td class="org-left">块内元素可以无序，块间元素必须有序</td>
+<td class="org-left">O(\(L_1+L_2\))</td>
+</tr>
+
+<tr>
+<td class="org-left">B 树</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table></li>
+<li>易错点 折半查找的判定树平衡二叉树，不一定是完全二叉树</li>
+<li>B 树
+<ul class="org-ul">
+<li>m阶B树 每个结点最多只能有m棵子树，m-1个s原始；或空树</li>
+<li><b>除根结点以外</b> 其他结点最少有 \(\lceil m/2 \rceil\) 棵子树</li>
+<li>根结点至少有两棵子树</li>
+<li>所有叶结点都出现在同一层次上，并且不带信息；可以看作是查找失败点，这些点实际不存在，指向这些结点的指针是空指针</li>
+<li>\(log_m(n+1) \leq h \leq log_{\lceil m/2 \rceil} ((n+1)/2) + 1\)</li>
+<li>插入的结点一定在最底层的某个非叶结点</li>
+<li>删除 直接删除 -&gt; 兄弟够借 -&gt; 兄弟不够借</li>
+</ul></li>
+<li>B+ 树
+<ul class="org-ul">
+<li>m阶B+树 每个结点最多只能有m棵子树 m个元素</li>
+<li><b>除根结点以外</b> 其他结点至少有两棵子树</li>
+<li>所有非叶结点只起到索引所用，只含有对应子树的最大关键字和指向子树的指针，不含有关键字对应记录的存储地址</li>
+<li>可以进行两种运算：从根结点的多路查找；从最小关键字开始的顺序查找</li>
+<li>B+ 适用于操作系统的文件索引和数据库索引</li>
+</ul></li>
+<li>Hash 表
+<ul class="org-ul">
+<li>散列函数 直接定址法 除留余数法 数字分析法 平方取中法 折叠法</li>
+<li>处理冲突的方法 开放定址法（既向它的同义词开放，也向非同义词开放）（线性探测法 平方探测法 再散列法 伪随机序列法） 拉链法（链接法）</li>
+<li>散列性能取决于散列函数、处理冲突的方法和装填因子（\(\\frac{表中记录数}{散列表长度})）</li>
+<li>平均查找长度依赖于装填因子，而不直接依赖表中记录数和散列表长度</li>
+</ul></li>
+<li>字符串模式匹配 KMP算法
+<ul class="org-ul">
+<li>思想：母串只遍历一次 根据子串自身元素重复的特性</li>
+<li>next 数组的计算方法：编号前面元素的匹配个数，匹配就+1，不匹配-1</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org3d76924" class="outline-2">
+<h2 id="org3d76924"><span class="section-number-2">8</span> 伪代码（C）</h2>
+<div class="outline-text-2" id="text-8">
+</div>
+<div id="outline-container-org6d17556" class="outline-3">
+<h3 id="org6d17556"><span class="section-number-3">8.1</span> 代码常识</h3>
+<div class="outline-text-3" id="text-8-1">
 <ul class="org-ul">
 <li>指针 存储数据所在位置，地址</li>
 <li>引用 数据</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orga339977" class="outline-3">
-<h3 id="orga339977"><span class="section-number-3">6.2</span> 线性表</h3>
-<div class="outline-text-3" id="text-6-2">
+<div id="outline-container-org4f2aca8" class="outline-3">
+<h3 id="org4f2aca8"><span class="section-number-3">8.2</span> 线性表</h3>
+<div class="outline-text-3" id="text-8-2">
 <ul class="org-ul">
 <li>线性表中的元素是从1开始的，而数组中的顺序是从0开始的</li>
 <li><p>
 线性表的顺序存储类型表述（数组定义）（静态分配）
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #cc99cc;">#define</span> <span style="color: #ffcc66;">MaxSize</span> 50
-<span style="color: #99cc99;">typedef</span> <span style="color: #99cc99;">struct</span> <span style="color: #cccccc;">{</span>
-  <span style="color: #6699cc;">ElemType</span> <span style="color: #ffcc66;">data</span><span style="color: #66cccc;">[</span>MaxSize<span style="color: #66cccc;">]</span>;
-  <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">length</span>;
-<span style="color: #cccccc;">}</span> <span style="color: #6699cc;">SqList</span>;
+<pre class="src src-c"><span style="color: #b0c4de;">#define</span> <span style="color: #eedd82;">MaxSize</span> 50
+<span style="color: #00ffff;">typedef</span> <span style="color: #00ffff;">struct</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #98fb98;">ElemType</span> <span style="color: #eedd82;">data</span><span style="color: #93a8c6;">[</span>MaxSize<span style="color: #93a8c6;">]</span>;
+  <span style="color: #98fb98;">int</span> <span style="color: #eedd82;">length</span>;
+<span style="color: #8c8c8c;">}</span> <span style="color: #98fb98;">SqList</span>;
 </pre>
 </div></li>
 <li><p>
 线性表的顺序存储类型表述（数组定义）（动态分配）
 </p>
 <div class="org-src-container">
-<pre class="src src-c"><span style="color: #cc99cc;">#define</span> <span style="color: #ffcc66;">InitSize</span> 20
-<span style="color: #99cc99;">typedef</span> <span style="color: #99cc99;">struct</span> <span style="color: #cccccc;">{</span>
-  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#25351;&#38024;</span>
-  <span style="color: #6699cc;">ElemType</span> *<span style="color: #ffcc66;">data</span>;
-  <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">MaxSize</span>, <span style="color: #ffcc66;">length</span>;
-<span style="color: #cccccc;">}</span> <span style="color: #6699cc;">SeqList</span>;
-<span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#21160;&#24577;&#20998;&#37197;</span>
-L.data = <span style="color: #cccccc;">(</span><span style="color: #6699cc;">ElemType</span><span style="color: #cccccc;">)</span> malloc<span style="color: #cccccc;">(</span><span style="color: #99cc99;">sizeof</span><span style="color: #66cccc;">(</span>ElemType<span style="color: #66cccc;">)</span> *InitSize<span style="color: #cccccc;">)</span>;
-<span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">C++ &#21160;&#24577;&#20998;&#37197;</span>
-L.data = new ElemType<span style="color: #cccccc;">[</span>InitSize<span style="color: #cccccc;">]</span>
+<pre class="src src-c"><span style="color: #b0c4de;">#define</span> <span style="color: #eedd82;">InitSize</span> 20
+<span style="color: #00ffff;">typedef</span> <span style="color: #00ffff;">struct</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #ff7f24;">// </span><span style="color: #ff7f24;">&#25351;&#38024;</span>
+  <span style="color: #98fb98;">ElemType</span> *<span style="color: #eedd82;">data</span>;
+  <span style="color: #98fb98;">int</span> <span style="color: #eedd82;">MaxSize</span>, <span style="color: #eedd82;">length</span>;
+<span style="color: #8c8c8c;">}</span> <span style="color: #98fb98;">SeqList</span>;
+<span style="color: #ff7f24;">// </span><span style="color: #ff7f24;">&#21160;&#24577;&#20998;&#37197;</span>
+L.data = <span style="color: #8c8c8c;">(</span><span style="color: #98fb98;">ElemType</span><span style="color: #8c8c8c;">)</span> malloc<span style="color: #8c8c8c;">(</span><span style="color: #00ffff;">sizeof</span><span style="color: #93a8c6;">(</span>ElemType<span style="color: #93a8c6;">)</span> *InitSize<span style="color: #8c8c8c;">)</span>;
+<span style="color: #ff7f24;">// </span><span style="color: #ff7f24;">C++ &#21160;&#24577;&#20998;&#37197;</span>
+L.data = new ElemType<span style="color: #8c8c8c;">[</span>InitSize<span style="color: #8c8c8c;">]</span>
 </pre>
 </div></li>
 <li><p>
 顺序表的插入
 </p>
 <div class="org-src-container">
-<pre class="src src-C"><span style="color: #6699cc;">bool</span> <span style="color: #f99157;">ListInsert</span><span style="color: #cccccc;">(</span>SqList &amp;L, <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">i</span>, <span style="color: #6699cc;">ElemType</span> <span style="color: #ffcc66;">e</span><span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
-  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#23558;&#20803;&#32032;e&#25554;&#20837;&#21040;L&#30340;&#31532;i&#20010;&#20301;&#32622;&#65307;i&#20174;1&#24320;&#22987;</span>
-  <span style="color: #99cc99;">if</span> <span style="color: #66cccc;">(</span>i &lt; 1 || i &gt; L.length + 1<span style="color: #66cccc;">)</span>
-    <span style="color: #99cc99;">return</span> <span style="color: #6699cc;">false</span>;
-  <span style="color: #99cc99;">if</span> <span style="color: #66cccc;">(</span>L.length &gt;= MaxSize<span style="color: #66cccc;">)</span>
-    <span style="color: #99cc99;">return</span> <span style="color: #6699cc;">false</span>;
-  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#21518;&#31227;</span>
-  <span style="color: #99cc99;">for</span> <span style="color: #66cccc;">(</span><span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">j</span>=L.length; j&gt;=i; j--<span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
-    L.data<span style="color: #ffcc66;">[</span>j<span style="color: #ffcc66;">]</span> = L.data<span style="color: #ffcc66;">[</span>j-1<span style="color: #ffcc66;">]</span>;
-  <span style="color: #66cccc;">}</span>
-  L.data<span style="color: #66cccc;">[</span>i-1<span style="color: #66cccc;">]</span> = e;
+<pre class="src src-C"><span style="color: #98fb98;">bool</span> <span style="color: #87cefa;">ListInsert</span><span style="color: #8c8c8c;">(</span>SqList &amp;L, <span style="color: #98fb98;">int</span> <span style="color: #eedd82;">i</span>, <span style="color: #98fb98;">ElemType</span> <span style="color: #eedd82;">e</span><span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #ff7f24;">// </span><span style="color: #ff7f24;">&#23558;&#20803;&#32032;e&#25554;&#20837;&#21040;L&#30340;&#31532;i&#20010;&#20301;&#32622;&#65307;i&#20174;1&#24320;&#22987;</span>
+  <span style="color: #00ffff;">if</span> <span style="color: #93a8c6;">(</span>i &lt; 1 || i &gt; L.length + 1<span style="color: #93a8c6;">)</span>
+    <span style="color: #00ffff;">return</span> <span style="color: #7fffd4;">false</span>;
+  <span style="color: #00ffff;">if</span> <span style="color: #93a8c6;">(</span>L.length &gt;= MaxSize<span style="color: #93a8c6;">)</span>
+    <span style="color: #00ffff;">return</span> <span style="color: #7fffd4;">false</span>;
+  <span style="color: #ff7f24;">// </span><span style="color: #ff7f24;">&#21518;&#31227;</span>
+  <span style="color: #00ffff;">for</span> <span style="color: #93a8c6;">(</span><span style="color: #98fb98;">int</span> <span style="color: #eedd82;">j</span>=L.length; j&gt;=i; j--<span style="color: #93a8c6;">)</span> <span style="color: #93a8c6;">{</span>
+    L.data<span style="color: #b0b1a3;">[</span>j<span style="color: #b0b1a3;">]</span> = L.data<span style="color: #b0b1a3;">[</span>j-1<span style="color: #b0b1a3;">]</span>;
+  <span style="color: #93a8c6;">}</span>
+  L.data<span style="color: #93a8c6;">[</span>i-1<span style="color: #93a8c6;">]</span> = e;
   L.length ++;
-  <span style="color: #99cc99;">return</span> <span style="color: #6699cc;">true</span>;
-<span style="color: #cccccc;">}</span>
+  <span style="color: #00ffff;">return</span> <span style="color: #7fffd4;">true</span>;
+<span style="color: #8c8c8c;">}</span>
 </pre>
 </div></li>
 <li><p>
 顺序表的删除
 </p>
 <div class="org-src-container">
-<pre class="src src-C"><span style="color: #6699cc;">bool</span> <span style="color: #f99157;">ListDelete</span><span style="color: #cccccc;">(</span>SqList &amp;L, <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">i</span>, ElemType &amp;e<span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
-  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#23558;L&#20013;&#31532;i&#20010;&#20803;&#32032;&#21024;&#38500;&#65292;&#36171;&#20540;&#32473;e</span>
-  <span style="color: #99cc99;">if</span> <span style="color: #66cccc;">(</span>i &lt; 1 || i &gt; L.length<span style="color: #66cccc;">)</span>
-    <span style="color: #99cc99;">return</span> <span style="color: #6699cc;">false</span>;
-  e = L.data<span style="color: #66cccc;">[</span>i-1<span style="color: #66cccc;">]</span>;
-  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#21069;&#31227;</span>
-  <span style="color: #99cc99;">for</span> <span style="color: #66cccc;">(</span><span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">j</span>=i; j&lt;L.length; j++<span style="color: #66cccc;">)</span>
-    L.data<span style="color: #66cccc;">[</span>j-1<span style="color: #66cccc;">]</span> = L.data<span style="color: #66cccc;">[</span>j<span style="color: #66cccc;">]</span>;
+<pre class="src src-C"><span style="color: #98fb98;">bool</span> <span style="color: #87cefa;">ListDelete</span><span style="color: #8c8c8c;">(</span>SqList &amp;L, <span style="color: #98fb98;">int</span> <span style="color: #eedd82;">i</span>, ElemType &amp;e<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #ff7f24;">// </span><span style="color: #ff7f24;">&#23558;L&#20013;&#31532;i&#20010;&#20803;&#32032;&#21024;&#38500;&#65292;&#36171;&#20540;&#32473;e</span>
+  <span style="color: #00ffff;">if</span> <span style="color: #93a8c6;">(</span>i &lt; 1 || i &gt; L.length<span style="color: #93a8c6;">)</span>
+    <span style="color: #00ffff;">return</span> <span style="color: #7fffd4;">false</span>;
+  e = L.data<span style="color: #93a8c6;">[</span>i-1<span style="color: #93a8c6;">]</span>;
+  <span style="color: #ff7f24;">// </span><span style="color: #ff7f24;">&#21069;&#31227;</span>
+  <span style="color: #00ffff;">for</span> <span style="color: #93a8c6;">(</span><span style="color: #98fb98;">int</span> <span style="color: #eedd82;">j</span>=i; j&lt;L.length; j++<span style="color: #93a8c6;">)</span>
+    L.data<span style="color: #93a8c6;">[</span>j-1<span style="color: #93a8c6;">]</span> = L.data<span style="color: #93a8c6;">[</span>j<span style="color: #93a8c6;">]</span>;
   L.length --;
-  <span style="color: #99cc99;">return</span> <span style="color: #6699cc;">false</span>;
-<span style="color: #cccccc;">}</span>
+  <span style="color: #00ffff;">return</span> <span style="color: #7fffd4;">false</span>;
+<span style="color: #8c8c8c;">}</span>
 </pre>
 </div></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orga4a7fc7" class="outline-3">
-<h3 id="orga4a7fc7"><span class="section-number-3">6.3</span> 单链表</h3>
-<div class="outline-text-3" id="text-6-3">
+<div id="outline-container-org77c54aa" class="outline-3">
+<h3 id="org77c54aa"><span class="section-number-3">8.3</span> 单链表</h3>
+<div class="outline-text-3" id="text-8-3">
 <ul class="org-ul">
 <li><p>
 结点定义
 </p>
 <div class="org-src-container">
-<pre class="src src-C"><span style="color: #99cc99;">typedef</span> <span style="color: #99cc99;">struct</span> <span style="color: #6699cc;">LNode</span> <span style="color: #cccccc;">{</span>
-  <span style="color: #6699cc;">ElemType</span> <span style="color: #ffcc66;">data</span>;
-  <span style="color: #99cc99;">struct</span> <span style="color: #6699cc;">LNode</span> *<span style="color: #ffcc66;">next</span>;
-<span style="color: #cccccc;">}</span> <span style="color: #6699cc;">LNode</span>, *<span style="color: #6699cc;">LinkedList</span>;
+<pre class="src src-C"><span style="color: #00ffff;">typedef</span> <span style="color: #00ffff;">struct</span> <span style="color: #98fb98;">LNode</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #98fb98;">ElemType</span> <span style="color: #eedd82;">data</span>;
+  <span style="color: #00ffff;">struct</span> <span style="color: #98fb98;">LNode</span> *<span style="color: #eedd82;">next</span>;
+<span style="color: #8c8c8c;">}</span> <span style="color: #98fb98;">LNode</span>, *<span style="color: #98fb98;">LinkedList</span>;
 </pre>
 </div></li>
 <li><p>
 头插法
 </p>
 <div class="org-src-container">
-<pre class="src src-C"><span style="color: #6699cc;">LinkedList</span> <span style="color: #f99157;">createList1</span><span style="color: #cccccc;">(</span>LinkList &amp;L<span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
-  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#24102;&#22836;&#32467;&#28857;&#30340;&#21333;&#38142;&#34920;</span>
-  <span style="color: #6699cc;">LNode</span> *<span style="color: #ffcc66;">s</span>; <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">x</span>;
-  L = <span style="color: #66cccc;">(</span><span style="color: #6699cc;">LinkedList</span><span style="color: #66cccc;">)</span>malloc<span style="color: #66cccc;">(</span><span style="color: #99cc99;">sizeof</span><span style="color: #ffcc66;">(</span>LNode<span style="color: #ffcc66;">)</span><span style="color: #66cccc;">)</span>;
+<pre class="src src-C"><span style="color: #98fb98;">LinkedList</span> <span style="color: #87cefa;">createList1</span><span style="color: #8c8c8c;">(</span>LinkList &amp;L<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #ff7f24;">// </span><span style="color: #ff7f24;">&#24102;&#22836;&#32467;&#28857;&#30340;&#21333;&#38142;&#34920;</span>
+  <span style="color: #98fb98;">LNode</span> *<span style="color: #eedd82;">s</span>; <span style="color: #98fb98;">int</span> <span style="color: #eedd82;">x</span>;
+  L = <span style="color: #93a8c6;">(</span><span style="color: #98fb98;">LinkedList</span><span style="color: #93a8c6;">)</span>malloc<span style="color: #93a8c6;">(</span><span style="color: #00ffff;">sizeof</span><span style="color: #b0b1a3;">(</span>LNode<span style="color: #b0b1a3;">)</span><span style="color: #93a8c6;">)</span>;
   L -&gt; next = null;
-  scanf<span style="color: #66cccc;">(</span><span style="color: #66cccc;">"%d"</span>, &amp;x<span style="color: #66cccc;">)</span>;
-  <span style="color: #99cc99;">while</span> <span style="color: #66cccc;">(</span>x != 9999<span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
-    s = <span style="color: #ffcc66;">(</span><span style="color: #6699cc;">LNode</span>*<span style="color: #ffcc66;">)</span>malloc<span style="color: #ffcc66;">(</span><span style="color: #99cc99;">sizeof</span><span style="color: #99cc99;">(</span>LNode<span style="color: #99cc99;">)</span><span style="color: #ffcc66;">)</span>;
+  scanf<span style="color: #93a8c6;">(</span><span style="color: #ffa07a;">"%d"</span>, &amp;x<span style="color: #93a8c6;">)</span>;
+  <span style="color: #00ffff;">while</span> <span style="color: #93a8c6;">(</span>x != 9999<span style="color: #93a8c6;">)</span> <span style="color: #93a8c6;">{</span>
+    s = <span style="color: #b0b1a3;">(</span><span style="color: #98fb98;">LNode</span>*<span style="color: #b0b1a3;">)</span>malloc<span style="color: #b0b1a3;">(</span><span style="color: #00ffff;">sizeof</span><span style="color: #97b098;">(</span>LNode<span style="color: #97b098;">)</span><span style="color: #b0b1a3;">)</span>;
     s -&gt; data = x;
     s -&gt; next = L -&gt; next;
     L -&gt; next = s;
-    scanf<span style="color: #ffcc66;">(</span><span style="color: #66cccc;">"%d"</span>, &amp;x<span style="color: #ffcc66;">)</span>;
-  <span style="color: #66cccc;">}</span>
-  <span style="color: #99cc99;">return</span> L;
-<span style="color: #cccccc;">}</span>
+    scanf<span style="color: #b0b1a3;">(</span><span style="color: #ffa07a;">"%d"</span>, &amp;x<span style="color: #b0b1a3;">)</span>;
+  <span style="color: #93a8c6;">}</span>
+  <span style="color: #00ffff;">return</span> L;
+<span style="color: #8c8c8c;">}</span>
 </pre>
 </div></li>
 <li><p>
 尾插法
 </p>
 <div class="org-src-container">
-<pre class="src src-C"><span style="color: #6699cc;">LinkedList</span> <span style="color: #f99157;">createList2</span><span style="color: #cccccc;">(</span>LinkedList &amp;L<span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
-  <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">x</span>;
-  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">malloc &#20998;&#37197;&#20986;&#26469;&#30340;&#26159;&#25351;&#38024;&#31867;&#22411;</span>
-  L = <span style="color: #66cccc;">(</span><span style="color: #6699cc;">LinkedList</span><span style="color: #66cccc;">)</span>malloc<span style="color: #66cccc;">(</span><span style="color: #99cc99;">sizeof</span><span style="color: #ffcc66;">(</span>LNode<span style="color: #ffcc66;">)</span><span style="color: #66cccc;">)</span>;
-  <span style="color: #6699cc;">LNode</span> *<span style="color: #ffcc66;">s</span>, *<span style="color: #ffcc66;">r</span> = L;
-  scanf<span style="color: #66cccc;">(</span><span style="color: #66cccc;">"%s"</span>, x<span style="color: #66cccc;">)</span>;
-  <span style="color: #99cc99;">while</span><span style="color: #66cccc;">(</span>x != 9999<span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
-    s = <span style="color: #ffcc66;">(</span><span style="color: #6699cc;">LNode</span>*<span style="color: #ffcc66;">)</span>malloc<span style="color: #ffcc66;">(</span><span style="color: #99cc99;">sizeof</span><span style="color: #99cc99;">(</span>LNode<span style="color: #99cc99;">)</span><span style="color: #ffcc66;">)</span>;
+<pre class="src src-C"><span style="color: #98fb98;">LinkedList</span> <span style="color: #87cefa;">createList2</span><span style="color: #8c8c8c;">(</span>LinkedList &amp;L<span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #98fb98;">int</span> <span style="color: #eedd82;">x</span>;
+  <span style="color: #ff7f24;">// </span><span style="color: #ff7f24;">malloc &#20998;&#37197;&#20986;&#26469;&#30340;&#26159;&#25351;&#38024;&#31867;&#22411;</span>
+  L = <span style="color: #93a8c6;">(</span><span style="color: #98fb98;">LinkedList</span><span style="color: #93a8c6;">)</span>malloc<span style="color: #93a8c6;">(</span><span style="color: #00ffff;">sizeof</span><span style="color: #b0b1a3;">(</span>LNode<span style="color: #b0b1a3;">)</span><span style="color: #93a8c6;">)</span>;
+  <span style="color: #98fb98;">LNode</span> *<span style="color: #eedd82;">s</span>, *<span style="color: #eedd82;">r</span> = L;
+  scanf<span style="color: #93a8c6;">(</span><span style="color: #ffa07a;">"%s"</span>, x<span style="color: #93a8c6;">)</span>;
+  <span style="color: #00ffff;">while</span><span style="color: #93a8c6;">(</span>x != 9999<span style="color: #93a8c6;">)</span> <span style="color: #93a8c6;">{</span>
+    s = <span style="color: #b0b1a3;">(</span><span style="color: #98fb98;">LNode</span>*<span style="color: #b0b1a3;">)</span>malloc<span style="color: #b0b1a3;">(</span><span style="color: #00ffff;">sizeof</span><span style="color: #97b098;">(</span>LNode<span style="color: #97b098;">)</span><span style="color: #b0b1a3;">)</span>;
     s -&gt; data = x;
     r -&gt; next = s;
     r = s;
-    scanf<span style="color: #ffcc66;">(</span><span style="color: #66cccc;">"%d"</span>, x<span style="color: #ffcc66;">)</span>;
-  <span style="color: #66cccc;">}</span>
-  r -&gt; next = <span style="color: #6699cc;">NULL</span>;
-  <span style="color: #99cc99;">return</span> r;
-<span style="color: #cccccc;">}</span>
+    scanf<span style="color: #b0b1a3;">(</span><span style="color: #ffa07a;">"%d"</span>, x<span style="color: #b0b1a3;">)</span>;
+  <span style="color: #93a8c6;">}</span>
+  r -&gt; next = <span style="color: #7fffd4;">NULL</span>;
+  <span style="color: #00ffff;">return</span> r;
+<span style="color: #8c8c8c;">}</span>
 </pre>
 </div></li>
 <li><p>
 双链表
 </p>
 <div class="org-src-container">
-<pre class="src src-C"><span style="color: #99cc99;">typedef</span> <span style="color: #99cc99;">struct</span> <span style="color: #6699cc;">DNode</span> <span style="color: #cccccc;">{</span>
-  <span style="color: #6699cc;">ElemType</span> <span style="color: #ffcc66;">data</span>;
-  Struct <span style="color: #6699cc;">DNode</span> *<span style="color: #ffcc66;">prior</span>, *<span style="color: #ffcc66;">next</span>;
-<span style="color: #cccccc;">}</span> <span style="color: #6699cc;">DNode</span>, *<span style="color: #6699cc;">DLinkList</span>;
+<pre class="src src-C"><span style="color: #00ffff;">typedef</span> <span style="color: #00ffff;">struct</span> <span style="color: #98fb98;">DNode</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #98fb98;">ElemType</span> <span style="color: #eedd82;">data</span>;
+  Struct <span style="color: #98fb98;">DNode</span> *<span style="color: #eedd82;">prior</span>, *<span style="color: #eedd82;">next</span>;
+<span style="color: #8c8c8c;">}</span> <span style="color: #98fb98;">DNode</span>, *<span style="color: #98fb98;">DLinkList</span>;
 </pre>
 </div></li>
 <li><p>
 静态链表
 </p>
 <div class="org-src-container">
-<pre class="src src-C"><span style="color: #cc99cc;">#define</span> <span style="color: #ffcc66;">MaxSize</span> 50
-<span style="color: #99cc99;">typedef</span> <span style="color: #99cc99;">struct</span> <span style="color: #cccccc;">{</span>
-  <span style="color: #6699cc;">ElemType</span> <span style="color: #ffcc66;">data</span>;
-  <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">next</span>;
-<span style="color: #cccccc;">}</span> <span style="color: #6699cc;">SLinkList</span><span style="color: #cccccc;">[</span>MaxSize<span style="color: #cccccc;">]</span>;
+<pre class="src src-C"><span style="color: #b0c4de;">#define</span> <span style="color: #eedd82;">MaxSize</span> 50
+<span style="color: #00ffff;">typedef</span> <span style="color: #00ffff;">struct</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #98fb98;">ElemType</span> <span style="color: #eedd82;">data</span>;
+  <span style="color: #98fb98;">int</span> <span style="color: #eedd82;">next</span>;
+<span style="color: #8c8c8c;">}</span> <span style="color: #98fb98;">SLinkList</span><span style="color: #8c8c8c;">[</span>MaxSize<span style="color: #8c8c8c;">]</span>;
 </pre>
 </div></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orgf01749b" class="outline-3">
-<h3 id="orgf01749b"><span class="section-number-3">6.4</span> 栈</h3>
-<div class="outline-text-3" id="text-6-4">
+<div id="outline-container-org747e6cf" class="outline-3">
+<h3 id="org747e6cf"><span class="section-number-3">8.4</span> 栈</h3>
+<div class="outline-text-3" id="text-8-4">
 <ul class="org-ul">
 <li><p>
 顺序栈（顺序存储）
 </p>
 <div class="org-src-container">
-<pre class="src src-C"><span style="color: #cc99cc;">#define</span> <span style="color: #ffcc66;">MaxSize</span> 50
-<span style="color: #99cc99;">typedef</span> <span style="color: #99cc99;">struct</span> <span style="color: #cccccc;">{</span>
-  <span style="color: #6699cc;">ElemType</span> <span style="color: #ffcc66;">data</span>;
-  <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">top</span>;
-<span style="color: #cccccc;">}</span> <span style="color: #6699cc;">SqStack</span>;
+<pre class="src src-C"><span style="color: #b0c4de;">#define</span> <span style="color: #eedd82;">MaxSize</span> 50
+<span style="color: #00ffff;">typedef</span> <span style="color: #00ffff;">struct</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #98fb98;">ElemType</span> <span style="color: #eedd82;">data</span>;
+  <span style="color: #98fb98;">int</span> <span style="color: #eedd82;">top</span>;
+<span style="color: #8c8c8c;">}</span> <span style="color: #98fb98;">SqStack</span>;
 </pre>
 </div></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org379b42f" class="outline-3">
-<h3 id="org379b42f"><span class="section-number-3">6.5</span> 队列</h3>
-<div class="outline-text-3" id="text-6-5">
+<div id="outline-container-org1beafc4" class="outline-3">
+<h3 id="org1beafc4"><span class="section-number-3">8.5</span> 队列</h3>
+<div class="outline-text-3" id="text-8-5">
 <ul class="org-ul">
 <li><p>
 顺序队列
 </p>
 <div class="org-src-container">
-<pre class="src src-C"><span style="color: #cc99cc;">#define</span> <span style="color: #ffcc66;">MaxSize</span> 50
-<span style="color: #99cc99;">typedef</span> <span style="color: #99cc99;">struct</span> <span style="color: #cccccc;">{</span>
-  <span style="color: #6699cc;">ElemType</span> <span style="color: #ffcc66;">data</span>;
-  <span style="color: #6699cc;">int</span> <span style="color: #ffcc66;">front</span>, <span style="color: #ffcc66;">rear</span>;
-<span style="color: #cccccc;">}</span> <span style="color: #6699cc;">SqQueue</span>;
+<pre class="src src-C"><span style="color: #b0c4de;">#define</span> <span style="color: #eedd82;">MaxSize</span> 50
+<span style="color: #00ffff;">typedef</span> <span style="color: #00ffff;">struct</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #98fb98;">ElemType</span> <span style="color: #eedd82;">data</span>;
+  <span style="color: #98fb98;">int</span> <span style="color: #eedd82;">front</span>, <span style="color: #eedd82;">rear</span>;
+<span style="color: #8c8c8c;">}</span> <span style="color: #98fb98;">SqQueue</span>;
 </pre>
 </div></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orge246d62" class="outline-3">
-<h3 id="orge246d62"><span class="section-number-3">6.6</span> 二叉树</h3>
-<div class="outline-text-3" id="text-6-6">
+<div id="outline-container-org3e3ff66" class="outline-3">
+<h3 id="org3e3ff66"><span class="section-number-3">8.6</span> 二叉树</h3>
+<div class="outline-text-3" id="text-8-6">
 <ul class="org-ul">
 <li><p>
 先序遍历
 </p>
 <div class="org-src-container">
-<pre class="src src-C"><span style="color: #6699cc;">void</span> <span style="color: #f99157;">PreOrder</span><span style="color: #cccccc;">(</span><span style="color: #6699cc;">BiTree</span> <span style="color: #ffcc66;">T</span><span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
-  <span style="color: #99cc99;">if</span> <span style="color: #66cccc;">(</span>T != <span style="color: #6699cc;">NULL</span><span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
-    visit<span style="color: #ffcc66;">(</span>T<span style="color: #ffcc66;">)</span>;
-    PreOrder<span style="color: #ffcc66;">(</span>T -&gt; lchild<span style="color: #ffcc66;">)</span>;
-    PreOrder<span style="color: #ffcc66;">(</span>T -&gt; rchild<span style="color: #ffcc66;">)</span>;
-  <span style="color: #66cccc;">}</span>
-<span style="color: #cccccc;">}</span>
+<pre class="src src-C"><span style="color: #98fb98;">void</span> <span style="color: #87cefa;">PreOrder</span><span style="color: #8c8c8c;">(</span><span style="color: #98fb98;">BiTree</span> <span style="color: #eedd82;">T</span><span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #00ffff;">if</span> <span style="color: #93a8c6;">(</span>T != <span style="color: #7fffd4;">NULL</span><span style="color: #93a8c6;">)</span> <span style="color: #93a8c6;">{</span>
+    visit<span style="color: #b0b1a3;">(</span>T<span style="color: #b0b1a3;">)</span>;
+    PreOrder<span style="color: #b0b1a3;">(</span>T -&gt; lchild<span style="color: #b0b1a3;">)</span>;
+    PreOrder<span style="color: #b0b1a3;">(</span>T -&gt; rchild<span style="color: #b0b1a3;">)</span>;
+  <span style="color: #93a8c6;">}</span>
+<span style="color: #8c8c8c;">}</span>
 </pre>
 </div></li>
 <li><p>
 中序遍历
 </p>
 <div class="org-src-container">
-<pre class="src src-C"><span style="color: #6699cc;">void</span> <span style="color: #f99157;">InOrder</span><span style="color: #cccccc;">(</span><span style="color: #6699cc;">BiTree</span> <span style="color: #ffcc66;">T</span><span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
-  <span style="color: #99cc99;">if</span> <span style="color: #66cccc;">(</span>T != <span style="color: #6699cc;">NULL</span><span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
-    inOrder<span style="color: #ffcc66;">(</span>T -&gt; lchild<span style="color: #ffcc66;">)</span>;
-    visit<span style="color: #ffcc66;">(</span>T<span style="color: #ffcc66;">)</span>;
-    inOrder<span style="color: #ffcc66;">(</span>T -&gt; rchild<span style="color: #ffcc66;">)</span>;
-  <span style="color: #66cccc;">}</span>
-<span style="color: #cccccc;">}</span>
+<pre class="src src-C"><span style="color: #98fb98;">void</span> <span style="color: #87cefa;">InOrder</span><span style="color: #8c8c8c;">(</span><span style="color: #98fb98;">BiTree</span> <span style="color: #eedd82;">T</span><span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #00ffff;">if</span> <span style="color: #93a8c6;">(</span>T != <span style="color: #7fffd4;">NULL</span><span style="color: #93a8c6;">)</span> <span style="color: #93a8c6;">{</span>
+    inOrder<span style="color: #b0b1a3;">(</span>T -&gt; lchild<span style="color: #b0b1a3;">)</span>;
+    visit<span style="color: #b0b1a3;">(</span>T<span style="color: #b0b1a3;">)</span>;
+    inOrder<span style="color: #b0b1a3;">(</span>T -&gt; rchild<span style="color: #b0b1a3;">)</span>;
+  <span style="color: #93a8c6;">}</span>
+<span style="color: #8c8c8c;">}</span>
 </pre>
 </div></li>
 <li><p>
 后序遍历
 </p>
 <div class="org-src-container">
-<pre class="src src-C"><span style="color: #6699cc;">void</span> <span style="color: #f99157;">PostOrder</span><span style="color: #cccccc;">(</span><span style="color: #6699cc;">BiTree</span> <span style="color: #ffcc66;">T</span><span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
-  <span style="color: #99cc99;">if</span> <span style="color: #66cccc;">(</span>T != <span style="color: #6699cc;">NULL</span><span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
-    PostOrder<span style="color: #ffcc66;">(</span>T -&gt; lchild<span style="color: #ffcc66;">)</span>;
-    PostOrder<span style="color: #ffcc66;">(</span>T -&gt; rchild<span style="color: #ffcc66;">)</span>;
-    visit<span style="color: #ffcc66;">(</span>T<span style="color: #ffcc66;">)</span>;
-  <span style="color: #66cccc;">}</span>
-<span style="color: #cccccc;">}</span>
+<pre class="src src-C"><span style="color: #98fb98;">void</span> <span style="color: #87cefa;">PostOrder</span><span style="color: #8c8c8c;">(</span><span style="color: #98fb98;">BiTree</span> <span style="color: #eedd82;">T</span><span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #00ffff;">if</span> <span style="color: #93a8c6;">(</span>T != <span style="color: #7fffd4;">NULL</span><span style="color: #93a8c6;">)</span> <span style="color: #93a8c6;">{</span>
+    PostOrder<span style="color: #b0b1a3;">(</span>T -&gt; lchild<span style="color: #b0b1a3;">)</span>;
+    PostOrder<span style="color: #b0b1a3;">(</span>T -&gt; rchild<span style="color: #b0b1a3;">)</span>;
+    visit<span style="color: #b0b1a3;">(</span>T<span style="color: #b0b1a3;">)</span>;
+  <span style="color: #93a8c6;">}</span>
+<span style="color: #8c8c8c;">}</span>
 </pre>
 </div></li>
 <li><p>
 中序遍历的非递归
 </p>
 <div class="org-src-container">
-<pre class="src src-C"><span style="color: #6699cc;">void</span> <span style="color: #f99157;">InOrder2</span><span style="color: #cccccc;">(</span><span style="color: #6699cc;">BiTree</span> <span style="color: #ffcc66;">T</span><span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
-  <span style="color: #999999; font-style: italic;">// </span><span style="color: #999999; font-style: italic;">&#38656;&#35201;&#20511;&#21161;&#26632;</span>
-  InitStack<span style="color: #66cccc;">(</span>S<span style="color: #66cccc;">)</span>;
-  <span style="color: #6699cc;">BiTree</span> <span style="color: #ffcc66;">p</span> = T;
-  <span style="color: #99cc99;">while</span> <span style="color: #66cccc;">(</span>p || <span style="color: #6699cc;">!</span>IsEmpty<span style="color: #ffcc66;">(</span>S<span style="color: #ffcc66;">)</span><span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
-    <span style="color: #99cc99;">if</span> <span style="color: #ffcc66;">(</span>p<span style="color: #ffcc66;">)</span> <span style="color: #ffcc66;">{</span>
-      Push<span style="color: #99cc99;">(</span>S, p<span style="color: #99cc99;">)</span>;
+<pre class="src src-C"><span style="color: #98fb98;">void</span> <span style="color: #87cefa;">InOrder2</span><span style="color: #8c8c8c;">(</span><span style="color: #98fb98;">BiTree</span> <span style="color: #eedd82;">T</span><span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #ff7f24;">// </span><span style="color: #ff7f24;">&#38656;&#35201;&#20511;&#21161;&#26632;</span>
+  InitStack<span style="color: #93a8c6;">(</span>S<span style="color: #93a8c6;">)</span>;
+  <span style="color: #98fb98;">BiTree</span> <span style="color: #eedd82;">p</span> = T;
+  <span style="color: #00ffff;">while</span> <span style="color: #93a8c6;">(</span>p || !IsEmpty<span style="color: #b0b1a3;">(</span>S<span style="color: #b0b1a3;">)</span><span style="color: #93a8c6;">)</span> <span style="color: #93a8c6;">{</span>
+    <span style="color: #00ffff;">if</span> <span style="color: #b0b1a3;">(</span>p<span style="color: #b0b1a3;">)</span> <span style="color: #b0b1a3;">{</span>
+      Push<span style="color: #97b098;">(</span>S, p<span style="color: #97b098;">)</span>;
       p = p -&gt; lchild;
-    <span style="color: #ffcc66;">}</span> <span style="color: #99cc99;">else</span> <span style="color: #ffcc66;">{</span>
-      Pop<span style="color: #99cc99;">(</span>S, p<span style="color: #99cc99;">)</span>;
-      visit<span style="color: #99cc99;">(</span>p<span style="color: #99cc99;">)</span>;
+    <span style="color: #b0b1a3;">}</span> <span style="color: #00ffff;">else</span> <span style="color: #b0b1a3;">{</span>
+      Pop<span style="color: #97b098;">(</span>S, p<span style="color: #97b098;">)</span>;
+      visit<span style="color: #97b098;">(</span>p<span style="color: #97b098;">)</span>;
       p = p -&gt; rchild;
-    <span style="color: #ffcc66;">}</span>
-  <span style="color: #66cccc;">}</span>
-<span style="color: #cccccc;">}</span>
+    <span style="color: #b0b1a3;">}</span>
+  <span style="color: #93a8c6;">}</span>
+<span style="color: #8c8c8c;">}</span>
 </pre>
 </div></li>
 <li><p>
 先序遍历的非递归
 </p>
 <div class="org-src-container">
-<pre class="src src-C"><span style="color: #6699cc;">void</span> <span style="color: #f99157;">PreOrder2</span><span style="color: #cccccc;">(</span><span style="color: #6699cc;">BiTree</span> <span style="color: #ffcc66;">T</span><span style="color: #cccccc;">)</span> <span style="color: #cccccc;">{</span>
-  InitStack<span style="color: #66cccc;">(</span>S<span style="color: #66cccc;">)</span>;
-  <span style="color: #6699cc;">BiTree</span> <span style="color: #ffcc66;">p</span> = T;
-  <span style="color: #99cc99;">while</span> <span style="color: #66cccc;">(</span>p || IsEmpty<span style="color: #ffcc66;">(</span>S<span style="color: #ffcc66;">)</span><span style="color: #66cccc;">)</span> <span style="color: #66cccc;">{</span>
-    <span style="color: #99cc99;">if</span> <span style="color: #ffcc66;">(</span>p<span style="color: #ffcc66;">)</span> <span style="color: #ffcc66;">{</span>
-      visit<span style="color: #99cc99;">(</span>p<span style="color: #99cc99;">)</span>;
-      Push<span style="color: #99cc99;">(</span>p<span style="color: #99cc99;">)</span>;
+<pre class="src src-C"><span style="color: #98fb98;">void</span> <span style="color: #87cefa;">PreOrder2</span><span style="color: #8c8c8c;">(</span><span style="color: #98fb98;">BiTree</span> <span style="color: #eedd82;">T</span><span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">{</span>
+  InitStack<span style="color: #93a8c6;">(</span>S<span style="color: #93a8c6;">)</span>;
+  <span style="color: #98fb98;">BiTree</span> <span style="color: #eedd82;">p</span> = T;
+  <span style="color: #00ffff;">while</span> <span style="color: #93a8c6;">(</span>p || IsEmpty<span style="color: #b0b1a3;">(</span>S<span style="color: #b0b1a3;">)</span><span style="color: #93a8c6;">)</span> <span style="color: #93a8c6;">{</span>
+    <span style="color: #00ffff;">if</span> <span style="color: #b0b1a3;">(</span>p<span style="color: #b0b1a3;">)</span> <span style="color: #b0b1a3;">{</span>
+      visit<span style="color: #97b098;">(</span>p<span style="color: #97b098;">)</span>;
+      Push<span style="color: #97b098;">(</span>p<span style="color: #97b098;">)</span>;
       p = p -&gt; lchild;
-    <span style="color: #ffcc66;">}</span> <span style="color: #99cc99;">else</span> <span style="color: #ffcc66;">{</span>
-      Pop<span style="color: #99cc99;">(</span>p<span style="color: #99cc99;">)</span>;
+    <span style="color: #b0b1a3;">}</span> <span style="color: #00ffff;">else</span> <span style="color: #b0b1a3;">{</span>
+      Pop<span style="color: #97b098;">(</span>p<span style="color: #97b098;">)</span>;
       p = p -&gt; rchild;
-    <span style="color: #ffcc66;">}</span>
-  <span style="color: #66cccc;">}</span>
-<span style="color: #cccccc;">}</span>
+    <span style="color: #b0b1a3;">}</span>
+  <span style="color: #93a8c6;">}</span>
+<span style="color: #8c8c8c;">}</span>
 </pre>
 </div></li>
 </ul>
+</div>
+</div>
+<div id="outline-container-org3f1a482" class="outline-3">
+<h3 id="org3f1a482"><span class="section-number-3">8.7</span> 顺序查找</h3>
+<div class="outline-text-3" id="text-8-7">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #00ffff;">typedef</span> <span style="color: #00ffff;">struct</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #98fb98;">ElemType</span> *<span style="color: #eedd82;">elem</span>;
+  <span style="color: #98fb98;">int</span> <span style="color: #eedd82;">TableInt</span>;
+<span style="color: #8c8c8c;">}</span> <span style="color: #98fb98;">SSTable</span>;
+
+<span style="color: #98fb98;">int</span> <span style="color: #87cefa;">Search_Seq</span><span style="color: #8c8c8c;">(</span><span style="color: #98fb98;">SSTable</span> <span style="color: #eedd82;">ST</span>, <span style="color: #98fb98;">ElemType</span> <span style="color: #eedd82;">key</span><span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #ff7f24;">// </span><span style="color: #ff7f24;">&#21736;&#20853;&#23384;&#25918;&#26597;&#25214;&#20540;</span>
+  ST.elem<span style="color: #93a8c6;">[</span>0<span style="color: #93a8c6;">]</span> = key;
+  <span style="color: #00ffff;">for</span> <span style="color: #93a8c6;">(</span>i=ST.TableLen; ST.elem<span style="color: #b0b1a3;">[</span>i<span style="color: #b0b1a3;">]</span>!=key; --i<span style="color: #93a8c6;">)</span>
+    <span style="color: #ff7f24;">// </span><span style="color: #ff7f24;">&#20174;&#21518;&#24448;&#21069;&#25214;&#65292;&#25214;&#21040;&#25110;&#32773;&#21040;ST[0] &#36864;&#20986;</span>
+    <span style="color: #00ffff;">return</span> i;
+<span style="color: #8c8c8c;">}</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org851eb1c" class="outline-3">
+<h3 id="org851eb1c"><span class="section-number-3">8.8</span> 折半查找</h3>
+<div class="outline-text-3" id="text-8-8">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #98fb98;">int</span> <span style="color: #87cefa;">Binary_Search</span><span style="color: #8c8c8c;">(</span><span style="color: #98fb98;">SeqList</span> <span style="color: #eedd82;">L</span>, <span style="color: #98fb98;">ElemType</span> <span style="color: #eedd82;">key</span><span style="color: #8c8c8c;">)</span> <span style="color: #8c8c8c;">{</span>
+  <span style="color: #98fb98;">int</span> <span style="color: #eedd82;">low</span> = 0, <span style="color: #eedd82;">high</span> = L.TableLen-1, <span style="color: #eedd82;">mid</span>;
+  <span style="color: #00ffff;">while</span> <span style="color: #93a8c6;">(</span>low &lt; high<span style="color: #93a8c6;">)</span> <span style="color: #93a8c6;">{</span>
+    mid = <span style="color: #b0b1a3;">(</span>low + high<span style="color: #b0b1a3;">)</span> / 2;
+    <span style="color: #00ffff;">if</span> <span style="color: #b0b1a3;">(</span>L.elem<span style="color: #97b098;">[</span>mid<span style="color: #97b098;">]</span> == key<span style="color: #b0b1a3;">)</span>
+      <span style="color: #00ffff;">return</span> mid;
+    <span style="color: #00ffff;">else</span> <span style="color: #00ffff;">if</span> <span style="color: #b0b1a3;">(</span>L.elem<span style="color: #97b098;">[</span>mid<span style="color: #97b098;">]</span> &gt; key<span style="color: #b0b1a3;">)</span>
+      high = mid - 1;
+    <span style="color: #00ffff;">else</span>
+      low = mid + 1;
+  <span style="color: #93a8c6;">}</span>
+  <span style="color: #00ffff;">return</span> -1;
+<span style="color: #8c8c8c;">}</span>
+</pre>
+</div>
 </div>
 </div>
 </div>
@@ -673,7 +866,7 @@ L.data = new ElemType<span style="color: #cccccc;">[</span>InitSize<span style="
 <div id="postamble" class="status">
 <p class="date">Date: 2018-11-10</p>
 <p class="author">Author: hiro</p>
-<p class="date">Created: 2018-11-24 六 16:12</p>
+<p class="date">Created: 2018-11-26 一 18:13</p>
 <p class="validation"></p>
 </div>
 </body>

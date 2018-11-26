@@ -1,6 +1,7 @@
 #+TITLE: English Intensive Reading Words
 #+OPTIONS: toc:nil
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
+#+EXPORT_FILE_NAME: ~/Documents/org-files/org-html/English-2001.html
 #+DATE: 2018-10-21
 
 1. cushion 缓冲
