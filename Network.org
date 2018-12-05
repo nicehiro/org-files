@@ -1,6 +1,7 @@
 #+TITLE: 计算机网络总结
 #+OPTIONS: toc:nil
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
+#+EXPORT_FILE_NAME: ~/Documents/org-files/org-html/Data-structure.html
 #+DATE: 2018-11-01
 
 * 计算机网络体系结构
