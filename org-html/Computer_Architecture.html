@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2018-12-08 六 15:35 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>计算机组成原理</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="hiro" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">计算机组成原理</h1>
+
+<div id="outline-container-orga7ae350" class="outline-2">
+<h2 id="orga7ae350"><span class="section-number-2">1</span> 计算机系统概述</h2>
+<div class="outline-text-2" id="text-1">
+<ol class="org-ol">
+<li>计算机的发展 1946年第一台计算机ENIAC问世，电子管时代-&gt;晶体管时代-&gt;中小规模集成电路-&gt;大规模集成电路</li>
+<li>摩尔定律 每隔18个月计算机性能可以提高一倍</li>
+<li>计算机按指令和数据流可以分为 单指令流和单数据流（SISD，诺依曼体系）；单指令流和多数据流（SIMD）；多指令流和单数据流（MIMD，实际上不存在）；多指令流和多数据流（MIMD，多处理器和多计算机）</li>
+<li>微型计算机的发展是以微型处理器为标准的</li>
+<li>逻辑电路的高低电平和二进制的0，1对应，所以采用二进制简单可靠</li>
+<li>对于某一功能，其在硬件上实现和在软件上实现是等价的，则称其在软硬件上是 <b>等效</b> 的（而非等价！！）</li>
+<li>冯诺依曼机的特点
+<ul class="org-ul">
+<li>运算器 控制器 存储器 输入设备 输出设备组成（运算器和控制器合起来是CPU）</li>
+<li>指令和数据以同等地位存储于存储器（无法在存储器上分辨是指令还是数据）</li>
+<li>指令由操作码和地址码组成，</li>
+<li>以运算器为核心，外设通过运算器（CPU）和存储器传送数据（程序直接控制方式）</li>
+<li>基本工作方式是控制流驱动方式</li>
+<li>工作的特点是按地址访问并顺序执行指令</li>
+</ul></li>
+<li>现代的计算机以存储器为核心</li>
+<li>主存储器是通过按存储单元的地址进行存取的，这种方式被称为按地址存取方式（相联存储器是按内容访问的）（一个存储单元能存储的0，1位数称为存储字长）</li>
+<li>MAR 用于寻址，位数对应着存储单元的个数；MDR 用于存储一个存储单元的数据；现代计算机中将MAR和MDR放在CPU中</li>
+<li>运算器 和运算相关，核心是算术逻辑单元ALU，累加器ACC，乘商寄存器MQ，操作数寄存器X，变址寄存器IX，基址寄存器BR，程序状态字寄存器（和计算结构进行比较）前三个必须有</li>
+<li>控制器 和指令相关，核心是控制单元CU，程序计数器PC（存放下一条指令的地址），指令寄存器IR</li>
+<li>系统软件有 操作系统OS，数据库软件DBMS，语言处理程序，分布式软件系统，网络软件系统，标准库程序，服务性程序（DBMS和数据库系统DBS不同，一般由数据库、数据库管理软件，数据库管理员和应用系统组成，是DBMS+OS+DBA）</li>
+<li>(PC)-&gt;MAR  将PC中的数据传到MAR</li>
+<li>地址译码器是主存的构成部分</li>
+<li>计算机的性能指标
+<ul class="org-ul">
+<li>机器字长 一次整数运算所能处理的二进制位数，与CPU寄存器的位数、加法器的位数有关</li>
+<li>指令字长 一个指令字包含的二进制位数，通常为存储字长的整数倍</li>
+<li>存储字长 一个存储单元能存储的位数</li>
+<li>吞吐量 系统在单位时间内处理请求的数量，取决于主存的存取周期</li>
+<li>响应时间 发送一个请求需要多久才会响应</li>
+<li>CPU时间周期 最小的时间单位，每个动作至少要一个时钟周期，主频是周期的倒数</li>
+<li>CPI 每条指令使用的时钟周期</li>
+<li>MIPS 每秒执行百万条指令；MFLOPS 每秒执行百万条浮点运算；GFLOPS 每秒执行十亿次运算（标记性能最有用的量）</li>
+</ul></li>
+<li>系列机 具有基本的体系结构</li>
+<li>固件 将程序固定在ROM中组成的部件称为固件</li>
+<li>兼容 计算机软件或者硬件可以在同一系列不同型号的计算机之间通用</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org5be489c" class="outline-2">
+<h2 id="org5be489c"><span class="section-number-2">2</span> 数据的表示和运算</h2>
+<div class="outline-text-2" id="text-2">
+<ol class="org-ol">
+<li>十进制转为二进制 整数部分：除2取余法（由低到高） 小数部分：乘基取整法（由高到低）</li>
+<li>BCD码 二进制编码的十进制数 8421码（大于9需要加6修正） 余3码（多3） 2421码（权值排列）</li>
+<li>ASCII码 127是DEL码，32是SPACE码，编码只32-126的字符是可印刷字符</li>
+<li>小端模式 先存储低位字节，后存储高位字节 (high)11223344(low)</li>
+<li>校验码 码距：任意两个合法码字之间最少变化的二进制位数称为码距；码距越大，检错能力越强；码距&gt;=2才有校验能力</li>
+<li>易错点 一位主存错误码，使用一位奇偶校验码一定可以校验</li>
+<li><p>
+原码 补码 反码 移码
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">码</th>
+<th scope="col" class="org-left">整数正数范围</th>
+<th scope="col" class="org-left">整数负数范围</th>
+<th scope="col" class="org-left">小数正数范围</th>
+<th scope="col" class="org-left">小数负数范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">原码</td>
+<td class="org-left">0-\(2^n-1\)</td>
+<td class="org-left">\(1-2^n\)-0</td>
+<td class="org-left">0-\(1-2^{-n}\)</td>
+<td class="org-left">\(2^{-n}-1\)-0</td>
+</tr>
+
+<tr>
+<td class="org-left">补码</td>
+<td class="org-left">0-\(2^n-1\)</td>
+<td class="org-left">\(-2^n\)-0</td>
+<td class="org-left">0-\(1-2^{-n}\)</td>
+<td class="org-left">-1 -0</td>
+</tr>
+
+<tr>
+<td class="org-left">反码</td>
+<td class="org-left">0-\(2^n-1\)</td>
+<td class="org-left">\(1-2^n\)-0</td>
+<td class="org-left">0-\(1-2^{-n}\)</td>
+<td class="org-left">\(2^{-n}-1\)-0</td>
+</tr>
+
+<tr>
+<td class="org-left">移码</td>
+<td class="org-left">0-\(2^n-1\)</td>
+<td class="org-left">\(-2^n\)-0</td>
+<td class="org-left">-----</td>
+<td class="org-left">-----</td>
+</tr>
+</tbody>
+</table></li>
+<li>补码的算术移位 将符号位和数值位一起右移一位，并保持补码的符号位不变，可实现除法功能</li>
+<li>移码和补码都有唯一的真值0表示</li>
+<li>算术移位 正数：原码、补码、反码移位都补0；负数：原码补0，补码左移补0右移补1，反码补1</li>
+<li>逻辑移位 将操作数当作无符号数移动，统统补0</li>
+<li>循环移位 不带标志位CF的左移右移也需要改变CF的值</li>
+<li>符号扩展 正数：原码、补码、反码扩展都补0；负数：原码补0，补码整数补1小数补0，反码补1</li>
+<li>溢出判断 三种方法都有异或门实现
+<ul class="org-ul">
+<li>单符号位 参与操作的两数符号位相同，结果也没变，则没有溢出</li>
+<li>双符号位（模4补码） 00，11 没有变，01 正溢出，10 负溢出</li>
+<li>单符号位和数据位的进位 若相同则无溢出，不相同则溢出</li>
+</ul></li>
+<li><p>
+定点数乘除法运算总结
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">乘法类型</th>
+<th scope="col" class="org-left">符号位参与运算</th>
+<th scope="col" class="org-left">累加/加减次数</th>
+<th scope="col" class="org-left">移位方向</th>
+<th scope="col" class="org-left">移位次数</th>
+<th scope="col" class="org-left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">原码一位乘法</td>
+<td class="org-left">否</td>
+<td class="org-left">n</td>
+<td class="org-left">右</td>
+<td class="org-left">n</td>
+<td class="org-left">部分积两位，乘数1位</td>
+</tr>
+
+<tr>
+<td class="org-left">补码Booth乘法</td>
+<td class="org-left">是</td>
+<td class="org-left">n+1</td>
+<td class="org-left">右</td>
+<td class="org-left">n</td>
+<td class="org-left">部分积两位，乘数1位</td>
+</tr>
+
+<tr>
+<td class="org-left">原码加减交替法</td>
+<td class="org-left">否</td>
+<td class="org-left">n+1或者n+2</td>
+<td class="org-left">左</td>
+<td class="org-left">n</td>
+<td class="org-left">若余数最终为负，需要恢复余数</td>
+</tr>
+
+<tr>
+<td class="org-left">补码加减交替法</td>
+<td class="org-left">是</td>
+<td class="org-left">n+1</td>
+<td class="org-left">左</td>
+<td class="org-left">n</td>
+<td class="org-left">商末位恒置1</td>
+</tr>
+</tbody>
+</table></li>
+<li>凡是原码运算，不论加减乘除，符号位都单独处理，其中乘除运算的结果符号由参与运算的两个操作数符号相 <b>异或</b> 得到</li>
+<li>强制类型转换 char类型只占1个字节，不是一位</li>
+<li>模4补码 只有一个符号位，因为每一个正确的模4补码的两个位都是相同的</li>
+<li>浮点数
+<ul class="org-ul">
+<li>左规 当结果需要规格化处理时，将尾数算术左移一位，阶码减一，可能需要多次左规</li>
+<li>右规 浮点数结果溢出时（01或10），将尾数算术右移一位，阶码加一，只需要右规一次</li>
+<li>规格化结果 尾数基数为2时，原码规格化后尾数首位一定是1；补码尾数首位一定和符号位相反；当尾数基数为3时，原码规格化后尾数最高两位不全为0</li>
+<li>上溢会报错，下溢当作0处理</li>
+<li><p>
+IEEE 754标准 数符+阶码E（移码）+尾数M（原码） 阶码的范围是（1-254 全0表示非规格化数）
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">类型</th>
+<th scope="col" class="org-right">阶码</th>
+<th scope="col" class="org-right">尾数</th>
+<th scope="col" class="org-right">总位数</th>
+<th scope="col" class="org-right">偏置值</th>
+<th scope="col" class="org-left">最小值</th>
+<th scope="col" class="org-left">最大值</th>
+<th scope="col" class="org-left">值表示</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">短浮点数</td>
+<td class="org-right">8</td>
+<td class="org-right">23</td>
+<td class="org-right">32</td>
+<td class="org-right">127</td>
+<td class="org-left">\(1*2^{1-127}\)</td>
+<td class="org-left">\(1.111...*2^{254-127}\)</td>
+<td class="org-left">\((-1)^s 1.M*2^{E-127}\)</td>
+</tr>
+
+<tr>
+<td class="org-left">长浮点数</td>
+<td class="org-right">11</td>
+<td class="org-right">52</td>
+<td class="org-right">64</td>
+<td class="org-right">1023</td>
+<td class="org-left">----</td>
+<td class="org-left">----</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table></li>
+<li>浮点数的加减运算
+<ul class="org-ul">
+<li>小阶向大阶对齐，阶码小的尾数右移直到阶码相等 舍弃有效位可能会产生误差，影响精度</li>
+<li>尾数求和</li>
+<li>规格化</li>
+<li>舍入 0舍1入法：右移时被移去的尾数最高数值位为1加1，为0加0；恒置1法：使末位恒置1</li>
+<li>溢出判断 01上溢；10下溢</li>
+</ul></li>
+</ul></li>
+<li>类型转换 int-&gt;float-&gt;double
+<ul class="org-ul">
+<li>32bit int 转到 float 只有1+23位的精度，如果int为32为，那么转换也会有损失</li>
+<li>如果将float 转到 int，float的小数部分也会有损失</li>
+<li>将float 转为double不会丢失精度</li>
+</ul></li>
+</ol>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: 2018-12-07</p>
+<p class="author">Author: hiro</p>
+<p class="date">Created: 2018-12-08 六 15:35</p>
+<p class="validation"></p>
+</div>
+</body>
+</html>
