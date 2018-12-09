@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2018-12-08 六 15:35 -->
+<!-- 2018-12-09 日 20:16 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>计算机组成原理</title>
@@ -254,8 +254,8 @@ for the JavaScript code in this tag.
 <div id="content">
 <h1 class="title">计算机组成原理</h1>
 
-<div id="outline-container-orga7ae350" class="outline-2">
-<h2 id="orga7ae350"><span class="section-number-2">1</span> 计算机系统概述</h2>
+<div id="outline-container-orgba3802c" class="outline-2">
+<h2 id="orgba3802c"><span class="section-number-2">1</span> 计算机系统概述</h2>
 <div class="outline-text-2" id="text-1">
 <ol class="org-ol">
 <li>计算机的发展 1946年第一台计算机ENIAC问世，电子管时代-&gt;晶体管时代-&gt;中小规模集成电路-&gt;大规模集成电路</li>
@@ -298,8 +298,8 @@ for the JavaScript code in this tag.
 </ol>
 </div>
 </div>
-<div id="outline-container-org5be489c" class="outline-2">
-<h2 id="org5be489c"><span class="section-number-2">2</span> 数据的表示和运算</h2>
+<div id="outline-container-org4a19b9c" class="outline-2">
+<h2 id="org4a19b9c"><span class="section-number-2">2</span> 数据的表示和运算</h2>
 <div class="outline-text-2" id="text-2">
 <ol class="org-ol">
 <li>十进制转为二进制 整数部分：除2取余法（由低到高） 小数部分：乘基取整法（由高到低）</li>
@@ -455,7 +455,7 @@ for the JavaScript code in this tag.
 <li>左规 当结果需要规格化处理时，将尾数算术左移一位，阶码减一，可能需要多次左规</li>
 <li>右规 浮点数结果溢出时（01或10），将尾数算术右移一位，阶码加一，只需要右规一次</li>
 <li>规格化结果 尾数基数为2时，原码规格化后尾数首位一定是1；补码尾数首位一定和符号位相反；当尾数基数为3时，原码规格化后尾数最高两位不全为0</li>
-<li>上溢会报错，下溢当作0处理</li>
+<li>上溢会报错，下溢当作0处理；下溢的运算结果的绝对值小于机器所能表示的最小绝对值</li>
 <li><p>
 IEEE 754标准 数符+阶码E（移码）+尾数M（原码） 阶码的范围是（1-254 全0表示非规格化数）
 </p>
@@ -519,9 +519,10 @@ IEEE 754标准 数符+阶码E（移码）+尾数M（原码） 阶码的范围是
 <ul class="org-ul">
 <li>小阶向大阶对齐，阶码小的尾数右移直到阶码相等 舍弃有效位可能会产生误差，影响精度</li>
 <li>尾数求和</li>
-<li>规格化</li>
+<li>规格化 左规（补码）：尾数首位和符号位相同；右规（补码）：溢出时</li>
 <li>舍入 0舍1入法：右移时被移去的尾数最高数值位为1加1，为0加0；恒置1法：使末位恒置1</li>
 <li>溢出判断 01上溢；10下溢</li>
+<li>只有对阶和右规需要尾数舍入；右规和尾码都可能引起阶码上溢</li>
 </ul></li>
 </ul></li>
 <li>类型转换 int-&gt;float-&gt;double
@@ -530,6 +531,99 @@ IEEE 754标准 数符+阶码E（移码）+尾数M（原码） 阶码的范围是
 <li>如果将float 转到 int，float的小数部分也会有损失</li>
 <li>将float 转为double不会丢失精度</li>
 </ul></li>
+<li>使用浮点数是为了增加数据的表示精度</li>
+<li>多位加法器设计采用快速进位，对加法器的每一位都会生成两个信号，进位信号g=XY，进位传递信号p=X异或Y</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org215f1c3" class="outline-2">
+<h2 id="org215f1c3"><span class="section-number-2">3</span> 存储系统</h2>
+<div class="outline-text-2" id="text-3">
+<ol class="org-ol">
+<li>磁盘分类
+<ul class="org-ul">
+<li>存储介质 磁表面存储器（磁盘，磁带）；磁芯存储器（MOS型，双极型）；光存储器（光盘）</li>
+<li>存取方式 随机存储器（RAM） 只读存储器ROM 串行访问存储器（顺序存取（磁带），直接存取（磁盘））</li>
+</ul></li>
+<li>直接存取方式和随机存取不同，是介于顺序存取和直接存取之间的方式</li>
+<li>存取周期 两次独立的存取操作之间的时间间隔（包括恢复时间）；存取时间 存取操作需要的时间</li>
+<li>Cache（主存）中的内容是主存（辅存）中的一部分</li>
+<li>Cache与主存之间的数据调动是硬件自动完成的，对用户透明；而主存和辅存之间的数据调动则是由硬件和系统共同完成的，对应用程序员透明，对系统程序员不透明</li>
+<li>破坏性读出和易失性</li>
+<li>静态RAM SRAM 双稳态触发器记忆信息 非破坏性读出 易失性存储器（断电没有内容） 存取速度快，集成度低，功耗大，一般用于高速缓冲器</li>
+<li>动态RAM DRAM 电路中的栅极电容记忆信息 破坏性读出 易失性存储器 相对慢，集成度高，功耗小，容量大，价格低
+<ul class="org-ul">
+<li>DRAM采用地址复用技术，地址线为原来的一般，且地址信号分行、列两次传送</li>
+<li>刷新方式 集中刷新（在“死区”（此期间停止读写）集中刷新）；分散刷新（把刷新安排到每个存取周期）；异步刷新（每个t时间刷新一次）；透明刷新（刷新的时间在不需要访问存储器的译码阶段，不需要浪费时间）</li>
+<li>刷新单位是行，所以只需要行地址；刷新不需要选片，即整个存储器刷新</li>
+</ul></li>
+<li>只读存储器ROM 非易失性（U盘）
+掩膜式只读存储器MROM（出厂一次性）、可编程PROM（一次性）、可擦除可变成EPROM（多次编程）、闪存（MOS）、固态硬盘SSD</li>
+<li>技巧 SRAM的引脚芯片包括：地址线+数据线+片选线（1条）+读写控制线（可1可2）；DRAM的引脚芯片包括：地址线/2（分用）+数据线+行、列片选（2）+读写控制（可1可2）</li>
+<li>主存容量扩展 位扩展法（8b到16b），连接地址线的方式相同，但是连接数据线的方式不同，某一时刻要选到所有芯片；字扩展法（8K到16K），连接数据线的方式和地址线的方式都相同，片选</li>
+<li>片选有效信号和访存控制信号有关，低电平有效</li>
+<li>双端口RAM 两组相互独立的地址线、数据线、控制线，允许同时异步访问存储单元，同时读、边写边读会发生错误</li>
+<li>多模块存储器 核心思想：CPU的执行速度比访存速度快，因此一次从存储器取出多条数据让CPU执行
+<ul class="org-ul">
+<li>单体多字存储器 一次读出多条指令</li>
+<li>多体并行存储器 高位交叉编址（指令放到一个连续空间，顺序存储器，不能满足程序的局部性原理）；低位交叉编址（指令放到不同存储体上，模块数&gt;=T/r，T存取周期，r总线传送周期）</li>
+</ul></li>
+<li>交叉存储器判断访存冲突：给定的访存地址在相邻的4（4个存储体）次访存中是否出现了同一个访存体</li>
+<li>Cache与CPU之间的数据交换以字为单位，Cache与主存之间的数据交换是以Cache块为单位的</li>
+<li>地址映射 把主存空间映射到Cache；地址变换 访存时把主存地址变换成Cache地址的过程</li>
+<li>Cache与主存的映射方式
+<ul class="org-ul">
+<li>直接映射 主存字块标记+Cache字块地址+字块内地址</li>
+<li>全相联映射 主存字块标记+字块内地址 （按内容寻址）</li>
+<li>组相联映射 组间直接映射，组内全相联映射 主存字块标记+组地址+字块内地址</li>
+</ul></li>
+<li>Cache的总容量包括：存储容量+标记阵列容量（有效位，标记位，一致性维护位，替换算法控制位；前两个一定有，后两个看题眼）</li>
+<li>Cache的写策略
+<ul class="org-ul">
+<li>全写法（命中时，必须把数据同时写入Cache和主存），非写分配法（没命中时，只把数据写到内存，不进行调块）</li>
+<li>写回法（命中时，只把数据写到Cache，只有在换出时才写到主存），写分配法（没命中时，先加载数据到Cache，然后在Cache中写入）</li>
+</ul></li>
+<li>指令Cache和数据Cache分离的主要目的是减少指令流水线资源冲突</li>
+<li>对于应用程序员，虚拟存储器是透明的；对于系统程序员，虚拟存储器是不透明的</li>
+<li>快表TLB的内容是页表的一部分（虚拟地址）；Cache的内容是主存的一部分（物理地址）</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org4e119c8" class="outline-2">
+<h2 id="org4e119c8"><span class="section-number-2">4</span> 指令系统</h2>
+<div class="outline-text-2" id="text-4">
+<ol class="org-ol">
+<li>指令 指令是计算机运行的最小功能单位，一台计算机上所有的指令的集合构成该机的指令系统，位于软件和硬件的交界面上</li>
+<li>定长指令字结构（所有指令字长相等） 变长指令字结构 单字长指令 半字长指令 双字长指令</li>
+<li>根据指令操作数地址码的数目的不同：
+<ul class="org-ul">
+<li>零地址指令 1.不需要操作数 2.两个操作树隐含的从栈顶和次栈顶弹出，运算结果隐含的压入栈中</li>
+<li>单地址指令 1.只需要一个地址 2.另一个操作数由累加器ACC提供</li>
+<li>二地址指令 目的操作数和源操作数</li>
+<li>三地址指令 两个源操作数和一个存放结果</li>
+<li>四地址指令 包含下址</li>
+</ul></li>
+<li>程序控制类指令主要包括 无条件转移 有条件转移 子程序调用和返回 循环指令等</li>
+<li>指令寻址方式 EA：有效地址
+<ul class="org-ul">
+<li>指令寻址 顺序寻址（PC） 跳跃寻址（将下址保存到PC，所有下一条指令仍然是由PC给出）</li>
+<li>隐含寻址 隐含的使用ACC作为第二操作数的地址</li>
+<li>立即数寻址 指令中的地址字段给出的不是操作数的地址而是操作数</li>
+<li>直接寻址 EA=A</li>
+<li>间接寻址 EA=(A) 一次间址需要两次访存</li>
+<li>寄存器寻址</li>
+<li>寄存器间接寻址 EA=(R)</li>
+<li>相对寻址 EA=(PC)+A（最重要）</li>
+<li>基址寻址 EA=(BR)+A</li>
+<li>变址寻址 EA=(IX)+A（便于处理数组问题）</li>
+<li>堆栈寻址 硬堆栈（寄存器），软堆栈（内存）</li>
+</ul></li>
+<li>进位/借位标志：CF；零标志ZF；符号标志：SF；溢出标志：OF</li>
+<li>CISC &amp; RISC
+<ul class="org-ul">
+<li>复杂指令系统计算机CISC 长度不固定，指令格式多，寻址方式多，大多兼容，绝大多数为微程序控制</li>
+<li>精简指令系统计算机RISC 长度固定，指令格式少，寻址方式少，可访存指令只有load/store，通用寄存器数量多，绝大多数为组合逻辑控制（硬布线）</li>
+</ul></li>
 </ol>
 </div>
 </div>
@@ -537,7 +631,7 @@ IEEE 754标准 数符+阶码E（移码）+尾数M（原码） 阶码的范围是
 <div id="postamble" class="status">
 <p class="date">Date: 2018-12-07</p>
 <p class="author">Author: hiro</p>
-<p class="date">Created: 2018-12-08 六 15:35</p>
+<p class="date">Created: 2018-12-09 日 20:16</p>
 <p class="validation"></p>
 </div>
 </body>
