@@ -174,7 +174,5 @@ v 进入可视模式，然后就可以选择文本对象了。
 :w !sh
 #+END_SRC
 
-** 有待更新...
-突然发现有些好玩，我在使用 Emacs 的 OrgMode 来编辑如何较好的使用 VIM …… hahahah
-
+* 脚注
 [fn:1] 我的 Vim 上道教程看得是陈皓大神翻译的 [[http://coolshell.cn/articles/5426.html][简明 VIM 练级攻略]]

@@ -306,7 +306,6 @@ export LC_ALL=zh_CN.UTF-8
 查看错误 log，发现是 =.erlang.cookie= 的问题，复制一份之后，还需要把这个文件的权限设为 rabbitmq:rabbitmq 才行。具体参考这个：
 https://stackoverflow.com/questions/24610367/unable-to-start-rabbitmq-server-on-ubuntu-10-04
 
-
 *** Arch 蓝牙失效
 <2018-09-07 Fri>
 今天买的静电容蓝牙键盘到手了，刚开始蓝牙可以使用，但过了一会电脑蓝牙就整个没用了。设置里显示没有蓝牙可以使用，非常奇怪。
@@ -331,6 +330,8 @@ sudo systemctl restart bluetooth
 #+END_SRC
 最后，冷启动（shutdown，热启动的：reboot）就 OK 了。
 
+*** Linux 下 JetBrain 系软件字体问题
+使用网上多种方式尝试无解之后，突然发现基于Idea的Android studio的字体渲染出乎意料的好，必定是在启动的Jre上做了字体渲染的修改，于是将Idea的启动Jre替换成AS的Jre。字体渲染完美
 ** 不停更新中......
    :PROPERTIES:
    :CUSTOM_ID: 不停更新中
