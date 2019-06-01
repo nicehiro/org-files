@@ -1,3 +1,0 @@
-* 记录Android开发过程的问题
-- Android Studio Proxy 配置问题
-  在配置代理之后可能还是不能正常的下载相关依赖，这时候需要注释 =.gradle/gradle.properties= 文件中关于 HTTPS 的相关配置

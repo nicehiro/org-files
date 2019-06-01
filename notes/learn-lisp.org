@@ -1,0 +1,266 @@
+#+TITLE: Lisp 学习笔记
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+#+DATE: 2018-01-03
+#+OPTIONS: toc:nil
+
+啃Elisp手册，加油！
+
+* Basic Program
+** defvar，给一个变量赋值。
+  + 如果该变量有初值，新赋的值不会改变以前的值。
+  + 可以给变量提供文档字符串——用 C-h v 后给出的变量的定义。
+    
+** 进制表示。
+  + #b101100 => 44
+  + #o10     => 8
+  + #x10     => 10
+
+** 测试变量是否相同：
+  + (= 1.0 1)   => t
+  + (eql 1.0 1) => nil => 还要比较两数的数据类型是否相同
+
+** 数的转换：
+  + truncate，靠近0
+  + floor，不比自身大的整数
+  + ceiling，不比本身小的整数
+  + round，四舍无入
+
+mod sin cos tan asin acos atan sqrt exp
+
+** String，字符串。
+  + ?x 表示一个字符
+  + (make-string 5 ?x) => "xxxxx"
+  + (string ?a ?b ?c)  => "abc"
+  + (string-to-number "256") => 256
+  + (format "%#o" 256) => "0400"
+  + downcase upcase capitalize
+  + string-match
+  + replace-match
+
+** 自求值表达式，求值前后值不变。
+quote，`，只读入，不求值。
+
+(cons 1 2) => (1 . 2)
+(cons 1 '()) => (1)
+
+cons & list:
+  + cons (1 . 2)
+  + list (1 2)
+
+函数式编程的特点：不会修改已有变量。
+破坏性函数：nreverse sort setcar setcdr
+
+** 关联表：
+  + (assoc "a" '(("a" 97) ("b" 98))) => ("a" 97) => eq
+  + (assoc 'a '((a . 97) (b . 98))) => (a . 97) => equal
+  + (assoc-default)
+  + (rassoc '(97) '(("a" 97) ("b" 98))) => ("a" 97)
+
+** 遍历列表：
+  + (mapc '1+ '(1 2 3)) => (1 2 3)
+  + (mapcar '1+ '(1 2 3)) => (2 3 4)
+  + (dolist (var list [result]) body ...)
+
+** 序列
+  + 包括列表（list）和数组（Array），数组中包括向量（vector）、字符串（string）、字符表（char-table）和布尔向量（bool-vector）。
+  + 数组是自求值的，其中每个元素都可以使用 aref 访问，aset 设置。
+  + sequencep arrayp vectorp char-table-p ...
+  + fillarray 整个数组用某个元素填充
+    
+** 符号机制。
+  + elisp 中有一个符号向量表 obarray（vector），维护惟一的符号；
+  + 通过 hash 散列的方法插入和查找；
+  + intern：lisp 读入一个符号时，会先查找该符号是否在 obarray 中，不在的话，使用 intern 插入。
+  + mapatom 来遍历整个 obarray
+  + 组成：symbol-name, symbol-value, symbol-function, property list
+  + set 设置 symbol-value，fset 设置 symbol-function，put、get、symbol-plist 设置 property list
+  + obarray 实质：用链表实现的hash表，每个元素都有相对的一个链表，hash 值相同的元素放在这个列表上。
+
+** 变量。
+  + 全局变量。只有当退出 emacs 或是使用 unintern 从 obarray 中除去才能消除。
+  + buffer-local变量，make-local-variable, with-current-buffer。只有关闭缓存区或是 kill-local-variable 才能消除。
+  + let 绑定的局部变量。特别注意，这货绑定的变量在整个表达式都是可见的，不算什么所谓的局部变量。动态生存期，只有绑定的表达式运行时才是有效的。
+
+** funcall & apply:
+  + funcall 直接把所有参数参入调用函数
+  + apply 最后一个参数必须是 list，传入时将最后一个参数展开再传入。
+    
+** 宏。
+  + ` 反引号和 , 逗号配合使用。反引号包住的都只读入而不 eval，在反引号中再用逗号包住的需要 eval。
+    
+** 缓存区操作。
+  + buffer-name 获取 buffer name；rename-buffer 重命名 buffer
+  + set-buffer 指定当前缓存区，但在 scratch buffer 中执行的时候，光标所在的缓存区会自动成为当前缓存区。
+  + with-current-buffer & save-current-buffer 想要切换buffer取执行别的buffer中的命令时，先使用save-current-buffer来保存当前缓存区，然后再使用set-buffer切换去执行；也可以直接使用with-current-buffer来执行。想想这就是前不久python加入的所谓新特性。
+  + get-buffer-create 生成一个新buffer，如果buffer存在，就返回已存在的buffer
+    generate-new-buffer 只能新建一个缓冲区
+  + kill-buffer 关闭缓存区
+    kill-buffer-query-functions 有确认的关闭缓存区
+    kill-buffer-hook 关闭缓存区并做善后处理
+  + buffer-live-p 检测buffer是否还存在
+  + buffer-list with-temp-buffer(临时buffer)
+  + point（位置）和 marker（标记）
+    point 是指一个缓存区中固定的一个位置，某两个字符之间的唯一的位置；
+    marker 可以是特殊标记一个字符的位置，当前面插入新的字符时，marker 的值会相应改变
+  + goto-char 到某个位置 （point-min） 到开始位置
+    forward-char 以point为开始向前移动
+    forward-word 按词移动
+    forward-line 按行移动 (forward-line 0) 移动到当前行首
+    line-beginning-position 获得行首位置
+    line-end-position 获得行尾位置
+    bobp eobp bolp eolp(end of line predicate)
+  + 获取缓存区的内容
+    buffer-string buffer-substring
+    char-after char-before
+    current-word thing-at-point（得到当前的表达式、符号、数字等）
+
+** 窗口
+  + frame & window 一个frame可以包含多个window
+  + 选择窗口 selected-window获得当前窗口对象
+  + save-selected-window & with-selected-window 执行语句结束后窗口回到执行前的那个位置
+  + next-window previous-window other-window 得到当前Frame的另一个window
+  + 获得窗口信息等
+  + 窗口缓存区 window-buffer get-buffer-window get-buffer-window-list
+             set-window-buffer：设置某个窗口显示某个缓存区
+             switch-to-buffer：让某个窗口显示某个缓存区
+
+** 文件
+需要理解，文件和缓存区（buffer）是两个不同的概念。buffer 是保存在内存中的对象，平时的修改只会对缓存区中的对象做改动，只有作了保存操作才会保存到磁盘。
+  + 修改某个 buffer 对应的文件使用 set-vistited-file-name
+  + 获得某个 buffer 的对应的文件名 find-buffer-visiting & get-file-buffer
+  + write-file == 另存为；save-buffer == 保存当前 buffer 到文件
+  + insert-file-contents & wirte-region 高级插入，将文件指定部分插入到当前缓存区
+  + file-exists-p file-writeable-p file executable-p file-modes（位模式）
+    file-regular-p（普通文件） file-directory-p file symlink-p（符号链接）
+  + file-attribute 可以得到文件几乎所有信息，可以查看文档看各个信息是干嘛的
+  + 修改文件信息
+    rename-file copy-file delete-file make-directory delete-directory
+    set-file-times set-file-modes set-file-modes
+  + file-name-absolute-p 是否为绝对路径
+    expand-file-name 扩展程绝对路径
+    file-relative-name 绝对转相对路径
+  + convert-standard-filename 得到系统使用的文件名
+  + directory-file 得到某个目录中的全部或者符合某个正则表达式的文件名
+
+* Tricky
+** interactive
+几个从 pdf 里面抄到的例子，写一个自己的理解。
+#+BEGIN_SRC elisp
+(defun hello-world (name)
+  (interactive "sWhat's your name? ")
+  (message "Hello, %s" name))
+#+END_SRC
+interactive 顾名思义，就是一个搞交互的函数，可以通过 interactive 这个表达式交互性的获取到这个函数所需的参数。如上，可以通过提示获得上诉函数的参数 name。
+其中，s 代表参数的类型是字符串，还有多种类型可以通过查看 interactive 函数来看到。
+
+#+BEGIN_SRC elisp
+(defun read-hiden-file (file arg)
+  (interactive
+   (list (read-file-name "Choose a hiden file: " "~/" nil nil nil
+			 (lambda (name)
+			   (string-match "^\\." (file-name-nondirectory name))))
+	 current-prefix-arg))
+  (message "%s, %s" file arg))
+read-hiden-file
+#+END_SRC
+interactive 对应的代码字符很多，一整张表，所以这里还提供了另一张方法。s 对应的函数是 read-string，读文件是 f，对应的函数是 read-file-name。
+如果 interactive 后面接的是表达式，那么表达式求值之后的列表元素就是这个函数对应的参数。如上，两个参数，一个是 file，一个是 arg。
+
+#+BEGIN_SRC elisp
+(defvar switch-major-mode-history nil)
+switch-major-mode-history
+(defun switch-major-mode (mode)
+  (interactive
+   (list
+    (intern
+     (completing-read "Switch to mode: "
+		      obarray (lambda (s)
+				(and (fboundp s)
+				     (string-match "-mode$" (symbol-name s))))
+		      t nil 'switch-major-mode-history))))
+  (setq switch-major-mode-history
+	(cons (symbol-name major-mode) switch-major-mode-history))
+  (funcall mode))
+switch-major-mode
+#+END_SRC
+这个函数可以切换 major-mode，completing-read 提供可补全的方法在 obarray 搜索 major-mode。
+
+** 正则表达式
+Emacs 正则表达式太恶心人了，还好本书作者给了一个简单的方法。
+首先想想没有引号引起时的正则表达式是怎样。比如对于特殊字符 \$ 要用 \$，对于反斜线结构是 \(，\)，\{，\}，\|等。知道这个之后，再把所有的 \ 替换成 \\，这就是写到最后的双引号里面的形式。所以要匹配一个 \，应该用 \\，然后在引号里用 \\\\ 来匹配。
+在使用 [] 表示一个字符集时，如果字符集里包括 ] 时，要把 ] 放在第一位；如果要包括 - ，只能放在最后一位；如果要包括 ^ ，不能放在第一位，如果只想匹配一个 ^，就使用 \^ 的形式。
+使用 M-x describe-syntax 查看语法表。
+使用 regexp-opt 产生一个更好的正则表达式；regexp-quote 可以让字符串中的特殊字符自动转义。
+
+** 显示当前桌面信息
+例子来自于书中。
+#+BEGIN_SRC elisp
+;; 根据 dir 是否是 nil 判断是水平还是竖直分割
+;; 返回格式：(DIR heigth/width win ...)
+(defun my-window-tree-to-list (tree)
+  (if (windowp tree)
+      'win
+    (let ((dir (car tree))
+          (children (cddr tree)))
+      (list (if dir 'vertical 'horizontal)
+            (if dir
+                (my-window-height (car children))
+              (my-window-width (car children)))
+            (my-window-tree-to-list (car children))
+            ;; 如果 子窗口 表达式的长度大于 2,也就是有被分割，则继续
+            (if (> (length children) 2)
+                (my-window-tree-to-list (cons dir (cons nil (cdr children))))
+              (my-window-tree-to-list (cadr children)))))))
+
+;; window-tree 返回格式中有两种不同的格式来表现 edge 这个变量
+(defun my-window-width (win)
+  (if (windowp win)
+      (window-width win)
+    (let ((edge (cadr win)))
+      (- (nth 2 edge) (car edge)))))
+
+(defun my-window-height (win)
+  (if (windowp win)
+      (window-height win)
+    (let ((edge (cadr win)))
+      (- (nth 3 edge) (cadr edge)))))
+
+(defun my-list-to-window-tree (conf)
+  (when (listp conf)
+    (let (newwin)
+      (setq newwin (split-window nil (cadr conf)
+                                 (eq (car conf) 'horizontal)))
+      (my-list-to-window-tree (nth 2 conf))
+      (select-window newwin)
+      (my-list-to-window-tree (nth 3 conf)))))
+
+(defun my-restore-window-configuration (winconf)
+  (delete-other-windows)
+  (my-list-to-window-tree winconf))
+
+(defun my-current-window-configuration ()
+  (my-window-tree-to-list (car (window-tree))))
+
+(setq foo (my-current-window-configuration))
+(horizontal 76 win (vertical 20 win win))
+
+;; 存储窗口信息
+(my-restore-window-configuration foo)
+#+END_SRC
+理解上面这个例子一定要先了解清楚 window-tree 返回的格式。
+
+如果 Frame 只有一个窗口，window-tree 返回只有一个窗口；如果 Frame 有被分割，那么返回的窗口中也会分割出几个不同的窗口：具体的格式是这样的，(DIR EDGE window ...)，DIR 为 =nil= 时表示水平分成两块——指竖着分，DIR 为 =t= 时表示竖直分成两块——指横着分，edge 表示这个窗口的范围，也是一个 list——(left top right bottom)，如果后面的窗口还有被分割，就继续按上面的方法分。
+#+BEGIN_SRC elisp
+(window-tree)
+((nil (0 0 160 40) #<window 3 on *scratch*> (t (80 0 160 40) #<window 34 on learn-lisp.org> #<window 36 on *Messages*>)) #<window 4 on  *Minibuf-0*>)
+#+END_SRC
+** 符号链接文件
+文件是否存在可以使用 file-exists-p 来判断，对于符号链接只有当文件存在时才返回 t。
+file-symlink-p 在文件是符号链接时返回目标文件名，而文件的真实名字可以用 file-truename 得到。
+** 文件目录
+目录名的写法要确保是以路径分隔符结束，可以用 file-name-as-directory 来转换。不用硬编码（concat dir "/"） 转换，遇到 win 系统怎么办？
+* 看源码
+- define-namespace
+  + 为该 namespace 下所有变量都加上一个前缀
+  + 为该 namespace 下所有函数及函数内部变量都加上一个前缀
+

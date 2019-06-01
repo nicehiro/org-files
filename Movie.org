@@ -1,8 +1,0 @@
-#+TITLE: Movie Motto
-#+OPTIONS: toc:nil
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="/home/hiro/Documents/org-files/worg.css"/>
-#+DATE: 2018-11-18
-
-* Brave Heart
-- It is exactly the ability to compromise that makes a man nobel.
-- God makes men what they are.

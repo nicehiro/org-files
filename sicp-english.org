@@ -1,3 +1,0 @@
-* English words in SICP
-- novice 初学者
-- approximation 近似值

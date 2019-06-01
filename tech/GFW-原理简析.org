@@ -1,0 +1,191 @@
+#+TITLE: GFW 原理解析
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+#+DATE: 2017-06-05
+#+OPTIONS: toc:nil
+
+看完了计算机网络就想了解一下防火长城（The GreatFirewall）的原理，于是网上找了不少文章，简单总结一下。 纯技术角度
+:expressionless:
+
+* GFW 封锁方式
+   :PROPERTIES:
+   :CUSTOM_ID: gfw-封锁方式
+   :END:
+
+GFW
+主要是指公共网络监控系统。尤其是指对境外涉及敏感内容的网站、IP地址、关键字等的过滤。GFW
+在其他国家也有，会对危害国家安全的信息进行监听。
+一般有以下几种方式进行封锁。最普遍的是 DNS 缓存污染。
+
+** DNS 缓存污染
+    :PROPERTIES:
+    :CUSTOM_ID: dns-缓存污染
+    :END:
+
+DNS 是什么？全称是 Domain Name
+System，即域名系统。可以把你在浏览器中输入的域名（www.baidu.com）解析成对应的
+IP 地址（183.232.231.172）。为什么要存在域名系统？------你觉得你是记
+baidu.com 容易还是一堆数字容易？为什么不直接使用域名来找网页而非要使用
+IP 地址？------IP 地址有很多作用，分级，容易的用二进制表示和识别等。
+
+可以简单想象一张表，表中一条域名对应一个 IP
+地址，在域名解析的时候，实际上查看的就是这些表的内容，根据浏览器输的域名来查找
+IP 地址。具体查询步骤如下：
+
+1. 当要确定 IP 地址时，系统首先会去本地 DNS
+   缓存中去查，如果没有，便会像你电脑配置的 DNS 服务器去查，DNS
+   服务器会先去查询根域名服务器，然后在去查找域名服务器，一级一级的查询直到确定。
+   > 根域名服务器：全世界一共有 504
+   台（2014），知道所有的顶级域名服务器的域名和 IP 地址。所有需要查询的
+   DNS 记录都要先访问根域名服务器进行解析。 > >
+   顶级域名服务器：.com、.cn、.org 等都是顶级域名服务器。
+
+2. 每次查询到一个对应的 IP
+   记录，就保存到你自己的电脑上，这样下次在访问这个域名就先从本地 DNS
+   缓存中拿。
+
+可见在访问一条本地 DNS 缓存中没有的记录需要多台 DNS
+服务器解析域名，然后从 DNS
+服务器传回到你本地。传回到本地的过程中需要经过多台路由器、服务器，只要有一台服务器被“污染”，传回到你本地的就不是你所请求的
+IP 地址。
+
+DNS 缓存污染就是指解析好的 IP
+地址在传到本地的过程中被中途篡改，传回来无效的 IP
+地址。那么到底是篡改哪些 IP 地址呢？总不能把所有的 IP
+地址都篡改吧------这里用到的是应该是正则匹配。比如说，凡是包含=google=这个字符的所有
+IP 地址，这台被污染的服务器就把 IP 地址换成其他的 IP
+地址，有可能根本不存在，也有可能直接就是广告页面。
+
+另外，前不久我用手机浏览器上网时（中国移动），网页右下角出现中国移动的“恶心”的流量提醒和广告。这也是
+DNS
+缓存污染。在返回的网页中加入了中国移动自己的广告，不爽的可以直接电话投诉。
+
+** 限定特定 IP 访问
+    :PROPERTIES:
+    :CUSTOM_ID: 限定特定-ip-访问
+    :END:
+
+实现原理： 你要和 google
+的服务器进行数据传输，数据包通过一层一层的路由传送到 google
+的服务器，但中途有一个静态路由，它会引导发送给 google
+的数据包转发到一个“黑洞服务器”上，这个“黑洞服务器”什么都不做，这样你的请求就被丢掉了，好像你从来都没有传过这条数据一样。
+
+#+BEGIN_QUOTE
+  静态路由：静态路由是指由用户或网络管理员手工配置的路由信息。当网络的拓扑结构或链路的状态发生变化时，网络管理员需要手工去修改路由表中相关的静态路由信息。
+#+END_QUOTE
+
+网络管理员知道这个路由的下一条地址的情况下才能使用静态路由，这样才能保证网络中的请求可以传到正确的位置。而
+GFW 设置的静态路由是将路由表故意填错的，导致数据包传送出错。
+
+** 其他方法
+    :PROPERTIES:
+    :CUSTOM_ID: 其他方法
+    :END:
+
+还有对 IP 地址特定端口封锁、对加密链接的干扰、TCP
+协议关键字阻断等方法来实现屏蔽功能。
+
+* FQ
+   :PROPERTIES:
+   :CUSTOM_ID: fq
+   :END:
+
+** 修改 Host
+    :PROPERTIES:
+    :CUSTOM_ID: 修改-host
+    :END:
+
+针对的是 DNS 缓存污染。Host 文件相当于 DNS
+在本地的缓存。进行域名解析时，先查询本地 DNS 缓存，就不需要去访问 DNS
+服务器来解析域名了。
+
+github 上有一个不断更新的 Host，有所需自己去取。
+
+但无法针对对特定 IP 封锁的 GFW 方法。
+
+** VPN
+    :PROPERTIES:
+    :CUSTOM_ID: vpn
+    :END:
+
+全称是虚拟专用网（Virtual Private Network）。
+
+原理图：
+
+#+ATTR_HTML: :width 600 
+ [[http://oeoaak94a.bkt.clouddn.com/vpn.jpg]]
+
+建立一个绕过 GFW 的专用通道传送数据包，当然数据是加密过的。
+
+** Shadowsocks
+    :PROPERTIES:
+    :CUSTOM_ID: shadowsocks
+    :END:
+
+原理图：
+
+[[http://oeoaak94a.bkt.clouddn.com/shadowsocks-4.png]]
+
+国外服务器将所要查询的数据包通过 ss 加密后，通过 GFW 传送到本机的 ss。而
+GFW 无法对数据包进行解密，因而无法过滤数据包。由本地的 ss
+对收到的数据进行解密，然后显示原数据包。
+
+* Linux 下查询域名 ip 的工具
+   :PROPERTIES:
+   :CUSTOM_ID: linux-下查询域名-ip-的工具
+   :END:
+
+-  nslookup
+
+#+BEGIN_EXAMPLE
+    ➜  ~ nslookup
+    > www.baidu.com
+    Server:         192.168.1.1             // 链接默认上连的 DNS 服务器查询 ip，这里应该是学校的 DNS
+    Address:        192.168.1.1#53          // DNS 服务器 ip 及 端口号
+
+    Non-authoritative answer:               // 指直接从 DNS 服务器缓存中拿到的
+    www.baidu.com   canonical name = www.a.shifen.com.  // baidu 别名
+    Name:   www.a.shifen.com
+    Address: 183.232.231.172
+    Name:   www.a.shifen.com
+    Address: 183.232.231.173
+#+END_EXAMPLE
+
+更多用法请=man nslookup=或是参考[[http://roclinux.cn/?p=2441][nslookup通往DNS的桥梁]]。
+
+-  dig
+
+#+BEGIN_EXAMPLE
+    ➜  ~ dig www.baidu.com
+
+    ; <<>> DiG 9.10.3-P4-Debian <<>> www.baidu.com
+    ;; global options: +cmd
+    ;; Got answer:
+    ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 38515
+    ;; flags: qr rd ra; QUERY: 1, ANSWER: 3, AUTHORITY: 0, ADDITIONAL: 0
+
+    ;; QUESTION SECTION:
+    ;www.baidu.com.                 IN      A
+
+    ;; ANSWER SECTION:
+    www.baidu.com.          600     IN      CNAME   www.a.shifen.com.
+    www.a.shifen.com.       600     IN      A       183.232.231.172
+    www.a.shifen.com.       600     IN      A       183.232.231.173
+
+    ;; Query time: 144 msec
+    ;; SERVER: 192.168.1.1#53(192.168.1.1)
+    ;; WHEN: Mon Jun 05 10:24:06 CST 2017
+    ;; MSG SIZE  rcvd: 90
+#+END_EXAMPLE
+
+相对来说信息较多一些，看着也舒服。
+
+[fn:1] https://2ey.me/2015/11/13/how-to-be-free/
+[fn:2] https://www.wikiwand.com/zh-hans/%E9%98%B2%E7%81%AB%E9%95%BF%E5%9F%8E
+[fn:3] http://viewdns.info/research/dns-cache-poisoning-in-the-peoples-republic-of-china/
+[fn:4] http://wiki.keso.cn/Home/across-the-gfw-s-technology-and-control-method
+
+
+
+
+
+

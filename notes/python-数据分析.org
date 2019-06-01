@@ -1,0 +1,196 @@
+#+TITLE: Python 数据分析知识点总结
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+#+DATE: 2017-08-09
+#+OPTIONS: toc:nil
+
+学习这本书，反正这几天真的是厌倦了去考研教室，去了也是不知疲倦的玩手机，不如在寝室学点别的东西呢……
+这是我自己记得学习笔记，在查一些函数时候比较方便，但是可能不适合当博客阅读。
+
+#+TOC: headlines 2
+
+** 开始之前
++ 安装必须的一些库，pandas，numpy 等。其中有一个库 tk 图形界面库需要注意一下，tk 库在 python 里是自带的，但第一次运行的时候需要额外配置。
+不同系统配置不同，在 arch 系的系统中只需要 =sudo pacman -S tk= 就可以了，其他系统参考：https://stackoverflow.com/questions/5459444/tkinter-python-may-not-be-configured-for-tk
++ “食”用环境的选择。使用 Emacs + eipy + IPython + Jupyter + ein ，这是在 Emacs 中使用 IPython 和 Notebook 的一个极好的配置。相当舒服。
+
+** Pandas 库一些使用
+records 是一个 list，里面每个元素是一个字典 dict，pandas 的 DataFrame 将 records 转为一个表格，其中，每个元素占一行，每个元素中字典各占一列。
+调用的时候可以直接使用 =frame['a']= 或是 =frame.a= （其中 a 是 frame 表格的列属性）直接拿到 frame 的列对象。
+
+#+BEGIN_SRC python
+frame = DataFrame(records)
+tz_counts = frame['tz'].valun_counts()
+
+# 可以使用 =fillna()= 函数替换缺失值。
+clean_tz = frame['tz'].fillna('Missing')
+clean_tz = frame[clean_tz == ''] = 'Unknown'
+
+# plot 函数做图，具体 api 用到的时候再看文档，这里 =barh= 指垂直块图； =rot= 指旋转。
+tz_counts[:10].plot(kind='barh', rot=0)
+
+# frame.a 返回的对象是一个 Series 对象，dropna() 返回去掉了空值
+results = Series([x.split()[0] for x in frame.a.dropna()])
+
+# return a frame 其中 a 元素没有空值
+cframe = frame[frame.a.notnull()]
+
+# numpy 的 where 函数，where(condition, true, false)；如果 condition 为true 内容就变为 true 设置的内容，false 同样
+operating_system = np.where(cframe['a'].str.contains('Windows'), 'Windows', 'Not Windows')
+
+# 通过 tz 和 operating_system 来分组，返回结果依然是 series，多个分组对象的话会得到层次化的结果
+by_tz_os = cframe.groupby(['tz', operating_system])
+
+# 这里的 size() 可以查看分组后的各组大小
+agg_counts = by_tz_os.size().unstack().fillna(0)
+#+END_SRC   
+
+** IPython
+作为一个比原始 Python Shell 好不知道多少倍的 shell，我竟然才开始用……
+
+*** 内省
+这简直就是神器！
+
+内省直接调用 =对象名?= 就可以。
+
+对象内省，返回对象的一些通用信息；函数或是实例方法内省，返回其类型和 docstring，也就是把基本介绍啥的都显示出来了。对于我这种新手简直好用的不要不要的。
+
+当你忘记某个函数是，可以用类似 Unix shell 的 * 补全查找函数。
+
+*** %run
+可以使脚本在当前的会话中运行。不用重新开一个 shell 就是爽；并且运行之后，脚本中的所有变量在此会话下都可以使用，大大方便了我们的调试。
+如果你想要在脚本中调用此会话下定义的变量，需要运行 =%run -i= 来调用脚本。
+
+***
+*** %paste
+直接使用这个函数将剪贴板中的代码贴到 shell 中就可以执行了。
+*** 和 shell 的交互
+这东西还是用的多了自然就熟悉了。
+
+** Numpy 库
+
+*** 生成数组
+传入一个嵌套的 list 到 =np.array()= 中可以生成一个数组，几个重要的属性：
++ dtype: 元素属性
++ shape: 数组行与列
++ ndim: 数组维度
+
+方法：
++ zeros: 传入 shape(tuple) 即可
++ empty: 参数和 zeros 传入的相同，返回一个没有初始化的数组
++ arange: 返回一个初值和终值以及间隔固定的一个数组
++ astype: 类型转换，超级强大。甚至可以直接转字符、数值、字符串等
++ reshape: 重新输入 shape， 将原数组转变 shape
+
+Numpy 的数组始终只有一个备份！所有的修改都在这一个地方生效。这决定了它的性能好坏。
+
+高级切片。可以有类似这种 =arr2d[:2, 1:]= 的对多个维度的切片。
+
+布尔数组。可以作为索引来检索其他数组。在一个数组中传入 list 可以筛选数组中的元素。
+
+花式检索：对数组传入一个 list，可以包含多个维度的 list，对不同维度进行检索。
+
+转置：二维数组的转置还好说，三维就开始烧脑了。
+
+内置的 ufunc 函数可以起到像 map 一样的作用，对数组中的每个元素求值。
+
+唯一化，得到数组中不重复的一组元素；in1d 可以检查元素的中元素是否在另一个数组中出现。
+
+存盘与加载：这功能一出就像极了 matlab。使用 =np.save()= 和 =np.load()= 来完成操作。
+
+** Pandas 库使用
+*** Series 使用
+传入的参数有一个 value list，一个 index list（缺省为数字）；也可以直接传入字典参数来来构建 Series。再有参数就是设置 dtype，用到的时候查文档吧。
+
+可以自动补齐不同索引的数据。
+
+index 可以通过赋值的方法更改。
+
+*** DataFrame 使用
+DataFrame 可以理解为一个表格，其中每一列都是 Series 对象。生成的时候传入一个字典，字典中每个索引指向一个 list，每个索引在生成后都是一个列。
+
+横行索引一般用 index 表示，竖行用 column 表示。
+
+因此在取列对象的时候，直接使用类似取 dict 中索引的方法，也可以使用 =.= 来取元素。
+
+赋值的时候每列的长度一定要匹配。除非在赋值的时候指定特定的值赋给特定的对象。
+
+可以通过设置 =frame.index.name= 和 =frame.columns.name= 来设置 frame 的表格竖、横列的 name。
+
+*** Index 对象
+Series 和 DataFrame 对象中的索引，它是不可修改的。
+
+reindex(index, method=None, fill_value=None)，这个方法中，method 用来填补表格中间的空隙；fill_value 用来填补表格为 NaN 的所有元素。
+
+对于 DataFrame 对象，使用 reindex 默认的是改变 index（横），如果要改变 column，需要传入关键字来指定。
+
+*** 删除元素
+drop 方法。
+
+切片。对 DataFrame 对象切片就是获得一个或多个列。使用数字切片得到的结果是行。也可以通过布尔数组选取行。通过传入一个列的 list 选取列。如果这个布尔 list 是多维（即一个 DataFrame 对象），那么将会对这个对象进行修改。这 TM 同样传一个 list 都能有不同结果要记，真是醉了……
+
+算数运算（+、-、*、/），两个 DataFrame 进行时对齐的是 index，不重叠的地方会产生 NA 值；DataFrame 和 Series 进行时对齐的是 column。也可以直接指定 =axis= 来指定对齐的轴。
+
+轴，axis，行用 0，列用 1。
+
+applymap，类似 map，是某个函数应用到整个 Frame 中；apply 只会应用到每个列中。
+
+将元素级的 Python 函数应用与 Frame，使用 =applymap= ，之所以这么叫，是因为 Series 有个应用于元素级函数的方法 =map= 。
+
+排序。通过 =sort_index()= 指定特定的 index 来排序，而 Series 默认使用 index 来排序，如果要使用值来排序，使用 =Series.order()= 方法。
+
+*** 处理丢失数据
+使用 =numpy.NaN= 来表示缺失值。
+
+=dropna()= 可以用来实现丢弃值为 NaN 的行或列。对于 Series 来说简单，但对于 DataFrame 来说默认丢弃行中有 NaN 的所有行，关键字参数 how 可以选择丢弃行全为 NaN 的行。
+
+使用 =fillna()= 实现填补，如果传入字典参数可以实现按列填补。
+
+*** 层次化索引
+给 Series 对象加多个索引，可以通过 =unstack()= 方法变为 DataFrame，在通过 =stack()= 变回来。
+
+索引名和轴标签是不同的。
+
+=swaplevel()= 交换索引层次级别。常和 =sortlevel()= 一起使用。
+
+根据轴级别分别汇总统计。切记传入的参数是轴标签。关键字参数：level
+
+将 DataFrame 中的一个列设为索引来用：set_index()，将索引设为列：reset_index()
+
+** 数据加载与存储
+看 =read_csv= 文档。还有各种 read。
+
+与数据库交互：
+#+BEGIN_SRC python
+import pandas.io.sql as sql
+
+sql.read_frame('sql_query', conn)
+#+END_SRC
+
+latitude: 维度
+longitude: 经度
+
+DataFrame 取多个列是，将列对象组成一个list传入
+
+** Basemap API 解析
+#+BEGIN_SRC python
+class mpl_toolkits.basemap.Basemap(llcrnrlon=None, llcrnrlat=None, 
+urcrnrlon=None, urcrnrlat=None, llcrnrx=None, llcrnry=None, urcrnrx=None,
+urcrnry=None, width=None, height=None, projection='cyl', resolution='c', 
+area_thresh=None, rsphere=6370997.0, ellps=None, lat_ts=None, lat_1=None, 
+lat_2=None, lat_0=None, lon_0=None, lon_1=None, lon_2=None, o_lon_p=None, 
+o_lat_p=None, k_0=None, no_rot=False, suppress_ticks=True, 
+satellite_height=35786000, boundinglat=None, fix_aspect=True, anchor='C', 
+celestial=False, round=False, epsg=None, ax=None)
+
+llcrnrlon: 所需地图域左下角的经度
+llcrnrlat: 所需地图域左下角的维度
+urcrnrlon: 所需地图域右上角的经度
+urcrnrlat: 所需地图域右上角的维度
+
+width: 投影坐标中地图域的宽度
+height: 投影坐标中地图域的高度
+lon_0: 所需地图域的中心坐标经度（度）
+lat_0: 所需地图域的中心坐标维度（度）
+
+resolution: 模糊还是清晰
+#+END_SRC

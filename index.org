@@ -1,119 +1,41 @@
-#+TITLE:Hiro's Cabin
-#+COMMENT: false
+#+SETUPFILE: ~/.emacs.d/org-templates/level-0.org
 
-[[file:about.org][About This Site & Me]]
+#+OPTIONS: toc:nil
+#+TITLE:Hiro's Blog
 
+** Notes
+学习笔记
 
-** 2018-01-27
-[[file:learn-lisp.org][Elisp 学习笔记]]
+- [[file:notes/Math.org][高数]]
 
-** 2017-09
-[[file:学校每日签到的自动化完成.org][每日签到自动化]]
+- [[file:notes/Probability.org][概率论]]
 
-** 2017-08
-   
-[[file:译:Org-mode-publishing-Adding-disqus-code.org][译:Org-mode publishing Adding disqus code]]
-  
-[[file:文件系统学习.org][文件系统学习]]
-   
-[[file:Elisp-Macro-Learn.org][Elisp Macro 学习]]
+- [[file:notes/线性代数.org][线性代数]]
 
-[[file:Vim-进阶.org][Vim 进阶]]
+- [[file:notes/Network.org][计算机网络]]
 
-[[file:大学之后呢？.html][大学之后呢？]]
+- [[file:notes/OS.org][操作系统]]
 
-** 2017-07
+- [[file:notes/Computer_Architecture.org][计算机组成原理]]
 
-[[file:译:Autoloads-in-Emacs-Lisp.html][译:Autoloads in Emacs Lisp]]
+- [[file:notes/Data_Structure.org][数据结构]]
 
-[[file:Pro-Git-翻译.html][Pro-Git-翻译]]
+- [[file:notes/Python-笔记.org][Python笔记]]
 
-[[file:译:Orgmode-for-GTD.html][译:Orgmode-for-GTD]]
+- [[file:notes/learn-lisp.org][Lisp笔记]]
 
-** 2017-06
+- [[file:notes/linux-shell-知识点总结.org][Shell笔记]]
 
-[[file:GFW-原理简析.html][GFW-原理简析]]
+** Tech
+谈谈技术
 
-** 2017-05
+- [[file:tech/GFW-原理简析.org][GFW原理解析]]
 
-[[file:算法-图.html][算法-图]]
+- [[file:tech/Vim-进阶.org][Vim 进阶]]
 
-[[file:算法-字符串.org][算法-字符串]]
+- [[file:tech/all_kinds_tech.org][技术杂集]]
 
-[[file:算法-排序][算法-排序]]
+** Life
+分享生活
 
-[[file:算法-查找][算法-查找]]
-
-** 2017-04
-
-[[file:Lisp-入门.html][Lisp-入门]]
-
-[[file:ANSI-Lisp-第六章答案.html][ANSI-Lisp-第六章答案]]
-
-[[file:ANSI-第四章习题.html][ANSI-第四章习题]]
-
-** 2017-03
-
-
-
-** 2017-01
-
-[[file:记一次数学建模.html][记一次数学建模]]
-
-[[file:技术渣的杂技术集.html][技术渣的杂技术集]]
-
-[[file:我的2016总结.html][我的2016总结]]
-
-** 2016-11
-
-[[file:JAVA-paint-repaint-update-paintComponent-理解.html][JAVA-paint-repaint-update-paintComponent-理解]]
-
-** 2016-10
-[[file:Android-Project-One-Test.html][Android-Project-One-Test]]
-
-[[file:Android-RecycleView-Learning.html][Android-RecycleView-Learning]]
-
-[[file:Android-简陋音乐播放器-初步.html][Android-简陋音乐播放器-初步]]
-
-[[file:Android-绘图基础.html][Android-绘图基础]]
-
-[[file:Android-文件存储.html][Android-文件存储]]
-
-[[file:Android-Studio-快捷键.html][Android-Studio-快捷键]]
-
-[[file:Bitmap-小程序.html][Bitmap-小程序]]
-
-[[file:Deepin-使用小记.html][Deepin-使用小记]]
-
-** 久远
-
-[[file:Lingo-学习案例.html][Lingo-学习案例]]
-
-
-[[file:经典进程的同步问题.html][经典进程的同步问题]]
-
-[[file:计算机组成原理之微指令.html][计算机组成原理之微指令]]
-
-[[file:Win10-C-C-DOS-编译环境配置.html][Win10-C-C-DOS-编译环境配置]]
-
-[[file:操作系统存储器管理.html][操作系统存储器管理]]
-
-
-[[file:Java-格式化.html][Java-格式化]]
-
-[[file:使用-Lex-进行词法分析.html][使用-Lex-进行词法分析]]
-
-[[file:Linux-Fork-分析.html][Linux-Fork-分析]]
-
-[[file:我喜欢的那些女孩.html][我喜欢的那些女孩]]
-
-[[file:单件模式详解.html][单件模式详解]]
-
-[[file:原来你是这样的汇编.html][原来你是这样的汇编]]
-
-
-[[file:汇编——一个好玩的程序.html][汇编——一个好玩的程序]]
-
-[[file:Java-Long-long.html][Java-Long-long]]
-
-
+- [[file:life/学校每日签到的自动化完成.org][学校每日签到的自动化完成]]

@@ -1,0 +1,202 @@
+#+TITLE: Python 学习笔记
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+#+DATE: 2018-03-26
+#+OPTIONS: toc:nil
+
+* 基础
+- Python中所有对象都是引用
+** 计算
+- 空值 None，java 中是 Null；
+- =/= 取精确值； =//= 取整； =%= 取余；
+- ** 乘方
+
+** 字符串
+- python 中转义与 java 不同，java 需要两个 =\\= 完成一次转义，而 python 只需要一次；还可以使用 r 来表示字符串不需要转义；
+- string 可以加、乘；字符串的本质是字符数组
+- print会自动生成可读性更强的输出文本
+- 字符串索引过大会报错；但切片过大会自动处理
+
+- list：列表，python 中使用 =[]= 来表示；而 elisp 中使用 =()= 表示， =len()= 查看长度。list 中的内容可以是任何类型
+- turple：和 list 一样，但一旦创建就不可变
+- break：跳出循环体；continue：执行下一循环
+- dict，字典，python 中用于存储 key-value 的数据结构。在 lisp 中只需要使用 ((a . b) (c .d)) 即可实现类似功能；dict 和 list 取值的时候方法相同（d[i]/l[i]）
+- set，集合，通过函数 =set(list)= 构建。在 lisp 中为 =[]=
+- 所谓可变不可变对象，在 lisp 就是是否改变自身的类型。对于函数式编程很有意义。str，None 都是不可变对象
+- 返回多个值：其实只是返回了一个 turple，然而 python 的语法糖可以允许你直接赋多个值
+
+** 列表
+- 列表是 mutable 类型，字符串是 immutable类型，list可以被赋值
+- append 把一个元素（可以是列表）添加到list之后；+ 可以把两个list合并为一个list
+- 切片相当于是开了一个新的对象
+- del移除某个对象，可以与切片一起使用
+#+BEGIN_SRC python
+l = [1, 2, 3, 4]
+l.append(5) #=> [1, 2, 3, 4, 5]
+l.append([5]) #=> [1,2,3,4,[5]]
+
+l + [5] #=> [1,2,3,4,5]
+
+[l, [5]] #=> [[1,2,3,4], [5]]
+
+l.extend([5]) #=> [1,2,3,4,5]
+
+del a[2:4]
+#+END_SRC
+
+** turple
+- 元组 是不可变的，可以有不同类型的共同存放
+
+#+BEGIN_SRC python
+t = () #=> empty turple
+t = 123, #=> one parameter's turple
+#+END_SRC
+
+** set
+- 使用 {} 包起来，或者使用函数 set()，空集合不能使用 {} 表示
+
+** dict
+- 当关键字是字符串时，可以直接指定
+#+BEGIN_SRC python
+d = {'jack' : 1, 'marry' : 2}
+
+d = dick(jack=1, marry=2)
+#+END_SRC
+
+** for
+- 如果循环过程中需要列表， 循环体最好提前复制一份，使用切片是个不错的选择 list[:]
+- break 循环中的break只在for语句结束，或者while的条件判断为False时执行
+
+** range
+- 是一个对象，不是一个list，可以节省存储空间 在取某个数的时候返回这个数
+
+** zip
+- 将集合 拆开 按首字母拆分
+
+** 条件控制
+- in & not in 和 is & is not
+- 比较可以传递
+- not > and > or
+
+* 参数
+- 位置参数（position） 最普通
+- 默认参数（default）
+- 可变参数（*args） 也是一个语法糖，可以将 *args 看作一个 turple 对象，调用时候传入的多个参数其实可以组成一个 turple，当需要调用这个
+#+BEGIN_SRC python
+def temp(*args):
+    ....
+#+END_SRC
+- 解包 * 调用函数的时候，使用 * 可以将参数解包，比如list拆分成元素，range也可以被拆分；同样，map也可以被拆分，使用 ** 可以将map拆分成关键字参数
+- 关键字参数（**args） 同上。无非是将多个字对参数组成一个 dict 传入
+- 命名关键字参数（*, args）/（*args, arg, arg）必须要有 * 做标记，后面的关键字参数必须是指定的某项。
+* 高级特性（语法糖）
+- 切片
+- generator：使用 yield 让函数在运行过程中停下来，使用 =next()= 不断拿到下一次计算的结果
+- iterator 对象，有 =next()= 方法可以不断迭代，当迭代完时可以抛出 =StopIteration= 错误
+- 凡可以作用于 =for= 的都是 iterable 类型；凡可以被 =next()= 的都是 iterator。Python 的 =for= 就是通过 iterator 来实现的。
+  #+BEGIN_SRC python
+  for x in [1,2,3,4]:
+  
+  it = iter([1,2,3,4])
+  while True:
+      try:
+          x = next(it)
+      except StopIteration:
+          break
+  #+END_SRC
+* 函数式编程（变量可以是函数）
+- map(function, Iterable), returns iterator
+- reduce
+- filter 把返回为 True 的保留
+- 闭包：函数体内部定义函数。返回函数不要用任何循环变量，或者后续会发生变化的变量。因为在外部函数执行时，内部函数不会被执行。
+- lambda x: x*x
+- 装饰器
+#+BEGIN_SRC python
+def log(func):
+    def wrapper(*args):
+        ...
+    return wrapper
+
+@log
+def print_time:
+    ...
+
+=> print_time = log(print_time)
+print_time.__name__ => wrapper
+#+END_SRC
+- 偏函数 创建函数时候固定一些函数位置参数用以简化操作。
+* 模块化
+可以自定义一个包，包下必须有 =__init__.py= 才能被当作一个模块。
+
+* 面向对象
+- class 命名一般大写
+- =__init__()= 方法相当于 java 的构造函数，必传参数 =self= ，相当于 java 的 =this= 指针
+- 私有属性的定义：__name，其实解释器只是把这个变量重命名为 =_Classname__name= ，所以在外部可以换个方法访问； =_name= 表示这个变量可以被外部直接访问，但你假装不知道不要访问好了。这样看，Python 的类私有是需要自觉遵守的。
+- Python 是动态语言，所以可以直接在类外部定义新的属性。
+- 继承和多态 可以覆写 因为里面私有属性不相同
+- =type()= 返回对象类型
+- =dir()= 返回这个对象的所有属性和方法。以双下划线开头的都是特殊方法。
+- =hasattr()= 、 =getattr()= 、 =setattr()= ，在 elisp 中只需要一个 =(slot-value)= 就可以搞定。
+- 给一个实例还可以绑定方法：
+  #+BEGIN_SRC python
+  from types import MethodType
+  s.set_age = Methodtype(set_age, s)
+  #+END_SRC
+  给一个类绑定方法让这个类的所有实例都可以使用：
+  #+BEGIN_SRC python
+  Student.set_age = set_age
+  #+END_SRC
+- =__slots__= 属性用以限制类中可以添加的属性。但不对继承的类起作用。
+- =@property= 装饰器的使用。限制一个私有变量的访问和设置，可以通过给这个私有变量加 set 和 get 的方法，在 set 中作出限制来达到封装的目的，但在调用的过程中需要写 =xx.get()= 等方法有些不好看，所以 python 加入了这个装饰器。
+  #+BEGIN_SRC python
+  class Student():
+      @property
+      def score(self):
+          return self.score
+      @score.setter
+      def score(self):
+          ...
+          self.score = xx
+  #+END_SRC
+  调用时候直接使用 =s.score = xx= 来设置，使用 =s.score= 来得到值。
+- 类似 java，可以重写 =__str__()= 方法让 =print()= 输出自己想要的格式
+- =__repr__()= 重写可以让 类 不使用 print 输出自己想要的格式
+- 重写 =__iter()= 和 =__next()__= 方法实现迭代器
+- 重写 =__getitem__()= 方法让函数像数组一样可以取数 
+- 重写 =__getattr__(self, attr)= 在调用不存在的属性时，会调用这个方法。调用 api 的时候会用到。
+- 类变量 实例变量
+#+BEGIN_SRC python
+class MyClass:
+    a = 1 # class variable
+
+    def t(self):
+        self.b = 2 # instance variable
+#+END_SRC
+
+* IO
+- 文件读： =f=open("file-path", r)= 拿到文件指针（返回的是 =file-like object= 对象 ）， =f.read()= 读文件到内存，最后 =f.close()= 关闭文件指针；读二进制文件需要使用 ='rb'= 
+- 文件写： =f.open("file-path", w)= ， =f.write('str')= ，追加文本使用 ='a'=
+- StringIO：起始上面文件读使用的 ='r'= 模式打开的文件就是以 =StringIO= 的模式保存在内存中
+- BytesIO：如上使用 ='rb'= 打开的就是这个类型
+- os 、 os.path 库提供了一系列可以与 系统 交互的库， =os.path.join()= 与 =os.path.split()= 两个函数可以省去多平台的麻烦
+- 使用 pickle 库的 =dumps= 将文件序列化为 bytes；使用 =loads= 从文件中恢复这个对象
+- json 模块的 dumps 和 loads 可以将 dict str 序列化。遇到类对象，使用 =__dict__= 先将类对象转为 dict 对象再序列化
+* 线程
+
+* trick
+** for list
+#+BEGIN_SRC python
+# Iterate list's key and value.
+for i in range(len(lst)):
+  "{}:{}".format(i, lst[i])
+
+for k,v in enumerate(lst):
+  "{}:{}".format(k, v)
+
+# Iterate two list
+for a,b in zip(lst1, lst2):
+  "{}:{}".format(a, b)
+#+END_SRC
+
+* 感触
+- 看似有很多语法糖，其实是有些罗嗦的。不如 lisp 只用 list 一种数据类型来拓展所有的数据类型。
+- 学会了如何查看 python library 而不是随随便便取网上乱搜……

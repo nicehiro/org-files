@@ -1,0 +1,79 @@
+body {
+    /* Adapted from https://www.zhihu.com/ */
+    font-family: -apple-system,system-ui,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
+    margin: 0 auto;
+    max-width: 50rem;
+    line-height: 40px;
+    background: #fff8dc
+}
+
+nav {
+    border-bottom: 1px solid black;
+    line-height: 1.5em;
+}
+
+nav a {
+    text-decoration: none;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+footer {
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.75rem;
+}
+
+code {
+    background: #f0f8ff;
+    font-size: large;
+}
+
+/* Copied from Discourse */
+kbd {
+    background-color: #fff;
+    border: 1px solid #e9e9e9;
+    border-radius: 3px;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.2), 0 0 0 1px #fff inset;
+    background: #fafafa;
+    border: 1px solid #ccc;
+    border-bottom: medium none #fff;
+    color: #222;
+    display: inline-block;
+    font-size: .8706em;
+    line-height: 1.4;
+    margin: 0 0.1em;
+    padding: 0.1em 0.6em;
+}
+
+pre {
+    margin: 0 1em;
+    padding: 0.5em;
+    line-height: 2;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    font-size: large;
+    background: #f0f8ff;
+}
+
+article h1:first-of-type {
+    text-align: center;
+}
+
+article time:first-of-type {
+    display: block;
+    text-align: center;
+    font-size: 0.8em;
+    color: DimGray;
+}
+
+h1.title {
+    text-align: center;
+}
+
+.org-ol li {
+    line-height: 40px;
+}
