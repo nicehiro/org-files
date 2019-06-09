@@ -26,6 +26,8 @@
 
 - [[file:notes/linux-shell-知识点总结.org][Shell笔记]]
 
+- [[file:notes/RL-David-Silver.org][RL 学习笔记]]
+
 ** Tech
 谈谈技术
 
