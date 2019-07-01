@@ -1,0 +1,81 @@
+#+TITLE: Sed 学习笔记
+
+测试文件：txt
+#+BEGIN_SRC
+This is my cat
+  my cat's name is betty
+This is my dog
+  my dog's name is frank
+This is my goat
+  my goat's name is adam
+#+END_SRC
+
+* s 命令替换
+
+#+BEGIN_SRC Sed
+# 替换 3-5 行的 my 成 your
+sed "3,5s/my/your/g" txt
+
+# 替换一行中的第 2 个匹配到的
+sed "s/s/S/2" txt
+
+# 多行匹配
+sed "s/my/your/g; 3,$s/This/That/g" txt
+#+END_SRC
+
+** 正则表达式
+
+- `^` 表示行头 `^#`
+- `$` 表示行尾 `}$`
+- `\<` 表示词头 `\<abc`
+- `\>` 表示词尾 `abc\>`
+
+* N 命令
+
+将下一行的内容纳入当前缓存区匹配。将两行合并在一起。
+
+#+BEGIN_SRC Sed
+# 将两行之间的 换行 转为 , 拼接两行
+sed "N; s/\n/,/g" txt
+
+sed "N; s/\n/,/; s/This is my \([^, &]*\), .* is \(.*\)/\1:\2/g" pets.txt
+========>
+cat:betty
+dog:frank
+goat:adam
+#+END_SRC
+
+* a & i & c & d & p
+
+`a` 就是 append，`i` 就是 insert，`c` 就是 change，`d` 就是 delete，`p` 就是 print
+
+#+BEGIN_SRC Sed
+# 行前插入
+sed "1 i Insert one line before line 1" txt
+
+# 行后插入
+sed "$ a Append one line after last line" txt
+
+# 匹配到之后 行后插入
+sed "/fish/a Append one line when get the *fish* line" txt
+
+# 替换匹配行
+sed "2 c This is a new line, replace the old line" txt
+#+END_SRC
+
+* address
+
+#+BEGIN_SRC Sed
+[address[,address]][!]{cmd}
+#+END_SRC
+
+address 可以是相对的，例如：
+
+#+BEGIN_SRC Sed
+sed "/dog/, +3s/^/# /g" txt
+#+END_SRC
+
+cmd 可以是多个命令，使用 {} 包起来作为嵌套命令。
+
+
+
