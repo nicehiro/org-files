@@ -1,4 +1,6 @@
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
 #+TITLE: Sed 学习笔记
+#+OPTIONS: toc:nil
 
 测试文件：txt
 #+BEGIN_SRC
@@ -76,6 +78,3 @@ sed "/dog/, +3s/^/# /g" txt
 #+END_SRC
 
 cmd 可以是多个命令，使用 {} 包起来作为嵌套命令。
-
-
-

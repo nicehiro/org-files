@@ -193,13 +193,13 @@ q ：当前 action 的value
 ** Policy improvement
 实时更新 Policy，如果新的 policy 和之前的相同，那么表示当前 policy 已经收敛，为最佳 policy
 
-* 免模型预测 Model-Free prediction
+* Lession 4免模型预测 Model-Free prediction
 
 ** Monte-Carlo RL
 - 目标： 在随机策略 \(\pi\) 下，agent 和环境不停的交互，得到一系列 state、action、return 的值，用来计算 \(v^{\pi}\)
 - Return：折扣 reward \(G_t = R_{t+1} + \gamma R_{t+2} + ...\)
 - 不知道环境的情况下，只能使用蒙特卡罗抽样的方法，一次次试验，从经验中求 Return 的均值
-- 片段（episodes）：agent 在环境中执行某些动作得到一系列反馈。类似，一个机器人在地上，可以前进或者后退，执行一系列操作，得到 \(S_1, A_1, R_1, ..., S_k ~ \pi\)，被称作一个片段
+- 片段（episodes）：agent 在环境中执行某些动作得到一系列反馈。类似，一个机器人在地上，可以前进或者后退，执行一系列操作，得到 \(S_1, A_1, R_1, ..., S_k ~ \pi\)，被称作一个片段。每一次抽样，可以称为一个片段
 
 *** 两种 value function 的计算方式
 - First-Visit：在同一个片段中，第一次访问到状态 s ，累加次数
@@ -213,6 +213,76 @@ q ：当前 action 的value
 &= \frac{1}{k}(x_k + (k-1)\mu_{k-1})\\
 &= \mu_{k-1} + \frac{1}{k}(x_k-\mu_{k-1})
 \end{align}
+
+因此：
+
+\[ N(S_t) = N(S_t) + 1 \]
+\[ V(S_t) = V(S_t) + \frac{1}{N_(S_t)} (G_t - V(S_t)) \]
+
+在非稳定环境下，不需要做到完全的平均，因为环境随时在改变。因此公式的改进如下：
+
+\[ V(S_t) = V(S_t) + \alpha (G_t - V(S_t)) \]
+
+注意：蒙特卡罗方法，需要在某个片段完成之后才能进行计算。
+
+** Temporal-Difference RL
+- 直接从样本经验中学习
+- model-free，未知 MDP 转换和 reward
+- 从 不完全 的片段中学习，bootstrapping
+- bootstrapping：在状态 1 预测到结束状态的时间（例子），到了状态 2 之后，再进行预测，此时更新状态 1 的预测时间
+- 目标：在随机策略 \(\pi\) 下，通过采样，不断更新 \(v(\pi)\)
+- TD(0)： \( G_t = R_{t+1} + \gamma V(S_{t+1}) \)
+  + \( R_{t+1} + \gamma V(S_t+1) \) 被称为 TD target
+  + \( R_{t+1} + \gamma V(S_t+1) - V(S_t) \) 称为 TD error
+
+** MC vs. TD
+- TD 可以通过每一步来学习；MC 只能等某个片段完全结束之后学习
+- TD 可以通过无限的片段学习
+- MC 适用的环境可以不是 Markov 的，因为是从样本中直接学习，不去预测，而 TD 只适用与 Markov
+- MC 不 bootstrap，DP、TD bootstrap
+- MC、TD sample，DP 不 sample
+
+*** MC Backup
+一个完整的片段之后，更新 value function
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/mc-backup.png]]
+#+END_CENTER
+
+*** TD Backup
+某个片段执行开始之后，就可以更新之前的 value function
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/td-backup.png]]
+#+END_CENTER
+
+*** DP Backup
+默认知道环境
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/dp-backup.png]]
+#+END_CENTER
+
+** n-Step Return
+TD(0) 指 \( G_t = R_{t+1} + \lambda G_{t+1} \)，TD(\(\lambda\)) 就是，有 \(\lambda\) 项参考实际的 return，之后的项使用预测值。
+
+将 n-Step Return 计算其平均值，可以得到更好的 \(G_t\)
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/n-step-return.png]]
+#+END_CENTER
+
+* Lession 5
+
+** On and Off-Policy Learning
+- On-Policy
+  + Learn on the job
+  + 根据 Policy 的执行，在这个过程中学习
+- Off-Policy
+  + Look over someone's shoulder
+  + 未知 Policy，采样来学习他人的经验
+
+
 
 
 
