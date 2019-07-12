@@ -1,5 +1,4 @@
 #+TITLE: 强化学习 -- David Silver Course
-#+OPTIONS: toc:nil
 #+DATE: 2019-06-06
 #+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
 
@@ -272,17 +271,132 @@ TD(0) 指 \( G_t = R_{t+1} + \lambda G_{t+1} \)，TD(\(\lambda\)) 就是，有 \
 [[file:../img/n-step-return.png]]
 #+END_CENTER
 
-* Lession 5
+** Backward-View TD(\(\lambda\))
+*** 资格迹 Eligibility Traces
+- Frequency heuristic：这个片段中 某个状态出现的次数越频繁，对当前状态的reward 影响越大
+- Recency heuristic：离当前状态越近的状态，对当前状态影响越大
+
+\[ E_t(s) = \gamma \lambda E_{t-1}(s) + 1(S_t = s) \]
+
+每经过一个 Step，通过 \(\gamma \lambda\) 减小 E(s)；如果再次遇到 s 这个状态，将 E(s) + 1
+
+*** Backward-View
+- 为每个 state 保留一个资格迹
+- 每走一个 state，E(s)
+- 更新 V(s)
+
+\[ \delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t) \]
+\[ V(s) \leftarrow V(s) + \alpha \delta_t E_t(s) \]
+
+\(\lambda = 0\)，TD(\(\lambda\)) 相当于 TD(0).
+
+* Lession 5 Model-Free Control
 
 ** On and Off-Policy Learning
 - On-Policy
   + Learn on the job
-  + 根据 Policy 的执行，在这个过程中学习
+  + 根据 Policy 的执行，在这个过程中学习，sample 遵循 policy
 - Off-Policy
   + Look over someone's shoulder
   + 未知 Policy，采样来学习他人的经验
 
+** Model-Free 使用 Action Value Function
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/mc-action-value.png]]
+#+END_CENTER
 
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/mc-iteration.png]]
+#+END_CENTER
+
+Evaluation 的时候，使用 MC 的方法，跑几组 sample 计算出 Value Function，然后 greedy。
+
+此方法的问题是：MC 是 model-free 的，没有全部的 state 信息，因此可能会漏掉很多概率小但是 return 非常大的状态。因此需要给当前 return 小的 state 一些机会。
+
+*** \(\epsilon\)-Greedy
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/mc-greedy.png]]
+#+END_CENTER
+
+每次 greedy，不直接选 Q 最大的，而是会给其他的 Action 留点机会（m：一共有 m 个 action）：
+\[ 1 = \epsilon / m * (m - 1) + (\epsilon / m + 1 - \epsilon) \]
+
+优化之后的 Iteration：
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/mc-iteration-2.png]]
+#+END_CENTER
+
+*** GLIE
+Greedy in the Limit with Infinite Exploration.
+- action-state 对 是无限的，一直会重新出现
+- \( lim_{k \rightarrow \infty} \pi_k(a|s) = 1 (a = argmax Q_k(s,a') ) \)
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/glie-mc-interation.png]]
+#+END_CENTER
+
+** Sarsa
+由 TD(0) 延伸。
+#+BEGIN_CENTER
+[[file:../img/sarsa-name.png]]
+#+END_CENTER
+
+\[ Q(S, A) \leftarrow Q(S, A) + \alpha (R + \gamma Q(S', A') - Q(S, A)) \]
+
+相比于 MC，Sarsa 不同的地方在于：原来每个 episode 更新一次策略，现在每个 timestep 更新一次；因此 Q 不能直接计算，而是需要预测。
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/sarsa-iteration.png]]
+#+END_CENTER
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/sarsa-algorithm.png]]
+#+END_CENTER
+
+** n-Step Sarsa
+由 TD(\(\lambda\)) 延伸。
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/n-step-sarsa.png]]
+#+END_CENTER
+
+*** Forward view
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/forward-sarsa.png]]
+#+END_CENTER
+
+这个方法将 TD(0) 到 TD(n) 的预计做了平均，唯一的缺点就是需要执行完整个 episode 才可以更新 value function。
+
+*** Backward View
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/sarsa-lambda.png]]
+#+END_CENTER
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/sarsa-lambda-algorithm.png]]
+#+END_CENTER
+
+Sarsa(\(\lambda\)) 算法其实就是对 Sarsa(0) 算法的基础上增加了资格迹（Eligibility Trace）。算法中有两处更新 E(s)，第一次是访问到的状态的更新，直接加 1；第二次是将所有状态衰减。
+
+*** Sarsa Compare
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/sarsa-compare.png]]
+#+END_CENTER
+
+假设：只有到达终点时候才会得到 reward 1，情况都是 0
+
+如果使用 Sarsa(0)，那么一次 sample 完成之后，只会更新离终点最近那个状态的 value，而不会更新其他状态；如果使用 Sarsa(\(\lambda\))，一次 sample 完成之后，会更新此次 sample 路径上所有的 value，因为在取样的时候已经更新过 E 了，而当获得一次 1 时，也会去更新其他状态的 value。
 
 
 
