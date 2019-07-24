@@ -7,6 +7,7 @@
 - notes
   - [[file:notes/linux-shell-知识点总结.org][Linux Shell 知识点总结]]
   - [[file:notes/learn-lisp.org][Lisp 学习笔记]]
+  - [[file:notes/pandas-and-numpy.org][Pandas & Numpy 上手]]
   - [[file:notes/Python-笔记.org][Python 学习笔记]]
   - [[file:notes/python-数据分析.org][Python 数据分析知识点总结]]
   - [[file:notes/Sed-Learn.org][Sed 学习笔记]]

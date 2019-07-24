@@ -30,6 +30,8 @@
 
 - [[file:notes/Sed-Learn.org][Sed 学习笔记]]
 
+- [[file:notes/pandas-and-numpy.org][Pandas & Numpy]]
+
 ** Tech
 谈谈技术
 
