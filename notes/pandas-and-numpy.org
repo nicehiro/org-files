@@ -1,0 +1,160 @@
+#+TITLE: Pandas & Numpy 上手
+
+#+OPTIONS: toc:nil
+#+DATE: 2019-07-19
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+
+* Numpy
+Learn from [[http://cs231n.github.io/python-numpy-tutorial/][Python Numpy Tutorial]]
+
+** Arrays
+- 传入 =list= 生成数组
+- 生成数组
+- 切片（注意：切片只是对原来数据的引用，修改会有影响）
+- 布尔筛选：传入布尔条件，输出是否满足的布尔数组
+- 整型筛选：传入行标、列标，输出对应区域的数组
+- 数学支持（查看文档 Mathematic 部分）
+- 扩展（Broadcast）：将 dim 为 1 的那一行（列）进行扩展，知道符合比较大的矩阵
+
+#+BEGIN_SRC python
+a = np.array([[1,2,3], [4,5,6]])
+print(a.shape) #=>(2, 3)
+a = np.array([1, 2, 3])
+print(a.shape) #=>(3,)
+a = np.array([[1, 2, 3]])
+print(a.shape) #=>(1, 3)
+
+# 生成特定的数组
+np.zeros((2, 2))
+np.ones((2, 2))
+np.full((2, 2), 7)
+
+np.random.random((2, 2))
+
+# 切片
+a = np.array([[1,2,3,4], [5,6,7,8], [9,10,11,12]])
+## 抽取每行中间两个元素
+b = a[:2, 1:3]
+
+## row_1 产生一维数组，row_2 产生二维数组
+row_1 = a[1, :]
+row_2 = a[1:2, :]
+
+# 布尔筛选
+## 根据返回的布尔数组，可以筛选出布尔值为 True 的数据
+bool_idx = (a > 2)
+a[bool_idx]
+
+# Math
+## 矩阵相加
+a = np.array([[1,2], [3,4]])
+b = np.array([[5,6], [7,8]])
+a + b
+np.add(a, b)
+## 矩阵相减
+a - b
+np.substract(a, b)
+## 同理，相乘 相除
+## 平方
+np.sqrt(a)
+## 内积
+x = np.array([[1,2], [3,4]])
+y = np.array([[5,6],[7,8]])
+x.dot(y)
+## 扩展
+y = np.array([5, 6])
+x + y
+#+END_SRC
+
+* Pandas
+Learn from [[https://pandas.pydata.org/pandas-docs/stable/getting_started/10min.html][10 minutes to pandas]]
+
+** 创建
+- Series 一维 ndarray，pandas 自动创建整型 index，每个 DataFrame 一列就是一个 Series对象
+- DataFrame 多维 ndarray
+
+#+BEGIN_SRC python
+import pandas as pd
+s = pd.Series([1, 3, 5, np.NaN, 6, 8])
+
+df2 = pd.DataFrame({'A': 1.,
+                    'B': pd.Timestamp('20130102'),
+                    'C': pd.Series(1, index=list(range(4)), dtype='float32'),
+                    'D': np.array([3] * 4, dtype='int32'),
+                    'E': pd.Categorical(["test", "train", "test", "train"]),
+                    'F': 'foo'})
+#+END_SRC
+
+** 查看数据
+- 使用 =[]= 选取的时候，单个字符串表示选取某列；使用 slice 表达式表示选取某些行
+
+#+BEGIN_SRC python
+# 转成 numpy 数组
+df.to_numpy()
+
+# 转质
+df.T
+
+# 排序
+## axis 有两个值，0 表示按行标，1 表示按列标
+df.sort_index(axis=1, ascending=False)
+## 按值排序
+df.sort_value(by='B')
+
+# 选取
+## 选取列
+df2['A']
+## 选取某行
+df2[1:3]
+df2['row_l1':'row_l2']
+## 选取某个区域
+df2.loc[:, ['col_1', 'cow_2']]
+## 按位置筛选
+### 筛选第三行的元素
+df2.iloc[3]
+### 筛选 [3, 5) & [0, 2)
+df2.iloc[3:5, 0:2]
+### 筛选 row: 1,2,4 & col: 3, 5
+df2.iloc[[1,2,4], [3,5]]
+## 布尔筛选
+### 传入一个布尔数组，输出对应为 True 的数组
+df2[df2['E'] == 'test']
+df2[df2['E'].isin(['test1', 'test2'])]
+
+# 修改
+## 设置 row=0, col='A'
+df2.at[0, 'A'] = 0
+## 新加一列
+s = pd.Series([...])
+df2['G'] = s
+## 按位置修改
+df2.iat(0, 1) = 0
+## 利用 布尔数组修改
+df2[df2 > 0] = -df2
+#+END_SRC
+
+** 数据处理
+
+*** NaN 数据
+#+BEGIN_SRC python
+# 删除含有 NaN 值的行 row
+df2.dropna(how='any')
+# 填充 NaN
+df2.fillna(value=5)
+# 获取是否为 NaN
+pd.isna(df2)
+#+END_SRC
+
+*** Operation
+对数据进行处理的时候，一般要先处理掉空值数据。
+
+- =pandas.DataFrame.apply()= 具体用法查文档了解
+- 直方图 =pandas.Series.value_counts=
+- 字符串数据 [[https://pandas.pydata.org/pandas-docs/stable/user_guide/text.html#text-string-methods][Working with text data]]
+- =concat= 拼接 DataFrame 对象
+- =merge= 类似 SQL 的 join 方法，连接多个 DF
+- =append= 将两个 DF 拼接（其 columns label 需要相同）
+- =pandas.DataFrame.groupby()= 按 label 分组
+
+* Tricky
+- 几乎所有的语言关于括号的使用都是 *前闭后开*

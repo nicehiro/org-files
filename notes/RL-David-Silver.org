@@ -381,6 +381,8 @@ Greedy in the Limit with Infinite Exploration.
 [[file:../img/sarsa-lambda.png]]
 #+END_CENTER
 
+资格迹很好理解。参考上诉 4.5.1
+
 #+BEGIN_CENTER
 #+ATTR_HTML: :width 100%
 [[file:../img/sarsa-lambda-algorithm.png]]
@@ -398,7 +400,28 @@ Sarsa(\(\lambda\)) 算法其实就是对 Sarsa(0) 算法的基础上增加了资
 
 如果使用 Sarsa(0)，那么一次 sample 完成之后，只会更新离终点最近那个状态的 value，而不会更新其他状态；如果使用 Sarsa(\(\lambda\))，一次 sample 完成之后，会更新此次 sample 路径上所有的 value，因为在取样的时候已经更新过 E 了，而当获得一次 1 时，也会去更新其他状态的 value。
 
+** Q-Learning
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/q-learning.png]]
+#+END_CENTER
 
+Q-Learning 即 SarsaMax，在计算 TD-error 的时候使用最大的 Q 函数。
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/q-learning-algorithm.png]]
+#+END_CENTER
+
+* Lession 6
+
+目前学到的计算 Value Function 的方法是通过一个 lookup table，
+- 每个状态有一个 V(s)
+- 每个 state-action 对有一个 Q(s,a)
+
+上诉方法的缺点有：
+- 维护一个太大的表，占用太多内存
+- 就算可以维护，从大的表中计算 Value 比较困难
 
 
 * 心得
