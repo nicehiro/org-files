@@ -21,6 +21,7 @@
   - [[file:notes/Network.org][计算机网络总结]]
   - [[file:notes/Math.org][高数总结]]
 - tech
+  - [[file:tech/use-pyim.org][Emacs 使用 pyim ＋ rime ＋ double flypy 打字]]
   - [[file:tech/GFW-原理简析.org][GFW 原理解析]]
   - [[file:tech/Vim-进阶.org][Vim 进阶]]
   - [[file:tech/all_kinds_tech.org][技术渣的杂技术集]]

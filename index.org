@@ -41,6 +41,8 @@
 
 - [[file:tech/all_kinds_tech.org][技术杂集]]
 
+- [[file:tech/use-pyim.org][Emacs 使用 pyim ＋ rime ＋ double flypy 打字]]
+
 ** Life
 分享生活
 
