@@ -156,5 +156,17 @@ pd.isna(df2)
 - =append= 将两个 DF 拼接（其 columns label 需要相同）
 - =pandas.DataFrame.groupby()= 按 label 分组
 
+*** 替换
+#+BEGIN_SRC python
+# 将所有的 0 替换成 5
+df.replace(0, 5)
+
+# 将 list 中所有元素替换成 5
+df.replace([1,2,3,4], 5)
+
+# 将 list 中元素分别替换成后面 list 中的值
+df.replace([1,2,3,4], [4,3,2,1])
+#+END_SRC
+
 * Tricky
 - 几乎所有的语言关于括号的使用都是 *前闭后开*

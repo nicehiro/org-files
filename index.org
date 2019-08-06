@@ -3,6 +3,8 @@
 #+OPTIONS: toc:nil
 #+TITLE:Hiro's Blog
 
+| About me |
+
 ** Notes
 学习笔记
 
@@ -31,6 +33,8 @@
 - [[file:notes/Sed-Learn.org][Sed 学习笔记]]
 
 - [[file:notes/pandas-and-numpy.org][Pandas & Numpy]]
+
+- [[file:notes/gradient-decent.org][Gradient Decent]]
 
 ** Tech
 谈谈技术

@@ -5,6 +5,7 @@
   - [[file:life/学校每日签到的自动化完成.org][学校每日签到的自动化完成]]
   - [[file:life/my-college.org][我的大学]]
 - notes
+  - [[file:notes/gradient-decent.org][Gradient Decent 梯度下降]]
   - [[file:notes/linux-shell-知识点总结.org][Linux Shell 知识点总结]]
   - [[file:notes/learn-lisp.org][Lisp 学习笔记]]
   - [[file:notes/pandas-and-numpy.org][Pandas & Numpy 上手]]
@@ -23,5 +24,7 @@
 - tech
   - [[file:tech/use-pyim.org][Emacs 使用 pyim ＋ rime ＋ double flypy 打字]]
   - [[file:tech/GFW-原理简析.org][GFW 原理解析]]
+  - [[file:tech/use-gym-for-rl.org][Gym Learning note]]
   - [[file:tech/Vim-进阶.org][Vim 进阶]]
+  - [[file:tech/i3wm-config.org][i3-wm 配置]]
   - [[file:tech/all_kinds_tech.org][技术渣的杂技术集]]

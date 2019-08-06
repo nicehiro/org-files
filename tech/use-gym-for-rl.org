@@ -1,0 +1,6 @@
+#+TITLE: Gym Learning note
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+#+DATE: 2019-07-25
+#+OPTIONS: toc:nil
+
+* 环境

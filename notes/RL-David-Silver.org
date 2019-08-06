@@ -423,6 +423,115 @@ Q-Learning 即 SarsaMax，在计算 TD-error 的时候使用最大的 Q 函数�
 - 维护一个太大的表，占用太多内存
 - 就算可以维护，从大的表中计算 Value 比较困难
 
+解决上诉问题的方法就是建立一个估计函数——估计某个状态的 value function
+
+\[ \hat{v}(s, w) \approx v_{\pi}(s) \]
+\[ \hat{q}(s, a, w) \approx v_{\pi}(s) \]
+
+原来的 value function 是一系列的 value 保存在 Q-table 中；使用预测函数将会只保存这个预测函数，以及不停更新 w 值。w 是一个一维向量，可以看作当前状态的抽象表示（举个例子，小车爬山，当前的位置和速度都算是当前环境的因素，可以看作 w）。
+
+** Gradient Descent
+- \(J(w)\) 是可微分的，w 是其变量向量组
+- \(J(w)\) 描述预测函数与实际值的方差，可见 \(J(w)\) 越小，w 越好，因此调整参数应该朝着使得 \(J(w)\) 小的方向进行，即负梯度的方向
+- \(J(w)\) 的梯度
+#+BEGIN_CENTER
+[[file:../img/gradient.png]]
+#+END_CENTER
+- 通过梯度下降找极小值，确定最佳函数的 w \(\Delta w = - \frac{1}{2} \alpha \bigtriangledown J(w)\) (\(\alpha\) 是步长参数 step-size)
+- 目标：找到参数向量 w , 最小化近似函数 v(s, w) 与实际值 v(s) 的方差
+\[ J(w) = E_{\pi} [(v_{\pi} (s) - \hat{v}(s, w))^2] \]
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 80%
+[[file:../img/gradient-descent.png]]
+#+END_CENTER
+
+** Feature Vectors
+用一个特征向量表示一个状态，每一个状态是由以 w 表示的不同强度的特征向量来线性组合得到的：
+可以理解为影响 value function 的因素所占的比重。
+
+#+BEGIN_CENTER
+[[file:../img/feature-vectors.png]]
+#+END_CENTER
+
+** 线性函数近似
+通过对特征的线性求和来近似价值函数：
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/linear-approx.png]]
+#+END_CENTER
+
+** 预测 —— 递增算法
+之前写出的公式都不能直接用于强化学习，因为公式里需要一个真实的 value function
+
+对于不同的算法使用不同的值代替真实的 value function
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/incremental-predict.png]]
+#+END_CENTER
+
+*** MC Value Function Approximation
+MC 的 \(G_t\) 是真实价值 \(V_{\pi}(S_t)\) 的有噪声，无偏采样，可以看作是将监督学习的标签数据代入机器学习算法进行学习：
+
+无偏是因为 MC 的 \(G_t\) 是准确的，是在整个 episode 结束之后才计算出。
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/mc-value-approx.png]]
+#+END_CENTER
+
+MC 方法最终会收敛到局部最小值，即使使用线性函数近似时也会收敛。
+
+*** TD Value Function Approximation
+TD-Target 是真实价值的有噪声，有偏采样：
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/td-value-approx.png]]
+#+END_CENTER
+
+线性 TD 近似收敛至全局最优解
+
+*** \(TD(\lambda)\) Value Function Approximation
+\(TD(\lambda)-target\) 是真实价值的有噪声，有偏采样：
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/td-lambda-value-approx.png]]
+#+END_CENTER
+
+** Incremental Control Algorithm
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/contrl-value-approx.png]]
+#+END_CENTER
+
+从一系列参数开始，得到一个近似的状态行为对价值函数，在 \(\epsilon-greedy\) 的策略下产生一个行为，在相应算法下计算相应的 Target 值，然后对近似函数参数进行更新；如此反复进行策略的优化，同时逼近最优价值函数。
+
+策略评估：近似的策略评估
+策略改善：\(\epsilon-greedy\)
+
+** Batch Methods
+前面说的方法都是实时的，每经过一个 Step , 更新一次算法。批方法则是把一段时期内的数据集中起来，通过学习使得参数能更好的符合这段时期内的所有数据。
+
+*** 最小平方差预测
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/least-squares-prediction.png]]
+#+END_CENTER
+
+相当于是经历重现，找 \(LS(w)\) 最小的 w , 更新参数。只要重复下面步骤即可：
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/least-squares-prediction-repeat.png]]
+#+END_CENTER
+
+
+
+
+
+
 
 * 心得
 - 不要被符号所局限，也不要完全脱离数学符号。

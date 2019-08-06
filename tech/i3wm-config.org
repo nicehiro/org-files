@@ -1,0 +1,51 @@
+#+TITLE: i3-wm 配置
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+#+DATE: 2019-07-31
+#+OPTIONS: toc:nil
+
+** WIFI
+Arch 系使用 [[https://wiki.archlinux.org/index.php/NetworkManager_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)][NetworkManager]] 管理 WIFI 的连接情况。 =nmcli= 是自带的命令行 WIFI 管理工具。
+
+#+BEGIN_SRC config
+# 查看当前 wifi 列表
+nmcli device wifi list
+
+# 查看当前连接
+nmcli connection
+
+# 断开当前连接
+nmcli connection down <WIFI SSID>
+
+# 连接新 wifi 并且询问密码
+nmcli connection up <WIFI SSID> --ask
+#+END_SRC
+
+多试试 TAB 补全，可以不用去记忆繁杂的命令。
+
+使用 =nm-applet= 图形化管理 WIFI 。在 i3 的 config 文件下添加：
+
+#+BEGIN_SRC config
+exec_always nm-applet --no-agent
+#+END_SRC
+
+** 亮度显示
+安装 =xbacklight= 包，配置中添加：
+#+BEGIN_SRC config
+bindsym XF86MonBrightnessUp exec xbacklight -inc 10 # increase screen brightness
+bindsym XF86MonBrightnessDown exec xbacklight -dec 10 # decrease screen brightness
+#+END_SRC
+
+** 触控板 Tap to Click
+参考 [[https://cravencode.com/post/essentials/enable-tap-to-click-in-i3wm/][Enable tap to click in i3 wm]]
+
+#+BEGIN_SRC shell
+sudo mkdir -p /etc/X11/xorg.conf.d && sudo tee <<'EOF' /etc/X11/xorg.conf.d/90-touchpad.conf 1> /dev/null
+Section "InputClass"
+        Identifier "touchpad"
+        MatchIsTouchpad "on"
+        Driver "libinput"
+        Option "Tapping" "on"
+EndSection
+
+EOF
+#+END_SRC
