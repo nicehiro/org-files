@@ -1,0 +1,113 @@
+#+TITLE: Logistic Regression
+#+DATE: 2019-08-08
+#+OPTIONS: toc:nil
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+
+** 后验概率
+
+\(P(C_1|X)\) 表示取出一个样本，其样本参数符合 X , 那么这个样本属于 Class1 的概率为 \(P(C_1|X)\)
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/sigmoid.png]]
+#+END_CENTER
+
+经过一系列的推导（查看李弘毅相关的视频，并不难），得出：
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/tuidao.png]]
+#+END_CENTER
+
+所以使用概率法得到的分类函数是线性的。
+
+** 逻辑回归
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/lr.png]]
+#+END_CENTER
+
+*** The Goodness of Function
+上诉的 \(f\) 即 \(P(C_1|X)\) . 那么如何才能判断一个模型（\(f\)）的好坏呢？
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/cross.png]]
+注：上诉有一错误： \(\hat{y}^2 = 1, \hat{y}^3 = 0\)
+#+END_CENTER
+
+我们将原来的分类 C1, C2 分别用 \(\hat{y} = 1\) , \(\hat{y} = 0\) 表示，使用 \(L(w, b)\) 量化当前模型的好坏，那么对应的 w, b 应该是使得 L 函数值最大的两个量，即使得 \(-lnL\) 最小的量。
+
+最后，可以将 \(-lnL\) 化为：
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 80%
+[[file:../img/cross2.png]]
+#+END_CENTER
+
+*** Find the best Function
+使用 Gradient Descent 来寻找最好的 Function
+
+求对 w 的偏微分：
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/lr-gradient-1.png]]
+#+ATTR_HTML: :width 100%
+[[file:../img/lr-gradient-2.png]]
+#+ATTR_HTML: :width 100%
+[[file:../img/lr-gradient-3.png]]
+#+END_CENTER
+
+** Sample 案例
+从给定的数据分析某个人的收入是否大于 50K
+
+代码和作业资料来自于： [[https://github.com/machineCYC/2017MLSpring_Hung-yi-Lee/tree/master/HW2][Dafish]]
+
+*** 数据处理
+- 大于 50K 的 \(\hat{y}\) 设为 1 , 小于的设为 0
+- 剔除无用的行（首行）
+- =X_train_my.csv= 中包含所有的数据（除了最后一列，最后一列属于结果），106个特征变量
+- =Y_train_my.csv= 中包含结果值
+
+*** 建模
+
+\[ y^n = \sigma \sum_{i=1}^{106} w_i x_i^n + b \]
+
+\[ \sigma(z) = \frac{1}{1 + e^{-z}} \]
+
+#+BEGIN_SRC python
+def getLinear(arrayX, arrayW, arrayB):
+    X = np.dot(arrayX, arrayW) + arrayB
+    return X
+
+
+def getSigmoidValue(z):
+    s = 1 / (1.0 + np.exp(-z))
+    return np.clip(s, 1e-8, 1 - (1e-8))
+#+END_SRC
+
+*** 判断模型好坏的方法
+
+\[ Loss = \frac{1}{n} \sum_n -[\hat{y}^nln{y(x^n)} + (1-\hat{y}^n)ln(1-y(x^n))] \]
+
+#+BEGIN_SRC python
+def getCrossEntropyValue(s, Y):
+    arrayCrossEntropy = -1 * (np.dot(np.transpose(Y), np.log(s)) + np.dot((1-np.transpose(Y)), np.log(1-s))) / len(Y)
+    return arrayCrossEntropy
+#+END_SRC
+
+*** Gradient Descent 更新参数
+
+\[ w_i \leftarrow w_i - \eta \sum_n - (\hat{y}^n - y^n) x_i^n \]
+
+\[ b_i \leftarrow b_i -\eta \frac{1}{n} \sum_n - (\hat{y}^n - y^n \]
+
+注：i 表示参数个数；n 表示样本个数
+
+#+BEGIN_SRC python
+arrayGradientW = -1 * np.dot(np.transpose(X), (np.squeeze(Y) - s).reshape((intBatchSize,1)))
+arrayGradientB = np.mean(-1 * (np.squeeze(Y) - s))
+arrayW -= floatLearnRate * np.squeeze(arrayGradientW)
+arrayB -= floatLearnRate * arrayGradientB
+#+END_SRC

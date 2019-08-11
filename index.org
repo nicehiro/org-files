@@ -36,6 +36,8 @@
 
 - [[file:notes/gradient-decent.org][Gradient Decent]]
 
+- [[file:notes/logistic-regression.org][逻辑回归]]
+
 ** Tech
 谈谈技术
 

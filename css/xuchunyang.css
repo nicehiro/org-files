@@ -59,6 +59,10 @@ pre {
     background: #f0f8ff;
 }
 
+pre.src {
+    overflow: auto;
+}
+
 article h1:first-of-type {
     text-align: center;
 }
