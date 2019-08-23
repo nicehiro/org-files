@@ -65,7 +65,7 @@ R: Reward(from environment)
 ** RL Agent的分类
 *** 分类1
 - Value based 根据 Value function 计算，其中 Policy 是隐含的，不需要直接定义
-- Policy based 根据 State、Action 的映射关系
+- Policy based 根据 Policy 计算 Value Function 同时不断更新 Policy
 - Actor Critic(Both)
 *** 分类2
 - Model Free
@@ -73,9 +73,14 @@ R: Reward(from environment)
   + No Model
 - Model Based
 * Lession 2
-** State Transition Matrix 状态转移矩阵
+** Markov Process 马尔科夫过程
+在一个时序过程中，如果 t+1 时刻的状态仅取决于 t 时刻的状态 \(S_t\) 而与 t 时刻之前的任何状态都无关时，则认为 t 时刻的状态 \(S_t\) 具有马尔科夫性。若这个过程中的每个状态都具有马尔科夫性，那么这个过程具备马尔科夫性。具备了马尔科夫性的随机过程称为马尔科夫过程，又称马尔科夫链。
+
 \(P_{ss^{\prime}}\)表示State从 s 转移到 \(s^{\prime}\)的概率。
 \[ P_{ss^{\prime}} = P[S_{t+1} = s^{\prime} | S_t = s] \]
+
+马尔科夫过程只涉及到状态之间转移的概率，没有考虑强化学习过程中伴随的奖励反馈。
+
 ** Markov Reward Process
 Markov Reward Process 可以用元祖表示 (S, P, R, \(\gamma\))
 - S 有限的State集合
@@ -84,6 +89,7 @@ Markov Reward Process 可以用元祖表示 (S, P, R, \(\gamma\))
 - \(\gamma\) discount因子
 *** Return
 Return（Environment 给 Agent）\(G_t\)是从 t 阶段之后的总的discounted reward之和。
+从强化学习的角度来说，奖励值是由环境动力学决定。
 \[ G_t = R_{t+1} + \gamma R_{t+2} + ... = \sum_{k=0}^{\infty}\gamma ^kR_{t+k+1} \]
 
 其中，G 来自一个随机样本，累计了从当前状态的奖励（immediate reward）一直到未来的奖励（delay reward）
@@ -91,10 +97,7 @@ Return（Environment 给 Agent）\(G_t\)是从 t 阶段之后的总的discounted
 - 数学的可行性、容易性
 - Markov Process 是无限的，不可能无限的考虑到之后所有的reward
 - 未来的不确定性，无法完美的表征未来
-- 个例
-#+BEGIN_SRC quote
-额，我上节课作出的回答不够完善，只想出了第二个原因
-#+END_SRC
+
 *** Value Function
 Value Function 会给出当前状态以及到未来所有状态下的期望 return（\(G_t\)）
 \[ v(s) = E[G_t | S_t = s] \]
@@ -125,7 +128,6 @@ Agent的行为完全取决于Policy。
 - actor-value function
   \[ q_{\pi}(s, a) = E_{\pi}[G_t | S_t = s, A_t = a] \]
 
-上诉两个value function传入的State有不同的含义。当我们现在在\(S=s_1\)，考虑下一步改执行什么action以及得到什么state时，state-value function传入的state是下一步的状态\(s_2\)；actor-value function传入的state是当前的状态\(s_1\)
 *** Bellman Expectation Equation
 #+BEGIN_SRC quote
 v ：当前 state 的 value
@@ -149,7 +151,7 @@ q ：当前 action 的value
 \[ v_{\pi}(s) = \sum_{a \in A} \pi(a|s) (R_s^a + \gamma \sum_{s^{\prime} \in S} P^a_{ss^{\prime}} v_{\pi}(s^{\prime})) \]
 
 #+BEGIN_SRC quote
-理解这些式子要抓住：当前状态的预测 reward value：当前的 reward value 和之后的 reward value 之和
+理解这些式子要抓住：当前状态的预测 reward value：当前的 reward value 和之后的 return value 之和
 #+END_SRC
 *** Optimal Policy
 \[ \pi > \pi^{\prime} \text{ if } v_{\pi}(s) > v_{\pi^{\prime}}(s) \]
@@ -165,9 +167,9 @@ q ：当前 action 的value
 - Value function可以被存储，之后使用到某个节点的value时可以重复使用，并且被不停更新
 ** 动态规划在求解 MDP 的应用
 *** 预测问题
-策略已知，根据策略和当前环境求在此策略下每个状态的 value
+策略已知，根据策略和当前环境求在此策略下每个状态的 value, 评估这个策略的好坏
 *** 控制问题
-未知策略，一次次迭代求出最优策略下的 value
+未知策略，一次次迭代求出最优策略下的 value 和最优策略
 ** Policy Iteration
 - Policy evaluation：评估当前策略 \(\pi\) 下计算出来每个状态的 value
 - Policy improvement：利用贪心算法优化当前 Policy
@@ -191,6 +193,10 @@ q ：当前 action 的value
 
 ** Policy improvement
 实时更新 Policy，如果新的 policy 和之前的相同，那么表示当前 policy 已经收敛，为最佳 policy
+
+** Control 如何找到最优策略
+- Bellman Equation + greedy policy improvement
+- Value Iteration 将最大的 action value 作为当前 state 的 value function
 
 * Lession 4免模型预测 Model-Free prediction
 
