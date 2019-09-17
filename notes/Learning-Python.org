@@ -1,0 +1,158 @@
+#+TITLE: Learning Python 5th 笔记
+#+OPTIONS: toc:nil
+#+DATE: 2019-0817
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+
+** Python 代码运行
+Python 代码会先编译成字节码，然后将字节码送到 PVM(Python Virtural Machine) 执行。
+- 字节码比原始代码运行要快的多
+- 如果机器上的 Python 进程有写（Write）的权限，会在源代码同级目录生成 =__pycache__= 目录，其中维护该项目的字节码（Python 2.x 版本不会生成此目录，而是生成相应文件的 =*.pyc= ）；如果 Python 没有写的权限，Python 进程会将字节码存在内存中，进程执行结束后清空内存
+- Python 只会为导入的包生成字节码文件，最顶层的启动文件不会生成字节码
+- 切忌这里的字节码是供 Python 虚拟机识别的，而非直接是机器可以运行的机器码；这也是为什么 Python 是动态语言，Python 比 C 语言运行慢的原因
+
+** Python build-in objects
+| Object type  | Examples                                        |
+|--------------+-------------------------------------------------|
+| Numbers      | 1,2,Decimal(), Fraction()                       |
+| Strings      | 'str', b'a\x01c'(byte)                          |
+| Lists        | [1,2,3]                                         |
+| Dictionaries | {1:2}                                           |
+| Tuples       | (1, 2)                                          |
+| Files        | open('test.txt')                                |
+| Sets         | {1,2,3}                                         |
+| Others       | Booleans, Types, None                           |
+| Program unit | Functions(def, class, import), modules, classes |
+
+*** Strings
+- 有序序列。
+- 不变性，所有对 Strings 的操作都是新生成一个 Strings 对象进行操作；但可以换个方法来实现修改 Strings 某个位置的 char 使用 =list= 或者 =bytearray= , bytearray 有个限制，只能修改到 8 位编码的字符
+- 使用 =dir(s)= 查看 Strings 的方法
+- 使用单引号或者双引号表示一个 Strings, 在其中可以使用 =\x \u \U= 分别表示十六进制数，短 unicode 和长 unicode
+- Python 3.x 中有三种 string, =str= 用于展示 unicode text, =bytes= 用于展示字节数据，文件可以有两种模式：文本文件和字节文件。
+#+BEGIN_SRC python
+s = 'spam'
+s * 8 #=> 'spamspamspamspamspamspamspamspam'
+s + '1' #=> 'spam1'
+
+l = list(s)
+l [1] = n
+''.join(l) #=> 'snam'
+
+b = bytearray(b'spam')
+b[1] = 110 # acsii code
+b.decode() #=> 'snam'
+#+END_SRC
+
+**** Escape Charactors 转义字符
+- =\' \"=
+- =\a= Bell
+- =\b= Backspace
+- =\f= Formfeed
+- =\0= Null, 比特 0
+- =\ooo= 八进制数，最多 3 位
+- =\xhh= 十六进制数，最多 2 位
+- =uhhhh= & =uhhhhhhhh= Unicode
+
+**** Format
+- ='=%(qty) is %(thing) % {qty: 1, thing: 2}'=
+- ='{0}, {1}, {2}'.format(1, 2, 3)= 按位置
+- ='{name} is {thing}.format(name=="1", thing="2"=)'=
+- ='{0:>10} = {1:<10}.format('spam', 123)'= > 表示右对齐，10 表示占位 10
+- 可以将函数引入到 format 语句中
+
+*** Files
+- 默认打开方式是 ='r'=
+
+*** Sets
+- 无序序列
+- 不可变
+- 唯一
+- =x | y= 并集 =x & y= 交集
+
+#+BEGIN_SRC python
+list(set([1,2,1,3])) #=> [1,2,3]
+set('spam') - set('ham') #=> {'p', 's'}
+set('spam') == set('pasm') #=> True
+#+END_SRC
+
+*** Number
+- =0o= =0x= =0b= 八进制 十六进制 二进制
+- 位操作 把操作数转为二进制然后进行位操作
+- 正常使用的数都是浮点数，不精确，可以使用 Decimal 代替
+- 将无限小数转为分数时会发生精度缺失的问题
+
+#+BEGIN_SRC python
+# 按位取反
+~5 #=> -6
+x = 1
+x << 2 #=> 4
+x | 2 #=> 3
+x & 1 #=> 1
+
+# format
+'%o %x %b' % (16,16,16)
+
+# float
+0.1 + 0.1 + 0.1 - 0.3 #=> not 0.0
+
+# decimal 设定 context
+with decimal.localcontext() as ctx:
+    ctx.prec = 2
+    ...
+
+# float to fraction
+Fraction(*f.as_integer_ratio())
+Fraction.fram_float(f)
+#+END_SRC
+
+* Dynamic Typing
+** =a = 3= 执行过程
+- 创建一个对象表示 3
+- 如果不存在变量 a 创建变量 a
+- 将 a 指向对象 3
+
+** =a = 3, b = a= 执行过程
+- 创建一个对象表示 3
+- 如果不存在变量 a 创建变量 a
+- 将 a 指向对象 3
+- 如果不存在变量 b 创建变量 b
+- 将 b 指向 a 所指向的对象 3
+
+** is & ==
+- =is= 比较两个变量指向的对象是否是同一个
+- ==== 比较两个变量指向的对象的值是否相同
+
+** 垃圾回收会立刻执行吗？
+- 大部分对象在没有变量指向时会被立刻执行垃圾回收
+- 有些对象不会，比如数字，会不被回收而且被重用
+
+
+* Others
+** 特殊函数
+- =ord()= 查看某个字符的 ascii code
+
+** 技巧
+- 使用 =help(f)= 查看相关函数文档
+- list 表达式性能和速度都要比 for loop 好
+- =type(object)= 返回这个 object 的 class
+- 相同字符的乱序 Set 集合是可以 ====
+- 如果直接赋值 list =l1 = l2= 那么 l2 如果改变，l1 也会一起改变；使用 =l1 = l2[:]= 创建一个新的对象可以避免这种情况
+- =*= 可以用来解turple =**= 可以用来解 dict
+
+** 需要注意的地方
+- 3.x map 函数返回 iterable 对象而不是生成的 list
+- 3.x 计算时 floor 的结果会根据参数是否有 float 类型而呈现不同类型的结果
+- 3.x 计算整数相除的结果是小数
+- =repr= 和 =str= 是不一样的
+
+* Words
+- Sequence 序列
+- arbitrary 任意的
+- Immutability 不变性
+- literal 字符
+- Interlude 插曲
+- conciseness 简洁
+- polymorphism 多态
+- reclaim 回收
+- constrain 驱使，强迫
+- octal 八进制
