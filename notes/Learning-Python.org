@@ -3,6 +3,7 @@
 #+DATE: 2019-0817
 #+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
 
+* Basics
 ** Python 代码运行
 Python 代码会先编译成字节码，然后将字节码送到 PVM(Python Virtural Machine) 执行。
 - 字节码比原始代码运行要快的多
@@ -60,10 +61,41 @@ b.decode() #=> 'snam'
 - ='{0:>10} = {1:<10}.format('spam', 123)'= > 表示右对齐，10 表示占位 10
 - 可以将函数引入到 format 语句中
 
+*** List
+- 有序序列
+- 可变
+- 不唯一
+- Slice assignment
+  + Deletion 删除用 Slice 选中的元素
+  + Insertion 删除之后插入新元素
+
+#+BEGIN_SRC python
+l = [1,2,3]
+l[1:1] = [4,5]
+l #=> [1,4,5,2,3]
+
+l = [1]
+l[:0] = [2,3,4]
+l #=> [2,3,4,1]
+#+END_SRC
+
+*** Tuples
+- 有序序列
+- 不可变
+- 不唯一
+- 可以隐性表示一个 turple 不加括号
+- 其加（+）和乘（*）和 List 表现一样
+- =namedtuple= 生成一个类，第一个参数传类名，第二个参数传类中属性 list 其实例可以使用索引取属性
+
 *** Files
 - 默认打开方式是 ='r'=
+- ='w'= 创建并且打开文件，可以写入
+- ='a'= 打开文件并在末尾添加
+- ='b'= 写入二进制数据
+- 文件是被读进或者写的时候保存在内存的，可以使用 =flash= 强制写入
+- 可以使用 =seek= 函数查看文件的某个
 
-*** Sets
+*** SETS
 - 无序序列
 - 不可变
 - 唯一
@@ -126,6 +158,36 @@ Fraction.fram_float(f)
 - 大部分对象在没有变量指向时会被立刻执行垃圾回收
 - 有些对象不会，比如数字，会不被回收而且被重用
 
+* Assignment
+** 赋值方法
+- 扩展序列赋值需要注意边界情况，一般最好不要在数目不确定的情况下使用这种赋值方法；不能单独出现；同一个表达式不能出现两次
+- list 的 =+== 后面可以跟任意类型的序列，但是 =+= 只能跟同类型的序列
+#+BEGIN_SRC python
+# tuple assign
+a, b = c, d
+# list assign
+[a, b] = [c, d]
+# sequence assign
+a, b, c, d = 'spam'
+# extend sequence assign
+a, *b = 'spam' #=> b='pam'
+# multiple target assign
+a = b = c
+#+END_SRC
+
+* Iterable and Iterator
+- iterable 表示一个对象是可遍历的，是一种 iteration 对象；有 =iter()= 或者 =__iter()__=
+- iterator 是一个 iterable 对象产生的，用来遍历那个 iterable 对象；有 =next()= 或者 =__next()__=
+- 有些对象既是 iterable 又是 iterator 类似 =file=
+- 大部分内置 iterable 对象都不是自身的 iterator
+
+* Functions
+- 使用 =def= 定义一个对象，并为对象定义一个引用指向它（可以从这里看出所谓的函数式编程即把函数本身也看作一个对象）；
+- 使用 =lambda= 定义一个对象，但不为对象定义一个引用，这个表达式执行完返回的结果就是自身
+- =yield= 返回 result 给调用者，但会记录当前的位置
+- LEGB rules (Local Enclosing-defs Global Built-in)
+- =global nonlocal= 关键字用来修饰函数内部使用到的外部变量
+
 
 * Others
 ** 特殊函数
@@ -138,12 +200,36 @@ Fraction.fram_float(f)
 - 相同字符的乱序 Set 集合是可以 ====
 - 如果直接赋值 list =l1 = l2= 那么 l2 如果改变，l1 也会一起改变；使用 =l1 = l2[:]= 创建一个新的对象可以避免这种情况
 - =*= 可以用来解turple =**= 可以用来解 dict
+- Python 中空字符串、空列表、空字典、0.0 、None 都可以表示 0
+- =print= 默认输出在 =sys.stdout=
+- unzip a zip! =zip(*zip(X, Y))=
 
 ** 需要注意的地方
 - 3.x map 函数返回 iterable 对象而不是生成的 list
 - 3.x 计算时 floor 的结果会根据参数是否有 float 类型而呈现不同类型的结果
 - 3.x 计算整数相除的结果是小数
 - =repr= 和 =str= 是不一样的
+- =//= 向下取整的，并非真正的取整数部分，如果要取整数部分，使用 =int=
+
+** Closure
+
+#+BEGIN_SRC python
+  def makeActions():
+      acts = []
+      for i in range(5):
+          acts.append(lambda x: i * x)
+      return acts
+#+END_SRC
+
+上诉代码不会返回 =0^x, 1^x ...= , 而是统一都会返回 =4^x= ，因为在闭包中把 i 也当成变量来处理了，最后调用的时候，i 的值为 4 因此全部返回都是相同的。
+
+#+BEGIN_SRC python
+  def makeActions():
+      acts = []
+      for i in range(5):
+          acts.append(lambda x, i=i: i * x)
+      return acts
+#+END_SRC
 
 * Words
 - Sequence 序列
@@ -156,3 +242,5 @@ Fraction.fram_float(f)
 - reclaim 回收
 - constrain 驱使，强迫
 - octal 八进制
+- Hierarchy 等级，制度，层级
+- Interlude 插曲，插入

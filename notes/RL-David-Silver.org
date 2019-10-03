@@ -533,11 +533,147 @@ TD-Target 是真实价值的有噪声，有偏采样：
 [[file:../img/least-squares-prediction-repeat.png]]
 #+END_CENTER
 
+* Lession 7
+之前学过的方法都是 value based, 即通过值函数的更新，对值函数 greedy 选取相应策略的方法。而第七章讲的是 policy based 的方法，即直接对策略进行学习，最后得到是一些概率（选择某个 action 的概率）
 
+** 目标函数
+*** 片段式环境（episodic）
+使用开始状态的值
+\[ J_1(\theta) = V^{\pi_{\theta}}(s_1) = E_{\pi\theta}[v_1] \]
 
+*** 持续环境（continuing）
+使用 state value 的期望
+\[ J_{avV}(\theta) = \sum_{s}d^{\pi_{\theta}}(s) V^{\pi_{\theta}}(s) \]
 
+使用 action value 的期望
+\[ J_{avR}(\theta) = \sum_s d^{\pi_{\theta}}(s) \sum_a\pi_{\theta}(s, a) R^a_s \]
+其中，d 指：在以 \(\theta\) 为参数确定的策略 \(\pi\) 下，稳态马尔科夫链中状态 s 出现的概率
 
+** 分值函数Score Function
 
+策略梯度可以等价的表示为策略乘以一个似然函数的导数，这个与极大似然操作形式一致的式子叫做分值函数
+
+\begin{equation}
+\begin{split}
+\nabla_{\theta}\pi_{\theta}(s, a) &= \pi_{\theta}(s, a) \frac{\nabla_{\theta}\pi_{\theta}(s, a)}{\pi_{\theta}(s, a)}\\
+&= \pi_{\theta}(s, a) \nabla_{\theta} log \pi_{\theta}(s, a)
+\end{split}
+\end{equation}
+
+** softmax policy 的分值函数
+*** softmax function
+对特征 \(\phi(s, a)\) 进行线性组合当作 softmax 的输入：
+
+\[ \pi_{\theta}(s, a) = \frac{e^{\phi(s, a)^T\theta}}{\sum_ae^{\phi(s, a)^T\theta}} \]
+
+*** 化简 score function
+
+\begin{equation}
+\begin{split}
+\nabla_{\theta}log\pi_{\theta}(s, a) &= \nabla_{theta} log e^{\phi(s, a)^T\theta} - \nabla_{theta} log \sum_a e^{\phi(s, a)^T\theta}\\
+&= \phi(s, a) - \frac{\sum_a e^{\phi(s, a)^T\theta}\phi(s, a)}{\sum_a e^{\phi(s, a)^T\theta}}\\
+&= \phi(s, a) - \sum_a{\frac{e^{\phi(s, a)^T\theta}\phi(s, a)}{\sum_a{e^{\phi(s, a)^T\theta}}}}\\
+&= \phi(s, a) - \sum_a{\pi_{\theta}(s, a)\phi(s, a)}\\
+&= \phi(s, a) - E_{\phi_{theta}}[\phi(s, \cdot)]\\
+\end{split}
+\end{equation}
+
+** Policy Gradient策略梯度
+
+奖励函数的导数等于分值函数乘以 long-term Reward Q 在策略下的期望。
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 80%
+[[file:../img/policy-gradient.png]]
+#+END_CENTER
+
+*** Monte-Carlo 策略梯度
+将上诉策略梯度的方法结合 Monte-Carlo 方法，得到 Monte-Carlo 策略梯度
+- 使用策略上升（为了提高 J）
+- 使用 return \(v_t\) 作为 \(Q^{\pi_{\theta}}\) 的无偏采样
+- 波动很大，很难收敛（每次采样的变化都会很大）
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 80%
+[[file:../img/monte-carlo-policy-gradient.png]]
+#+END_CENTER
+
+** Actor-Critic 策略梯度
+直接使用采样的方法进行策略梯度分析会有很大波动，因此使用近似的 \(Q_w(s, a)\) 来代替 \(Q_{\pi_{\theta}}(s, a)\) , 会有很小的波动；这就引出了 Actor-Critic 算法。
+
+其中：
+- Actor: 使用梯度上升更新策略函数中的参数 \(\theta\) ,会用到 Critic 的结果 Q
+- Critic: 使用梯度下降更新 Q 值中的参数 w
+
+Actor 在更新策略函数的参数时，需要 Critic 告知哪个好（利用 Q 值更新）；Critic 计算 Q 值的时候需要用到 Actor 的策略函数。
+
+\[ \nabla_{\theta} J(\theta) \approx \mathbf E_{\pi_{\theta}}[\nabla_{\pi_{\theta}} log \pi_{\theta}(s, a) Q_w(s, a)] \]
+
+\[ \theta = \theta + \alpha \nabla_{\pi_{\theta}} log \pi_{\theta}(s, a)Q_w(s, a) \]
+
+*** Action-Value Actor-Critic
+- 使用线性函数对 Q value 逼近 \( Q_w(s, a) = \phi(s, a)^T w \)
+- 使用 \(TD(0)\) 作为 Critic 的 Q value 计算方法，参数为 w
+- Actor 使用策略梯度，参数为 \(\theta\)
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 80%
+[[file:../img/action-value-actor-critic.png]]
+#+END_CENTER
+
+*** Compatible Function Approximation
+如果使用上诉方法进行对 Q value 的估计，是带 bias 的有偏估计，因此不一定准确。
+
+如果 \(Q_w(s, a)\) 满足：
+- action value function 的徧导等于策略梯度
+\[ \nabla_wQ_w(s, a) = \nabla_{\theta}log \pi_{\theta}(s, a) \]
+
+- 调整 w 的值，使得真实值与估计值之间的均方误差最小
+\[ \epsilon = \mathbf E_{\pi_{\theta}}[(Q^{\pi_{\theta}}(s, a) - Q_w(S, a))^2] \]
+
+则：
+
+\[ \nabla_{\theta} J(\theta) = \mathbf E_{\pi_{\theta}}[\nabla_{\pi_{\theta}} log \pi_{\theta}(s, a) Q_w(s, a)] \]
+
+**** Proof
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 80%
+[[file:../img/proof-compatible-function-approx.png]]
+#+END_CENTER
+
+*** 方差依然存在
+尽管使用预计的 Q value 估计 Q value 的真实值可以减小方差，但策略梯度本身还有个问题：
+
+\[ \delta\theta = \alpha \nabla_{\theta} log \pi_{\theta}(s, a) Q_w(s, a) = \alpha \nabla_wQ_w(s, a) Q_w(s, a) \]
+
+策略梯度更新是按 Reward 增大的方向进行的，如果 reward 都是正数，那么 \(\theta\) 只会增加不会减小，随着时间的推移，方差会越来越大（？？不是很理解）
+
+所以我们希望引入一个函数，使得期望不变，但方差可以减小，这个函数称为 Advantage Function，记作 \(A^{\pi_{\theta}}(s, a)\)
+**** Baseline 函数
+引入 Baseline 函数是为了：
+- \(\mathbf E_{\pi_{\theta}}[\nabla_{\theta}log\pi_{\theta}(s, a)A^{\pi_{\theta}}(s, a)] = E_{\pi_{\theta}}[\nabla_{\theta}log\pi_{\theta}(s, a)Q^{\pi_{\theta}}(s, a)]\)
+- 方差变小
+
+一个与动作 action 无关，只与状态 state 有关的基准函数 B(s) ，乘以分值函数之后，计算其期望为 0。也就是说，我们可以在奖励函数的梯度的基础熵任意增减一个式子，而保持梯度不变。一个不错的基准函数可以是 \(\V^{\pi_{\theta}}(s)\)
+
+\begin{equation}
+\begin{split}
+\mathbf E_{\pi_{\theta}}[\nabla_{\theta}log\pi_{\theta}(s, a) B(s)] &= \sum_{s\in S}d^{\pi_{\theta}}(s) \sum_{a}\nabla_{\theta}\pi_{\theta}(s, a) B(s)\\
+&= \sum_{s\in S}d^{\pi_{\theta}}(s)B(s)\nabla_{\theta}\sum_{a\in A}\pi_{\theta}(s, a)
+&= 0
+\end{split}
+\end{equation}
+
+上式中， \(\sum_{a\in A} \pi_{\theta}(s, a) = 1\) ，对常数求导为 0
+
+因此可以将优势函数写成：
+\[ A^{\pi_{\theta}}(s, a) = Q^{\pi_{\theta}}(s, a) - V^{\pi_{\theta}}(s) \]
+
+其奖励函数的梯度为：
+\[ \nabla_{\theta}J(\theta) = \mathbf E_{\pi_{\theta}}[\nabla_{\theta}log\pi_{\theta}(s, a) A^{\pi_{\theta}}(s, a)] \]
+
+优势函数的意义是，在动作值函数的基础上减去了对应状态拥有的基准值，使之变为动作带来的增益，因而降低了方差。
 
 * 心得
 - 不要被符号所局限，也不要完全脱离数学符号。

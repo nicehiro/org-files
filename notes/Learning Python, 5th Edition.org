@@ -1,0 +1,4 @@
+* Learning Python, 5th Edition
+  :PROPERTIES:
+  :NOTER_DOCUMENT: ../../../Downloads/Learning Python, 5th Edition.pdf
+  :END:
