@@ -536,6 +536,8 @@ TD-Target 是真实价值的有噪声，有偏采样：
 * Lession 7
 之前学过的方法都是 value based, 即通过值函数的更新，对值函数 greedy 选取相应策略的方法。而第七章讲的是 policy based 的方法，即直接对策略进行学习，最后得到是一些概率（选择某个 action 的概率）
 
+例如，格子世界中逃跑者的训练，使用 value based 方法很难训练成功，因为对于逃跑者来说，其实只要不是朝着追逐者的方向走，那么其他三个方向都算是最优解，这会给求 Max Value 带来问题。因而只能使用策略梯度的方法。
+
 ** 目标函数
 *** 片段式环境（episodic）
 使用开始状态的值
@@ -548,6 +550,8 @@ TD-Target 是真实价值的有噪声，有偏采样：
 使用 action value 的期望
 \[ J_{avR}(\theta) = \sum_s d^{\pi_{\theta}}(s) \sum_a\pi_{\theta}(s, a) R^a_s \]
 其中，d 指：在以 \(\theta\) 为参数确定的策略 \(\pi\) 下，稳态马尔科夫链中状态 s 出现的概率
+
+有了目标函数，我们需要做的就是寻找一组参数 \(\theta\) 使得目标函数最大。最常用的方法是梯度上升，使用梯度法就需要用到 \(\nabla_{\theta} J\)
 
 ** 分值函数Score Function
 
@@ -562,7 +566,7 @@ TD-Target 是真实价值的有噪声，有偏采样：
 
 ** softmax policy 的分值函数
 *** softmax function
-对特征 \(\phi(s, a)\) 进行线性组合当作 softmax 的输入：
+对网络的输出 \(\phi(s,a)\) 进行线性组合当作 softmax 的输入：
 
 \[ \pi_{\theta}(s, a) = \frac{e^{\phi(s, a)^T\theta}}{\sum_ae^{\phi(s, a)^T\theta}} \]
 
@@ -570,13 +574,35 @@ TD-Target 是真实价值的有噪声，有偏采样：
 
 \begin{equation}
 \begin{split}
-\nabla_{\theta}log\pi_{\theta}(s, a) &= \nabla_{theta} log e^{\phi(s, a)^T\theta} - \nabla_{theta} log \sum_a e^{\phi(s, a)^T\theta}\\
+\nabla_{\theta}log\pi_{\theta}(s, a) &= \nabla_{\theta} log e^{\phi(s, a)^T\theta} - \nabla_{\theta} log \sum_a e^{\phi(s, a)^T\theta}\\
 &= \phi(s, a) - \frac{\sum_a e^{\phi(s, a)^T\theta}\phi(s, a)}{\sum_a e^{\phi(s, a)^T\theta}}\\
 &= \phi(s, a) - \sum_a{\frac{e^{\phi(s, a)^T\theta}\phi(s, a)}{\sum_a{e^{\phi(s, a)^T\theta}}}}\\
 &= \phi(s, a) - \sum_a{\pi_{\theta}(s, a)\phi(s, a)}\\
-&= \phi(s, a) - E_{\phi_{theta}}[\phi(s, \cdot)]\\
+&= \phi(s, a) - E_{\pi_{\theta}}[\phi(s, \cdot)]\\
 \end{split}
 \end{equation}
+
+\(\mathbf E_{\pi_{\theta}}[\phi(s, \cdot)]\) 表示在策略 \(\pi_{\theta}\) 下，输出的加权平均。所以分值函数就表示：采取的某个动作获得的“分数”比“平均分”要多多少。
+
+** Gaussian Policy 的分值函数
+*** Gaussian Policy
+
+- 使用 state 的线性组合表示 \(\mu\)
+  \[ \mu{(s)} = \phi{(s)^T \theta} \]
+
+- \(a \sim N(\mu(s), \sigma ^2)\)
+
+*** 化简分值函数
+
+\begin{equation}
+\begin{split}
+\nabla_{\theta}log\pi_{\theta}(s, a) &= \nabla_{\theta}log{\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(a-\mu)^2}{2\sigma^2}}}\\
+&= \nabla_{\theta}{-\frac{(a-\phi(s)\theta)^2}{2\sigma^2}}\\
+&= \frac{(a-\mu(s))\phi(s)}{\sigma^2}
+\end{split}
+\end{equation}
+
+同样，这个分值函数也表示：采取某个动作获得的“分数”比“平均分”要多多少。
 
 ** Policy Gradient策略梯度
 
@@ -586,6 +612,8 @@ TD-Target 是真实价值的有噪声，有偏采样：
 #+ATTR_HTML: :width 80%
 [[file:../img/policy-gradient.png]]
 #+END_CENTER
+
+它表示：如果某个动作获得的“分数”比平均分多，而且其带来的 Reward 也大，那么参数就朝着这个动作的方向移动。
 
 *** Monte-Carlo 策略梯度
 将上诉策略梯度的方法结合 Monte-Carlo 方法，得到 Monte-Carlo 策略梯度

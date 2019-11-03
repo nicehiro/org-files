@@ -187,41 +187,7 @@ a = b = c
 - =yield= 返回 result 给调用者，但会记录当前的位置
 - LEGB rules (Local Enclosing-defs Global Built-in)
 - =global nonlocal= 关键字用来修饰函数内部使用到的外部变量
-
-
-* Others
-** 特殊函数
-- =ord()= 查看某个字符的 ascii code
-
-** 技巧
-- 使用 =help(f)= 查看相关函数文档
-- list 表达式性能和速度都要比 for loop 好
-- =type(object)= 返回这个 object 的 class
-- 相同字符的乱序 Set 集合是可以 ====
-- 如果直接赋值 list =l1 = l2= 那么 l2 如果改变，l1 也会一起改变；使用 =l1 = l2[:]= 创建一个新的对象可以避免这种情况
-- =*= 可以用来解turple =**= 可以用来解 dict
-- Python 中空字符串、空列表、空字典、0.0 、None 都可以表示 0
-- =print= 默认输出在 =sys.stdout=
-- unzip a zip! =zip(*zip(X, Y))=
-
-** 需要注意的地方
-- 3.x map 函数返回 iterable 对象而不是生成的 list
-- 3.x 计算时 floor 的结果会根据参数是否有 float 类型而呈现不同类型的结果
-- 3.x 计算整数相除的结果是小数
-- =repr= 和 =str= 是不一样的
-- =//= 向下取整的，并非真正的取整数部分，如果要取整数部分，使用 =int=
-
-** Closure
-
-#+BEGIN_SRC python
-  def makeActions():
-      acts = []
-      for i in range(5):
-          acts.append(lambda x: i * x)
-      return acts
-#+END_SRC
-
-上诉代码不会返回 =0^x, 1^x ...= , 而是统一都会返回 =4^x= ，因为在闭包中把 i 也当成变量来处理了，最后调用的时候，i 的值为 4 因此全部返回都是相同的。
+  上诉代码不会返回 =0^x, 1^x ...= , 而是统一都会返回 =4^x= ，因为在闭包中把 i 也当成变量来处理了，最后调用的时候，i 的值为 4 因此全部返回都是相同的。
 
 #+BEGIN_SRC python
   def makeActions():
@@ -230,6 +196,20 @@ a = b = c
           acts.append(lambda x, i=i: i * x)
       return acts
 #+END_SRC
+
+** Arguments
+*** 传参
+- 传参的过程只是把传过来的对象赋值给一个 local variable
+- 修改一个 mutable 参数可能会改变原来参数的值
+
+Python 传参，不可变对象是值传递，例如，整数、字符串等，所以在函数内改变其值不会影响参数；可变对象是引用传递，例如列表、字典等，其在函数内引用改变，原来的值也会改变。
+
+*** 参数匹配
+- 基本原则：从左向右匹配
+- =name=value= 匹配
+- =*args= turple 匹配
+- =**args= dict 匹配
+- 传参时可以使用 =*= 解包 turple
 
 * Words
 - Sequence 序列
