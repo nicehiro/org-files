@@ -1,0 +1,89 @@
+#+TITLE: 反向传播算法 Back-Propagation
+#+DATE: 2019-11-28
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+
+* 背景
+在神经网络中更新参数时，经常需要使用梯度的方法来更新参数。反向传播就是用来有效的求输出值和每个参数导数的有效方法。
+
+* 链式求导法则
+\begin{equation}
+y = f(x) \\
+z = g(x) \\
+w = m(x) \\
+s = y + z + w \\
+
+\nabla_{x} = \frac{\partial{s}}{dx} = \frac{\partial{y}}{dx} + \frac{\partial{z}}{dx} + \frac{\partial{w}}{dx}
+\end{equation}
+
+* 反向传播
+在神经网络中截取一小段，不妨将我们的问题转化为求此段网络中输入\(x_1,x_2\)的梯度。
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 80%
+[[file:../img/back-prop-1.png]]
+#+END_CENTER
+
+取出其中一个神经元（Neuron），拆开分析：
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 80%
+[[file:../img/back-prop-2.png]]
+#+END_CENTER
+
+可以看出，\(\nabla_w\)由两部分组成\(\frac{\partial{l}}{dz} \frac{\partial{z}}{dw}\)。
+
+** Forward Pass 前向传播
+先来求求\(\frac{\partial{z}}{dw}\)。
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 80%
+[[file:../img/back-prop-3.png]]
+#+END_CENTER
+
+从前面向后面计算一次，相对于每个神经元来说，每个神经元的输入即是各自的\(\frac{\partial{z}}{dw}\)。
+
+** Backward Pass 反向传播
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 80%
+[[file:../img/back-prop-4.png]]
+#+END_CENTER
+
+其中，\(a\)为激活函数（Activation Function）的输出。
+
+\begin{equation}
+\begin{split}
+\frac{\partial{l}}{dz} &= \frac{\partial{l}}{da} \frac{\partial{a}}{dz} \\
+&= (\frac{\partial{l}}{dz^{\prime}} \frac{\partial{z^{\prime}}}{da} + \frac{\partial{l}}{dz^{\prime \prime}} \frac{pritial{z^{\prime \prime}}}{da}) \frac{\partial{a}}{dz} \\
+&= (\frac{\partial{l}}{dz^{\prime}} w_3 + \frac{\partial{l}}{dz^{\prime \prime}} w_4) \frac{\partial{a}}{dz}
+\end{split}
+\end{equation}
+
+如果要从前往后的计算每一层的\(\frac{\partial{l}}{dz}\)，显然计算每一层都需要计算从这一层开始的之后所有层的输出；但我们如果换一种方法，从后向前计算，那么只需要计算一次就足够了。
+
+*** 输出层
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 80%
+[[file:../img/back-prop-5.png]]
+#+END_CENTER
+
+*** 中间层
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 80%
+[[file:../img/back-prop-6.png]]
+#+END_CENTER
+
+* 总结
+
+使用 Forward Pass 计算\(\frac{\partial{z}}{dx}\)，使用 Backward Pass 计算\(\frac{\partial{l}}{dz}\)，最后将两个值相乘，即是对应参数的梯度。
+
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 80%
+[[file:../img/back-prop-7.png]]
+#+END_CENTER
+
+* Ref
+- [[https://www.youtube.com/channel/UC2ggjtuuWvxrHHHiaDH1dlQ][李宏毅——机器学习]]
+- [[https://datawhalechina.github.io/leeml-notes/#/chapter14/chapter14][Data Whale 学习笔记]]

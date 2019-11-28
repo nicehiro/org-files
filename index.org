@@ -36,7 +36,9 @@
 
 - [[file:notes/gradient-decent.org][Gradient Decent]]
 
-- [[file:notes/logistic-regression.org][逻辑回归]]
+- [[file:notes/logistic-regression.org][罗辑回归]]
+
+- [[file:notes/back-propagation.org][反向传播算法 Back Propagation]]
 
 ** Tech
 谈谈技术
