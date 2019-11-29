@@ -29,7 +29,6 @@ s = y + z + w \\
 #+ATTR_HTML: :width 80%
 [[file:../img/back-prop-2.png]]
 #+END_CENTER
-
 可以看出，\(\nabla_w\)由两部分组成\(\frac{\partial{l}}{dz} \frac{\partial{z}}{dw}\)。
 
 ** Forward Pass 前向传播
@@ -73,6 +72,12 @@ s = y + z + w \\
 #+BEGIN_CENTER
 #+ATTR_HTML: :width 80%
 [[file:../img/back-prop-6.png]]
+#+END_CENTER
+
+利用下一层的结果求本层的\(\frac{\sigma{l}}{z}\)：
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 80%
+[[file:../img/back-prop-8.png]]
 #+END_CENTER
 
 * 总结

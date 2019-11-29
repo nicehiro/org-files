@@ -40,6 +40,8 @@
 
 - [[file:notes/back-propagation.org][反向传播算法 Back Propagation]]
 
+- [[file:notes/active-function.org][激活函数]]
+
 ** Tech
 谈谈技术
 
