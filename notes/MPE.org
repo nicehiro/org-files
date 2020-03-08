@@ -1,0 +1,14 @@
+#+TITLE: 多智能体环境 MPE 分析
+#+DATE: 2020-02-23
+#+STARTUP: latexpreview
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+
+** 类图
+#+BEGIN_SRC plantuml :file test.png
+  @startuml
+  class EntityState(object)
+  @enduml
+#+END_SRC
+
+#+RESULTS:
+[[file:test.png]]

@@ -1,6 +1,7 @@
 #+TITLE: 强化学习 -- David Silver Course
 #+DATE: 2019-06-06
 #+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+#+STARTUP: latexpreview
 
 * Lession 1
 ** 强化学习和其他机器学习之间的区别是什么？
