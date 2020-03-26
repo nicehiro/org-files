@@ -6,7 +6,7 @@
 | About me |
 
 ** Notes
-学习笔记
+学习笔记。
 
 - [[file:notes/Math.org][高数]]
 
@@ -28,11 +28,14 @@
 
 - [[file:notes/linux-shell-知识点总结.org][Shell笔记]]
 
-- [[file:notes/RL-David-Silver.org][RL 学习笔记]]
-
 - [[file:notes/Sed-Learn.org][Sed 学习笔记]]
 
 - [[file:notes/pandas-and-numpy.org][Pandas & Numpy]]
+
+** Reinforcement Learning
+强化学习相关。
+
+- [[file:notes/RL-David-Silver.org][David Silver 课程学习笔记]]
 
 - [[file:notes/gradient-decent.org][Gradient Decent]]
 
@@ -42,8 +45,12 @@
 
 - [[file:notes/active-function.org][激活函数]]
 
+- [[file:thesis/TRPO.org][TRPO 置信空间策略优化]]
+
+- [[file:thesis/kl-divergence.org][KL 散度]]
+
 ** Tech
-谈谈技术
+谈谈技术。
 
 - [[file:tech/GFW-原理简析.org][GFW原理解析]]
 
@@ -54,6 +61,6 @@
 - [[file:tech/use-pyim.org][Emacs 使用 pyim ＋ rime ＋ double flypy 打字]]
 
 ** Life
-分享生活
+分享生活。
 
 - [[file:life/学校每日签到的自动化完成.org][学校每日签到的自动化完成]]

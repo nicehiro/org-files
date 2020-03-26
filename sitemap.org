@@ -2,10 +2,10 @@
 
 - [[file:index.org][Hiro's Blog]]
 - life
-  - [[file:life/moves.org][moves]]
   - [[file:life/学校每日签到的自动化完成.org][学校每日签到的自动化完成]]
   - [[file:life/my-college.org][我的大学]]
 - notes
+  - [[file:notes/awk-note.org][AWK]]
   - [[file:notes/gradient-decent.org][Gradient Decent 梯度下降]]
   - [[file:notes/Learning-Python.org][Learning Python 5th 笔记]]
   - [[file:notes/Learning Python, 5th Edition.org][Learning Python, 5th Edition]]
@@ -16,13 +16,11 @@
   - [[file:notes/Python-笔记.org][Python 学习笔记]]
   - [[file:notes/python-数据分析.org][Python 数据分析知识点总结]]
   - [[file:notes/Sed-Learn.org][Sed 学习笔记]]
-  - [[file:notes/tensorflow-learning.org][TensorFlow 学习笔记]]
-  - [[file:notes/classfication.org][classfication]]
-  - [[file:notes/main-RL-QiangYe.org][main-RL-QiangYe]]
   - [[file:notes/back-propagation.org][反向传播算法 Back-Propagation]]
+  - [[file:notes/MARL.org][多智能体深度强化学习]]
+  - [[file:notes/MPE.org][多智能体环境 MPE 分析]]
   - [[file:notes/RL-David-Silver.org][强化学习 -- David Silver Course]]
   - [[file:notes/RL-Learn.org][强化学习 -- 基础]]
-  - [[file:notes/rl-experience.org][强化学习调试经验]]
   - [[file:notes/OS.org][操作系统]]
   - [[file:notes/Data_Structure.org][数据结构]]
   - [[file:notes/Probability.org][概率论]]
@@ -37,6 +35,8 @@
   - [[file:tech/use-gym-for-rl.org][Gym Learning note]]
   - [[file:tech/Vim-进阶.org][Vim 进阶]]
   - [[file:tech/i3wm-config.org][i3-wm 配置]]
+  - [[file:tech/tensorboard.org][学习使用Tensorboard]]
   - [[file:tech/all_kinds_tech.org][技术渣的杂技术集]]
 - thesis
-  - [[file:thesis/a brief survery of deep reinforement learning.org][a brief survery of deep reinforement learning]]
+  - [[file:thesis/kl-divergence.org][Kullback-Leibler Divergence Explained]]
+  - [[file:thesis/TRPO.org][置信空间策略优化]]

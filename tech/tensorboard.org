@@ -1,0 +1,10 @@
+#+TITLE: 学习使用Tensorboard
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+#+DATE: 2020-03-19
+#+OPTIONS: toc:nil
+
+* QuickStart
+Tensorboard 顶栏代表的含义：
+- “Scalars”可以查看【Loss】和【Metrics】如何随着训练变化，，可以根据这些数据研究训练的速度快慢，学习率设置的好坏等。
+- “Graph”可以查看训练网络的结构。可以帮助你分析网络构建的时候合理，正确。
+- “Distributions”和“Histograms”展示向量随时间变化的分布。可以根据这张图分析向量是否按照你预期的变化。

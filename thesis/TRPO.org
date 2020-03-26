@@ -1,0 +1,255 @@
+#+TITLE: 置信空间策略优化
+#+DATE: 2020-03-10
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+#+STARTUP: latexpreview
+#+LATEX_HEADER: \usepackage[long]{optidef}
+
+* Introduction
+大部分策略优化算法都可分为以下三类：
+- 策略迭代算法。在计算当前策略下的值函数和策略更新两个方面迭代。
+- 策略梯度算法。从回合中取样，然后对这些样本的预计Return进行梯度更新，使得预计Return最大。
+- 无导数优化算法。比如交叉熵算法。
+
+寻常的无导数优化算法适用于很多场景，因此这种算法很容易理解和实现，而且有很好的效果。对于连续动作空间问题，无导数优化算法在学习控制策略的任务中表现很好。Gradient-Based优化方法在监督学习任务中对于带有大量参数的函数优化问题都取得了不错的成效，将这种方法引入强化学习可以为更加复杂的策略优化提供方便。
+
+* Preliminaries
+- MDP, \((\mathcal{S}, \mathcal{A}, \mathcal{P}, r, \rho_0, \gamma)\)
+- \(\pi\)：随机策略
+- \(\eta(\pi) = \mathbb{E}_{s_0, a_0, \cdots}[\sum_{t=0}^{infty}\gamma^tr(s_t)]\)
+- \(Q_{\pi}(s_t, a_t) = \mathbb{E}_{s_{t+1}, a_{t+1}, \cdots} [\sum_{l=0}^{\infty}\gamma^r(s_{t+1}]\)
+- \(V_{\pi}(s_t) = \mathbb{E}_{a_t, s_{t+1}, \cdots}[\sum_{l=0}^{\infty}\gamma^lr(s_{t+1})]\)
+- \(A_{\pi}(s_t) = Q_{\pi}(s,a) - V_{\pi}(s)\)
+
+优势函数的定义为：
+
+\[A_{\pi}(s, a) = \mathbb{E}_{s^{\prime} \sim P(s^{\prime} | s,a)}[r(s) + \gamma V_{\pi}(s^{\prime}) - V_{\pi}(s)]\]
+
+下一个策略的期望回报与当前策略的期望回报之间的关系为：
+
+\[\eta(\tilde{\pi}) = \eta(\pi) + \mathbb{E}_{s_0, a_0, \cdots \sim \tilde{\pi}} [\sum_{t=0}^{\infty}\gamma^t A_{\pi}(s_t, a_t)]\]
+
+式\(\mathbb{E}_{s_0, a_0, \cdots \sim \tilde{\pi}}\)中\(a_t \sim \tilde{\pi}(\cdot \mid s_t)\)
+
+依据下式更新策略：
+
+\[
+\tilde{\pi}(s) = \arg \max A_{\pi}(s, a)
+\]
+
+当所有\(\tilde{\pi}\)下可能到达的状态\(s\)，以及它所可能采取的动作\(a\)都不再使得\(A_{\pi} \geq 0\)，说明收敛到了最有策略。
+
+证明：
+\begin{equation*}
+\begin{split}
+&\mathbb{E}_{\tau \sim \tilde{\pi}}[\sum_{t=0}^{\infty}\gamma^t A_{\pi}(s_t, a_t)]\\
+&= \mathbb{E}_{\tau \sim \tilde{\pi}}[\sum_{t=0}^{\infty}\gamma^t (r(s^t) + \gamma V_{\pi}(s_{t+1}) - V_{\pi}(s_t))]\\
+&= \mathbb{E}_{\tau \sim \tilde{\pi}}[- V_{\pi}(s_0) +  \sum_{t=0}^{\infty}\gamma^t r(s_t)]\\
+&= - \mathbb{E}_{s_0}[V_{\pi}(s_0)] + \mathbb{E}_{r \mid \tilde{\pi}}[\sum_{t=0}^{\infty}\gamma^t r(s_t)]\\
+&= -\eta(\pi) + \eta(\tilde{\eta})
+\end{split}
+\end{equation*}
+
+令\(\rho_{\pi}(s) = P(s_0=s) + \gamma P(s_1 = s) + \gamma^2 P(s_2 = s) + ...\)，表示在策略\(\pi\)下带有折扣因子的访问到状态\(s\)的概率。我们可以将上述等式写为：
+\begin{equation}
+\begin{split}
+\eta(\tilde{\pi}) &= \eta(\pi) + \sum_{t=0}^{\infty}\sum_{s} P(s_t = s \mid \tilde{\pi}) \sum_{a}\tilde{\pi}(a \mid s) \gamma^t A_{\pi}(s, a)\\
+&= \eta(\pi) + \sum_{s}\sum_{t=0}^{\infty} \gamma^t P(s_t=s\mid \tilde{\pi})\sum_a \tilde{\pi}(a\mid s)A_{\pi}(s, a)\\
+&= \eta(\pi) + \sum_s\rho_{\tilde{\pi}}(s) \sum_a \tilde{\pi}(a\mid s)A_{\pi}(s,a)
+\end{split}
+\end{equation}
+
+对于一个改进的策略\(\tilde{\pi}\)，如果满足\(\sum_a \tilde{\pi}(a \mid s)A_{\pi}(s,a) \geq 0\)，就可以确保改进的策略表现不会比之前的策略差。但是在训练过程中，我们很难确保每个状态期望回报的优势函数都是正的，即出现\(\sum_a \tilde{\pi}(a \mid s)A_{\pi}(s, a) < 0\)是不可避免的。
+设：
+
+\[
+L_{\pi}(\tilde{\pi}) = \eta(\pi) + \sum_{s}\rho_{\pi}(s) \sum_a \tilde{\pi}(a \mid s)A_{\pi}(s, a)
+\]
+
+其中，使用了\(\rho_{\pi}(s)\)而不是\(\rho_{\tilde{\pi}}\)，忽略策略改变引起的状态概率改变，使得\(L_{\pi}\)近似逼近\(\eta_{\tilde{\pi}}\)。
+
+那么可不可以这样近似呢？
+
+\begin{equation*}
+\begin{split}
+L_{\pi_{\theta}_{old}}(\pi_{\theta}_{old}) = \eta(\pi_{\theta_{old}})\\
+\nabla_{\theta} L_{\pi_{\theta}_{old}}(\pi_{\theta}) \mid_{\theta = \theta_{old}} = \nabla_{\theta} \eta(\pi_{\theta}) \mid_{\theta = \theta_{old}}\\
+\end{split}
+\end{equation*}
+
+有上式可知，对于函数\(L_{\pi_{\theta_{old}}}(\pi_{\theta})\)和\(\eta_{\pi_{\theta}}\)，在\(\theta_{old}\)处，进行很小的更新，那么对于前者的提高相当于对后者的提高。
+
+当对于策略的改进使用以下方式时：
+
+\[
+\eta_{new}(a \mid s) = (1 - \alpha)\pi_{old}(a \mid s) + \alpha \pi^{\prime}(a \mid s)
+\]
+
+这样，会有：
+
+\begin{equation*}
+\begin{split}
+\eta(\pi_{new}) \geq L_{\pi_{old}}(\pi_{new}) - \frac{2\epsilon\gamma}{(1-\gamma)^2} \alpha^2 \\
+\qquad where \quad \epsilon = \max\mid \mathbb{E}_{a \sim \pi^{\prime}(a\mid s)}[A_{\pi}(s,a)]\mid
+\end{split}
+\end{equation*}
+
+* Monotonic Improvement Guarantee for General Stochastic Policies
+上面推理已经确保了如何单调递增的更新策略，那么如何衡量\(\theta_{old}\)和\(\theta_{new}\)之间的距离呢？
+
+本文提出衡量更新参数距离的方法为：Total variation divergence。其定义为：
+
+\[
+D_{TV}(p \mid\mid q) = \frac{1}{2}\sum_i\mid p_i - q_i \mid
+\]，
+
+其中\(p, q\)为离散随机变量概率函数，如果是连续型随机变量，\(p, q\)为其概率密度函数，将求和改为积分。
+
+定义：
+
+\[
+D_{TV}^{\max}(\pi, \tilde{\pi}) = \max\limits_s D_{TV}(\pi(\cdot\mid s) \mid\mid \tilde{\pi}(\cdot \mid s))
+\]
+
+其含义为：所有状态的 Total variation divergence 中的最大值。
+
+定理一：
+\begin{equation*}
+\begin{split}
+\alpha = D_{TV}^{\max}(\pi_{old}, \pi_{new}), then\\
+\eta(\pi_{new}) \geq L_{\pi_{old}}(\pi_{new}) - \frac{4\epsilon\gamma}{1-\gamma}^2 {\alpha}^2,\\
+where \quad \epsilon = \max\limits_{s,a}\mid A_{\pi}(s,a)\mid
+\end{split}
+\end{equation*}
+
+Total variation divergence 和 KL divergence 之间的关系为：
+
+\[
+D_{TV}(p\mid\midq)^2 \leq D_{KL}(p \mid\mid q)
+\]
+
+令\(D_{KL}^{\max}(\pi, \tilde{\pi}) = \max\limits_s D_{KL}(\pi(\cdot\mid s) \mid\mid \tilde{\pi}(\cdot\mid s))\)，将定理一可以写为：
+
+\begin{equation*}
+\begin{split}
+\eta(\tilde{\pi}) \geq L_{\pi}(\tilde{\pi}) - CD_{KL}^{\max}(\pi, \tilde{\pi}),\\
+where \quad C = \frac{4\epsilon\gamma}{(1-\gamma)^2}
+\end{split}
+\end{equation*}
+
+用\(M_i(\pi)\)来表示\(\eta(\pi)\)的下限，\(M_i{\pi} = L_{\pi_i}(\pi) - CD_{KL}^{\max}(\pi_i, \pi)\)，则：
+
+\begin{equation*}
+\begin{split}
+\eta(\pi_{i+1}) &\geq M_i(\pi_{i+1})\\
+\eta(\pi_{i+1}) &= M_i(\pi_i)\\
+\eta(\pi_{i+1}) - \eta(\pi_i) &\geq M_i(\pi_{i+1}) - M(\pi_i)
+\end{split}
+\end{equation*}
+
+因此，每个回合优化\(M_i\)，可以确保回报\(\eta\)是非递减的。
+
+* Optimization of Parameterized Policies
+以下讨论的策略\(\pi\)都是以向量\(\theta\)为参数的策略\(\pi_{\theta}\)。集中规约以下变量：
+- \(\eta(\theta) := \eta(\pi_{\theta}))\)
+- \(L_{\theta}(\tilde{\theta}) := L_{\pi_{\theta}}(\pi_{\tilde{\theta}})\)
+- \(D_{KL}(\theta \mid\mid \tilde{\theta}) := D_{KL}(\pi_{\theta} \mid\mid \pi_{\tilde{\theta}})\)
+
+上一节说明了\(\eta(\theta) \geq L_{\theta_{old}}(\theta) - CD_{KL}^{\max}(\theta_{old}, \theta)\)。更新\(\theta\)的过程为，找一个使得右边式子最大的\(\theta\)，令\(\theta_{old} = \theta\)。
+
+我们的任务其实就是最大化：
+
+\[
+maximize\limits_{\theta}[L_{\theta_{old}}(\theta) - CD_{KL}^{\max}(\theta_{old}, \theta)]
+\]
+
+如果直接使用上诉推导出的\(C\)进行优化，步长非常小，更新很慢，因此我们着手于处理\(D_{KL}^{\max}\)这一项。通过对这一项进行约束，可以获得较大的更新步长，这种在新旧策略之间差距的约束被称为：Trust region constraint。
+\begin{maxi*}
+{\theta} {L_{\theta_{old}}(\theta)}
+{}{}
+\addConstraint{D_{KL}^{\max}(\theta_{old}, \theta)}
+\end{maxi*}
+
+由于\(D_{KL}^{\max} = \max\limits_{s} D_{KL}(\pi_{\theta_{old}}(\cdot \mid s)\mid\mid \pi_{\theta}(\cdot \mid s))\)，与所有状态都有关系，因此可以使用平均值进行第二次逼近：
+
+\(\bar{D}_{KL}^{\rho}(\theta_1, \theta_2) := \mathbb{E}_{s \sim \rho}[D_{KL}(\pi_{\theta_1}(\cdot \mid s) \mid\mid \pi_{\theta_2}(\cdot \mid s))]\)
+
+因此，之前的约束优化问题可以转换为：
+\begin{maxi*}
+{\theta} {L_{\theta_{old}}(\theta)}
+{}{}
+\addConstraint{\bar{D}_{KL}^{\rho}(\theta_{old}, \theta) \leq \delta}
+\end{maxi*}
+
+实验结果表明，这种逼近是可行的。
+
+* Sample-Based Estimation of the Objective and Constraint
+上一节提出了关于策略函数参数优化的问题，该问题优化了对预期总回报的估计，该估计受到每次更新时策略变化的约束。这一节提出如何使用 Monte Carlo Simulation 估计目标函数和约束条件。
+
+将之前的优化问题展开：
+\begin{maxi*}
+{\theta} {\sum_s \rho_{\theta_{old}}(s) \sum_a \pi_{\theta}(a \mid s) A_{\theta_{old}}(s,a)}
+{}{}
+\addConstraint{\bar{D}_{KL}^{\rho}(\theta_{old}, \theta) \leq \delta}
+\end{maxi*}
+
+此处近似三个地方：
+- \(\sum_s \rho_{\theta_{old}}(s)[\cdots]\)使用期望近似\(\frac{1}{1-\gamma}\mathbb{E}_{s \sim \rho_{\theta_{old}}}[\cdots]\)
+- \(A_{\theta_{old}}\)使用Q值近似\(Q_{\theta_{old}}\)
+- 使用重要性采样近似之后的动作概率求和\(\sum_a \pi_{\theta}(a\mid s_n)A_{\theta_{old}}(s_n, a) = \mathbb{E}_{a \sim q}[\frac{\pi_{\theta}(a \mid s_n)}{q(a \mid s_n)}A_{\theta_{old}}(s_n, a)]\)
+
+近似之后的优化问题为：
+\begin{maxi*}
+{\theta} {\mathbb{E}_{s \sim \rho_{\theta_{old}}, a \sim q} [\frac{\pi_{\theta}(a \mid s)}{q(a \mid s)} Q_{\theta_{old}}(s, a)]}
+{}{}
+\addConstraint{\mathbb{E}_{s \sim \rho_{\theta_{old}}}[D_{KL}(\pi_{\theta_{old}}(\cdot \mid s))] \leq \delta}
+\end{maxi*}
+
+其中的重要性采样方法有两种，一种称为“Single Path”，另一种称为“Vine”。
+
+** Single Path
+使用策略\(\pi_{\theta_{old}}\)生成一些轨迹\(Trajectory: s_0, a_0, s_1, a_1, \cdots, s_{t-1}, a_{t-1}, s_{t}\)。可以看出，\(q(a \mid s) = \pi_{\theta_{old}}\)。\(Q_{\theta_{old}}(s, a)\)可以使用每个状态的衰减奖励值表示。策略梯度算法中的\(\mathbf{REINFORCE}\)。
+
+** Vine
+在这种采样方法中，首先取样\(s_0 \sim \rho_0\)，利用策略函数\(\pi_{\theta_i}\)生成一些轨迹，然后从这些轨迹中取样\(s_1, s_2, \cdots, s_N\)，将这个取样集合称为“Rollout set”。对于这个集合中的每个状态，根据动作概率函数取样动作，即：\(a_{n, k} \sim q(\cdot \mid s_n)\)，在实验中，发现采用\(q(\cdot \mid s_n) = \pi_{\theta_i}(\cdot \mid s_n)\)的动作概率函数，在连续运动的问题上效果很好。
+
+当状态下的动作空间有限时，某个状态的损失函数为：
+
+\[
+L_{n}(\theta) = \sum_{k=1}^{K}\pi_{\theta}(a_k \mid s_n)Q(s_n, a_k)
+\]
+
+其中，动作空间为：\(\mathcal{A} = \{a_1, a_2, \cdots, a_K\}\)。在连续型动作空间中，使用重要性采样方法逼近：
+
+\[
+L_n(\theta) = \frac{\sum_{k=1}^{K}\frac{\pi_{\theta}(a_{n,k} \mid s_n)}{\pi_{\theta_{old}}(a_{n,k} \mid s_n)}A(s_n, a_n, k)}{\sum_{k=1}^{K}\frac{\pi_{\theta}(a_{n,k} \mid s_n)}{\pi_{\theta_{old}}(a_{n,k} \mid s_n)}}
+\]
+
+其中，假设从\(s_n\)中采样了\(K\)个动作\(a_{n,1}, a_{n,2}, \cdots, a_{n, K}\)。
+
+“Vine”方法相对于“Single Path”方法，有更小的方差，更容易计算出优势值。其缺点是，要估算值就需要很多的样本，跑到所有动作值，因此这个算法需要环境可以初始化不同的初始位置，而单路径法没有这个问题。
+
+* Practical Algorithm
+之前我们介绍了两种方法来进行策略优化，总结起来步骤如下：
+- 使用“Single Path”或者“Vine”的方法收集状态－动作对，使用蒙特卡罗方法预测 Q 值
+- 通过对取样求均值，求出损失函数中的期望值
+- 使用梯度方法求解
+
+对于上诉第三步，我们通过计算 KL 散度的 Hessian 值来求解 Fisher 信息矩阵，而不是使用梯度的协方差矩阵。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+* Ref
+- [[https://zhuanlan.zhihu.com/p/60257706][TRPO 论文推导]]
+- [[https://zhuanlan.zhihu.com/p/29918825][TRPO 和 PPO]]
+- [[https://zhuanlan.zhihu.com/p/26308073][强化学习进阶 第七讲]]
