@@ -1,0 +1,6 @@
+#+TITLE: Comint: 实现自己的命令解释器
+#+OPTIONS: toc:nil
+#+DATE: 2020-04-06
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+
+Emacs 无比强大的原因之一就是它可以为和外部进程进行交互，并把这些交互体验通过全面的 Emacs 功能来实现，比如语法高亮，宏，命令历史等等。自 Emacs 诞生以来，这个功能就存在于 Emacs 中，但很少有人使用这个功能实现自己的命令解释器，因为大家都觉得它可能会很难实现。
