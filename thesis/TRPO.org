@@ -15,14 +15,16 @@
 * Preliminaries
 - MDP, \((\mathcal{S}, \mathcal{A}, \mathcal{P}, r, \rho_0, \gamma)\)
 - \(\pi\)：随机策略
-- \(\eta(\pi) = \mathbb{E}_{s_0, a_0, \cdots}[\sum_{t=0}^{infty}\gamma^tr(s_t)]\)
-- \(Q_{\pi}(s_t, a_t) = \mathbb{E}_{s_{t+1}, a_{t+1}, \cdots} [\sum_{l=0}^{\infty}\gamma^r(s_{t+1}]\)
+- \(\eta(\pi) = \mathbb{E}_{s_0, a_0, \cdots}[\sum_{t=0}^{\infty}\gamma^tr(s_t)]\)
+- \(Q_{\pi}(s_t, a_t) = \mathbb{E}_{s_{t+1}, a_{t+1}, \cdots} [\sum_{l=0}^{\infty}\gamma^{l} r(s_{t+1}]\)
 - \(V_{\pi}(s_t) = \mathbb{E}_{a_t, s_{t+1}, \cdots}[\sum_{l=0}^{\infty}\gamma^lr(s_{t+1})]\)
 - \(A_{\pi}(s_t) = Q_{\pi}(s,a) - V_{\pi}(s)\)
 
 优势函数的定义为：
 
-\[A_{\pi}(s, a) = \mathbb{E}_{s^{\prime} \sim P(s^{\prime} | s,a)}[r(s) + \gamma V_{\pi}(s^{\prime}) - V_{\pi}(s)]\]
+\begin{equation*}
+A_{\pi}(s, a) = \mathbb{E}_{s^{\prime} \sim P(s^{\prime} | s,a)}[r(s) + \gamma V_{\pi}(s^{\prime}) - V_{\pi}(s)]
+\end{equation*}
 
 下一个策略的期望回报与当前策略的期望回报之间的关系为：
 
@@ -31,18 +33,16 @@
 式\(\mathbb{E}_{s_0, a_0, \cdots \sim \tilde{\pi}}\)中\(a_t \sim \tilde{\pi}(\cdot \mid s_t)\)
 
 依据下式更新策略：
-
-\[
+\begin{equation*}
 \tilde{\pi}(s) = \arg \max A_{\pi}(s, a)
-\]
-
-当所有\(\tilde{\pi}\)下可能到达的状态\(s\)，以及它所可能采取的动作\(a\)都不再使得\(A_{\pi} \geq 0\)，说明收敛到了最有策略。
+\end{equation*}
+当所有\(\tilde{\pi}\)下可能到达的状态\(s\)，以及它所可能采取的动作\(a\)都不再使得\(A_{\pi} \geq 0\)，说明收敛到了最优策略。
 
 证明：
 \begin{equation*}
 \begin{split}
 &\mathbb{E}_{\tau \sim \tilde{\pi}}[\sum_{t=0}^{\infty}\gamma^t A_{\pi}(s_t, a_t)]\\
-&= \mathbb{E}_{\tau \sim \tilde{\pi}}[\sum_{t=0}^{\infty}\gamma^t (r(s^t) + \gamma V_{\pi}(s_{t+1}) - V_{\pi}(s_t))]\\
+&= \mathbb{E}_{\tau \sim \tilde{\pi}}[\sum_{t=0}^{\infty}\gamma^t (r(s_t) + \gamma V_{\pi}(s_{t+1}) - V_{\pi}(s_t))]\\
 &= \mathbb{E}_{\tau \sim \tilde{\pi}}[- V_{\pi}(s_0) +  \sum_{t=0}^{\infty}\gamma^t r(s_t)]\\
 &= - \mathbb{E}_{s_0}[V_{\pi}(s_0)] + \mathbb{E}_{r \mid \tilde{\pi}}[\sum_{t=0}^{\infty}\gamma^t r(s_t)]\\
 &= -\eta(\pi) + \eta(\tilde{\eta})
@@ -50,20 +50,20 @@
 \end{equation*}
 
 令\(\rho_{\pi}(s) = P(s_0=s) + \gamma P(s_1 = s) + \gamma^2 P(s_2 = s) + ...\)，表示在策略\(\pi\)下带有折扣因子的访问到状态\(s\)的概率。我们可以将上述等式写为：
-\begin{equation}
+\begin{equation*}
 \begin{split}
 \eta(\tilde{\pi}) &= \eta(\pi) + \sum_{t=0}^{\infty}\sum_{s} P(s_t = s \mid \tilde{\pi}) \sum_{a}\tilde{\pi}(a \mid s) \gamma^t A_{\pi}(s, a)\\
 &= \eta(\pi) + \sum_{s}\sum_{t=0}^{\infty} \gamma^t P(s_t=s\mid \tilde{\pi})\sum_a \tilde{\pi}(a\mid s)A_{\pi}(s, a)\\
 &= \eta(\pi) + \sum_s\rho_{\tilde{\pi}}(s) \sum_a \tilde{\pi}(a\mid s)A_{\pi}(s,a)
 \end{split}
-\end{equation}
+\end{equation*}
 
 对于一个改进的策略\(\tilde{\pi}\)，如果满足\(\sum_a \tilde{\pi}(a \mid s)A_{\pi}(s,a) \geq 0\)，就可以确保改进的策略表现不会比之前的策略差。但是在训练过程中，我们很难确保每个状态期望回报的优势函数都是正的，即出现\(\sum_a \tilde{\pi}(a \mid s)A_{\pi}(s, a) < 0\)是不可避免的。
 设：
 
-\[
+\begin{equation*}
 L_{\pi}(\tilde{\pi}) = \eta(\pi) + \sum_{s}\rho_{\pi}(s) \sum_a \tilde{\pi}(a \mid s)A_{\pi}(s, a)
-\]
+\end{equation*}
 
 其中，使用了\(\rho_{\pi}(s)\)而不是\(\rho_{\tilde{\pi}}\)，忽略策略改变引起的状态概率改变，使得\(L_{\pi}\)近似逼近\(\eta_{\tilde{\pi}}\)。
 
@@ -71,21 +71,20 @@ L_{\pi}(\tilde{\pi}) = \eta(\pi) + \sum_{s}\rho_{\pi}(s) \sum_a \tilde{\pi}(a \m
 
 \begin{equation*}
 \begin{split}
-L_{\pi_{\theta}_{old}}(\pi_{\theta}_{old}) = \eta(\pi_{\theta_{old}})\\
-\nabla_{\theta} L_{\pi_{\theta}_{old}}(\pi_{\theta}) \mid_{\theta = \theta_{old}} = \nabla_{\theta} \eta(\pi_{\theta}) \mid_{\theta = \theta_{old}}\\
+L_{\pi_{\theta}_{old}}(\pi_{\theta}_{old}) &= \eta(\pi_{\theta_{old}})\\
+\nabla_{\theta} L_{\pi_{\theta}_{old}}(\pi_{\theta}) \mid_{\theta = \theta_{old}} &= \nabla_{\theta} \eta(\pi_{\theta}) \mid_{\theta = \theta_{old}}\\
 \end{split}
 \end{equation*}
 
 有上式可知，对于函数\(L_{\pi_{\theta_{old}}}(\pi_{\theta})\)和\(\eta_{\pi_{\theta}}\)，在\(\theta_{old}\)处，进行很小的更新，那么对于前者的提高相当于对后者的提高。
 
 当对于策略的改进使用以下方式时：
-
-\[
-\eta_{new}(a \mid s) = (1 - \alpha)\pi_{old}(a \mid s) + \alpha \pi^{\prime}(a \mid s)
-\]
+\begin{equation*}
+\pi_{new}(a \mid s) = (1 - \alpha)\pi_{old}(a \mid s) + \alpha \pi^{\prime}(a \mid s)
+\end{equation*}
+其中：\(\pi^{\prime} = \arg \max_{\pi^{\prime}} L_{\pi_{old}}(\pi^{\prime})\)，
 
 这样，会有：
-
 \begin{equation*}
 \begin{split}
 \eta(\pi_{new}) \geq L_{\pi_{old}}(\pi_{new}) - \frac{2\epsilon\gamma}{(1-\gamma)^2} \alpha^2 \\
@@ -97,35 +96,31 @@ L_{\pi_{\theta}_{old}}(\pi_{\theta}_{old}) = \eta(\pi_{\theta_{old}})\\
 上面推理已经确保了如何单调递增的更新策略，那么如何衡量\(\theta_{old}\)和\(\theta_{new}\)之间的距离呢？
 
 本文提出衡量更新参数距离的方法为：Total variation divergence。其定义为：
-
-\[
+\begin{equation*}
 D_{TV}(p \mid\mid q) = \frac{1}{2}\sum_i\mid p_i - q_i \mid
-\]，
-
+\end{equation*}
 其中\(p, q\)为离散随机变量概率函数，如果是连续型随机变量，\(p, q\)为其概率密度函数，将求和改为积分。
 
 定义：
-
-\[
+\begin{equation*}
 D_{TV}^{\max}(\pi, \tilde{\pi}) = \max\limits_s D_{TV}(\pi(\cdot\mid s) \mid\mid \tilde{\pi}(\cdot \mid s))
-\]
-
+\end{equation*}
 其含义为：所有状态的 Total variation divergence 中的最大值。
 
 定理一：
 \begin{equation*}
 \begin{split}
 \alpha = D_{TV}^{\max}(\pi_{old}, \pi_{new}), then\\
-\eta(\pi_{new}) \geq L_{\pi_{old}}(\pi_{new}) - \frac{4\epsilon\gamma}{1-\gamma}^2 {\alpha}^2,\\
+\eta(\pi_{new}) \geq L_{\pi_{old}}(\pi_{new}) - \frac{4\epsilon\gamma}{(1-\gamma)^2} {\alpha}^2,\\
 where \quad \epsilon = \max\limits_{s,a}\mid A_{\pi}(s,a)\mid
 \end{split}
 \end{equation*}
 
 Total variation divergence 和 KL divergence 之间的关系为：
 
-\[
-D_{TV}(p\mid\midq)^2 \leq D_{KL}(p \mid\mid q)
-\]
+\begin{equation*}
+D_{TV}(p\mid\mid q)^2 \leq D_{KL}(p \mid\mid q)
+\end{equation*}
 
 令\(D_{KL}^{\max}(\pi, \tilde{\pi}) = \max\limits_s D_{KL}(\pi(\cdot\mid s) \mid\mid \tilde{\pi}(\cdot\mid s))\)，将定理一可以写为：
 
@@ -141,7 +136,7 @@ where \quad C = \frac{4\epsilon\gamma}{(1-\gamma)^2}
 \begin{equation*}
 \begin{split}
 \eta(\pi_{i+1}) &\geq M_i(\pi_{i+1})\\
-\eta(\pi_{i+1}) &= M_i(\pi_i)\\
+\eta(\pi_{i}) &= M_i(\pi_i)\\
 \eta(\pi_{i+1}) - \eta(\pi_i) &\geq M_i(\pi_{i+1}) - M(\pi_i)
 \end{split}
 \end{equation*}
@@ -154,13 +149,13 @@ where \quad C = \frac{4\epsilon\gamma}{(1-\gamma)^2}
 - \(L_{\theta}(\tilde{\theta}) := L_{\pi_{\theta}}(\pi_{\tilde{\theta}})\)
 - \(D_{KL}(\theta \mid\mid \tilde{\theta}) := D_{KL}(\pi_{\theta} \mid\mid \pi_{\tilde{\theta}})\)
 
-上一节说明了\(\eta(\theta) \geq L_{\theta_{old}}(\theta) - CD_{KL}^{\max}(\theta_{old}, \theta)\)。更新\(\theta\)的过程为，找一个使得右边式子最大的\(\theta\)，令\(\theta_{old} = \theta\)。
+上一节说明了两次策略之间回报的差值要大于\(\max L_{\theta_{old}}(\theta) - CD_{KL}^{\max}(\theta_{old}, \theta)\)。也就是说，找到使得上式最大的 $\theta$，即可保证最大限度的增加回报 $\eta$。 更新\(\theta\)的过程为，找一个使得右边式子最大的\(\theta\)，然后令\(\theta_{old} = \theta\)。
 
 我们的任务其实就是最大化：
 
-\[
+\begin{equation*}
 maximize\limits_{\theta}[L_{\theta_{old}}(\theta) - CD_{KL}^{\max}(\theta_{old}, \theta)]
-\]
+\end{equation*}
 
 如果直接使用上诉推导出的\(C\)进行优化，步长非常小，更新很慢，因此我们着手于处理\(D_{KL}^{\max}\)这一项。通过对这一项进行约束，可以获得较大的更新步长，这种在新旧策略之间差距的约束被称为：Trust region constraint。
 \begin{maxi*}
@@ -206,6 +201,23 @@ maximize\limits_{\theta}[L_{\theta_{old}}(\theta) - CD_{KL}^{\max}(\theta_{old},
 
 其中的重要性采样方法有两种，一种称为“Single Path”，另一种称为“Vine”。
 
+** Importance Sampling
+重要性采样的思想是：从与原分布不同的另一个分布中取样，而对原先分布的性质进行估计。
+
+函数 $f(x)$ 在概率分布 $p(x)$ 下的期望为：$\mathbb{E}[f] = \int_x p(x)f(x)dx$ ，当我们在 $q(x)$ 的概率分布上采样 ${x_1, x_2, \dots, x_n}$ ，那么函数 $f(x)$ 的期望为 $\mathbb{E}_{x \sim q} = \frac{1}{N}\sum_{i=1}^{N}f(x_i)$ 。
+
+那么：
+\begin{equation*}
+\begin{split}
+\mathbb{E}_{x \sim p}[f(x)] &\approx \frac{1}{N} \sum_{i=1}^{N} f(x_i)\\
+&= \int f(x)p(x)dx\\
+&= \int f(x)\frac{p(x)}{q(x)}q(x)dx\\
+&= \mathbb{E}_{x \sim q}[f(x)\frac{p(x)}{q(x)}]\\
+\end{split}
+\end{equation*}
+
+可见，我们可以从一个分布取样，然后计算函数 $f(x)$ 在其他分布下的期望。但重要性采样有个问题，虽然两个分布下的期望相同了，但其方差还是不同的，因此选取合适的分布 $q(x)$ 也是很重要的。
+
 ** Single Path
 使用策略\(\pi_{\theta_{old}}\)生成一些轨迹\(Trajectory: s_0, a_0, s_1, a_1, \cdots, s_{t-1}, a_{t-1}, s_{t}\)。可以看出，\(q(a \mid s) = \pi_{\theta_{old}}\)。\(Q_{\theta_{old}}(s, a)\)可以使用每个状态的衰减奖励值表示。策略梯度算法中的\(\mathbf{REINFORCE}\)。
 
@@ -220,9 +232,9 @@ L_{n}(\theta) = \sum_{k=1}^{K}\pi_{\theta}(a_k \mid s_n)Q(s_n, a_k)
 
 其中，动作空间为：\(\mathcal{A} = \{a_1, a_2, \cdots, a_K\}\)。在连续型动作空间中，使用重要性采样方法逼近：
 
-\[
+\begin{equation*}
 L_n(\theta) = \frac{\sum_{k=1}^{K}\frac{\pi_{\theta}(a_{n,k} \mid s_n)}{\pi_{\theta_{old}}(a_{n,k} \mid s_n)}A(s_n, a_n, k)}{\sum_{k=1}^{K}\frac{\pi_{\theta}(a_{n,k} \mid s_n)}{\pi_{\theta_{old}}(a_{n,k} \mid s_n)}}
-\]
+\end{equation*}
 
 其中，假设从\(s_n\)中采样了\(K\)个动作\(a_{n,1}, a_{n,2}, \cdots, a_{n, K}\)。
 
@@ -247,9 +259,9 @@ L_n(\theta) = \frac{\sum_{k=1}^{K}\frac{\pi_{\theta}(a_{n,k} \mid s_n)}{\pi_{\th
 
 
 
-
-
 * Ref
 - [[https://zhuanlan.zhihu.com/p/60257706][TRPO 论文推导]]
 - [[https://zhuanlan.zhihu.com/p/29918825][TRPO 和 PPO]]
 - [[https://zhuanlan.zhihu.com/p/26308073][强化学习进阶 第七讲]]
+- [[https://www.meltycriss.com/2018/02/03/summary-rl-drl/][学习总结《强化学习与深度学习》]]
+- [[https://zhuanlan.zhihu.com/p/41217212][重要性采样]]

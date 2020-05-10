@@ -1,12 +1,11 @@
 #+SETUPFILE: ~/.emacs.d/org-templates/level-0.org
-
 #+OPTIONS: toc:nil
 #+TITLE:Hiro's Blog
 
 | About me |
 
 ** Notes
-学习笔记。
+此笔记应该不适合别人当作博客阅读，阅读需谨慎。
 
 - [[file:notes/Math.org][高数]]
 
@@ -32,8 +31,9 @@
 
 - [[file:notes/pandas-and-numpy.org][Pandas & Numpy]]
 
+- [[file:thesis/mastering-eshell.org][Mastering Eshell]]
+
 ** Reinforcement Learning
-强化学习相关。
 
 - [[file:notes/RL-David-Silver.org][David Silver 课程学习笔记]]
 
@@ -49,8 +49,11 @@
 
 - [[file:thesis/kl-divergence.org][KL 散度]]
 
+- [[file:tech/weight-initialization.org][如何进行权重初始化]]
+
+- [[file:notes/lstm.org][理解 LSTM]]
+
 ** Tech
-谈谈技术。
 
 - [[file:tech/GFW-原理简析.org][GFW原理解析]]
 
@@ -60,7 +63,8 @@
 
 - [[file:tech/use-pyim.org][Emacs 使用 pyim ＋ rime ＋ double flypy 打字]]
 
+- [[file:tech/largest_rectangle_area.org][LeetCode #84 题解]]
+
 ** Life
-分享生活。
 
 - [[file:life/学校每日签到的自动化完成.org][学校每日签到的自动化完成]]

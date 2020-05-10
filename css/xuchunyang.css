@@ -3,8 +3,15 @@ body {
     font-family: -apple-system,system-ui,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
     margin: 0 auto;
     max-width: 50rem;
-    line-height: 40px;
-    background: #fff8dc
+    background: #f2f2f2
+}
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1.3em;
+}
+
+p {
+    line-height: 1.2em;
 }
 
 nav {
@@ -75,6 +82,10 @@ article time:first-of-type {
 }
 
 h1.title {
+    text-align: center;
+}
+
+h2.title {
     text-align: center;
 }
 

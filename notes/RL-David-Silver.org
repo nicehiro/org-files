@@ -10,6 +10,9 @@
 - 每个样本非独立同分布 每次获取的信息都不是独立同分布的
 - action 对之后的结果会有影响
 
+*** 强化学习和模仿学习
+模仿学习类似于人类模仿动作，例如在车辆自动驾驶中，如果先记录车辆在一条路上的正确行进路径，然后使用监督学习的方法让之后的行进路径切合正确的那条行进路径即可。可以看出，模仿学习其实是强化学习的简易版本，即，只通过一条训练记录来学习。这样会产生一个问题，学习到的动作会产生偏差，而多个偏差组合在一起，就会产生巨大的偏差。
+
 ** Reward
 - Reward 代表一个反馈的信号，一般用来表示某一时刻的 action 的表现如何
 
@@ -19,7 +22,6 @@
 - 有时，会为了未来的 reward 最大化 放弃当前的利益
 
 ** Agent & Environment
-
 #+BEGIN_CENTER
 [[file:../img/agent-envir-david.png]]
 #+END_CENTER
@@ -36,10 +38,9 @@ R: Reward(from environment)
 推动事件发生的动力取决于History。
 - 构建一个History到 Action的映射，Agent根据这个映射选择Action
 - Environment返回Agent Observation 和 Rewards
-** State
-- State 是对 History 的一个总结，用来决定下一个Action 是什么
-\[ S_t = f(H_t) \]
 
+** State
+- State 是对 History 的一个总结，用来决定下一个Action 是什么 \(S_t = f(H_t)\)
 - Environment State(\(S_t^e\))，对于agent来说，可能不是可见的，也可能会包含过多无用的信息。
 - Agent State(\(S_t^a\))，是把 \(S_t^e\) 经过agent抽象、整理之后的State，是RL用来分析的State。
 - State 相对于 Agent 来说最大的好处是他的信息量很少，我们不需要得到所有的 History 来得到下一步的 Action
@@ -49,6 +50,12 @@ R: Reward(from environment)
 \[ P[S_{t+1} | S_t] = P[S_{t+1} | S_1, S_2, ... S_t] \]
 那么这个状态就是Markov
 简单来说，P的下一个阶段的state（\(P_{t+1}\)）只和当前state（\(P_t\)）有关，与之前的状态无关，那就称这个state为Markov
+
+通常来说，Environment State 被称为 State，Agent State 被称为 Observation，是用户观察到的环境状态。一般来说，马尔科夫特性是由 State 决定的，而不是 Observation。假如现在有三张图片，第一章图片中有两只老虎，后面那只可以看到前面那只；第二张图片中前面那只老虎跑到了一辆车后面；如果要预测第三张图片中老虎将要出现的位置，那么必须要第一张图片的观测信息一起，才可以预测出来。这个例子说明， Observation 并不满足马尔科夫性。
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+[[file:../img/markov-depends-on.png]]
+#+END_CENTER
 
 ** RL Agent的主要元素
 - Policy 决策，agent的行为函数（agent采取什么action取决于这个函数） 输入状态，输出动作或者各个动作的概率
@@ -712,7 +719,6 @@ Actor 在更新策略函数的参数时，需要 Critic 告知哪个好（利用
 
 * Lession 8
 前七讲涉及到的知识有：1. 从经验中直接学习Value（State Value or Action Value）；2. 从经验中直接学习策略。没有讲解个体构建模拟环境对解决问题可以带来什么帮助。这讲将会学习三个方面的内容：1. 从经验中直接学习模型；2. 使用模型构建新的Value Function 或者策略；3. 整合 Model-Based 和 Model-Free 的方法一起训练网络。
-
 
 ** Model Based RL
 #+BEGIN_CENTER

@@ -328,3 +328,9 @@ sudo systemctl restart bluetooth
 
 * Linux 下 JetBrain 系软件字体问题
 使用网上多种方式尝试无解之后，突然发现基于Idea的Android studio的字体渲染出乎意料的好，必定是在启动的Jre上做了字体渲染的修改，于是将Idea的启动Jre替换成AS的Jre。字体渲染完美
+
+* pip install memory error
+一般是由于内存太小导致的，安装时不要缓存下载文件即可：
+#+BEGIN_SRC sh
+pip install torch --no-cache-dir
+#+END_SRC
