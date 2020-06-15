@@ -2,16 +2,62 @@ body {
     /* Adapted from https://www.zhihu.com/ */
     font-family: -apple-system,system-ui,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
     margin: 0 auto;
-    max-width: 50rem;
-    background: #f2f2f2
+    background: #f2f2f2;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    line-height: 1.3em;
+#content {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1000px;
+    font-size: 10px;
+}
+
+#content > div {
+    padding-bottom: 5px;
+}
+
+h1 {
+    font-size: 2rem;
+    padding: 20px;
+    text-decoration: underline;
+    text-decoration-color: #a66;
+    text-decoration-thickness: 5px;
+}
+
+h2 {
+    font-size: 1.5rem;
+    text-decoration: underline;
+    text-decoration-color: #a66;
+    text-decoration-thickness: 3px;
+}
+
+h3 {
+    font-size: 1.2rem;
+}
+
+h4, h5, h6 {
+    font-size: 1.1rem;
+    line-height: 1rem;
 }
 
 p {
-    line-height: 1.2em;
+    font-size: 1.1rem;
+    line-height: 2rem;
+}
+
+ol, ul {
+    font-size: 1.0rem;
+    line-height: 2rem;
+}
+
+a {
+    color: #a66;
+}
+
+div p.postamble {
+    text-align: center;
+    border-top: 5px solid #a66;
 }
 
 nav {
@@ -32,6 +78,10 @@ footer {
     margin-top: 1rem;
     margin-bottom: 1rem;
     font-size: 0.75rem;
+}
+
+div.MathJax_Display {
+    font-size: 1rem;
 }
 
 code {
@@ -87,10 +137,6 @@ h1.title {
 
 h2.title {
     text-align: center;
-}
-
-.org-ol li {
-    line-height: 40px;
 }
 
 /* TOC inspired by http://jashkenas.github.com/coffee-script */

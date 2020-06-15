@@ -1,0 +1,31 @@
+#+TITLE: GAE
+#+DATE: 2020-05-13
+#+STARTUP: latexpreview
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+
+* 前提条件
+考虑一个无折扣因子的策略优化问题。初始状态 $s_0$ 服从状态分布 $\rho_0$ 。一条路径 $(s_0, a_0, s_1, a_1, \dots)$ ，其中状态 $s_{t+1} \sim P(s_{t+1 } \mid s_t, a_t)$ ，动作 $a_t \sim \pi(a_t \mid s_t)$ 。奖励函数 $r_t = r(s_t, a_t, s_{t+1})$ 。我们的目标是去最大化每步的奖励之和 $\sum_{t=0}^{\infty}r_t$ 。我们不使用折扣因子作为问题的描述，而是将它作为一个调节损失函数方差的一个变量。
+
+策略梯度算法通过不断对损失函数偏微分 $g := \nabla_{\theta}\mathbb{E}[\sum_{t=0}^{\infty}r_t]$ 来更新策略。我们曾进推到过好多种不同形式的策略损失函数：
+\begin{equations*}
+g = \mathbb{E}[ \sum_{t=0}^{\infty} \Psi_t\nabla_{\theta}\log\pi_{\theta}(a_t \mid s_t) ]
+\end{equations*}
+
+其中 $\Psi_t$ 可以表示为：
+1. $\sum_{t=0}^{\infty} r_t$ ：每个回合所有步骤的奖励之和
+2. $\sum_{t^{\prime}^{\infty}} r_{t^{\prime}}$ ：执行动作 $a_t$ 之后获得的奖励
+3. $\sum_{t^{\prime}=t}^{\infty} r_{t^{\prime}}-b(s_t)$ ：上一个式子的 baseline 版本
+4. $Q^{\pi}(s_t, a_t)$ ：动作值函数
+5. $A^{\pi}(s_t, a_t)$ ：优势函数
+6. $r_t + V^{\pi}(s_{t+1}) - V^{\pi}(s_t)$ ：TD
+
+其中：
+\begin{equation*}
+\begin{split}
+V^{\pi}(s_t) &= \mathbb{E}_{s_{t+1:\infty,a_t:\infty}}[\sum_{l=0}^{\infty}r_{t+1}] \\
+Q^{\pi}(s_t, a_t) &= \mathbb{E}_{s_{t+1}:\infty, a_{t+1}:\infty}[\sum_{l=0}^{\infty}r_{t+1}] \\
+A^{\pi}(s_t, a_t) &= Q^{\pi}(s_t, a_t) - V^{\pi}(s_t)
+\end{split}
+\end{equation*}
+
+我们引入一个参数 $\gamma$ 用来减小奖励函数的方差。这个参数虽然和带有折扣因子的 MDP 式子相同，但是含义却不一样。

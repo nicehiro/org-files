@@ -1,0 +1,94 @@
+#+TITLE: LeetCode #84 Largest Rectangle Area in Histogram
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+#+DATE: 2020-04-23
+#+OPTIONS: toc:nil
+
+* 题目
+给定 n 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+
+求在该柱状图中，能够勾勒出来的矩形的最大面积。
+* 解法
+** 暴力解法
+计算任意两个柱子之间的最大面积，取最小值。
+#+BEGIN_SRC python
+def direct(self):
+    area = 0
+    for i in range(len(self.heights)):
+        for j in range(i, len(self.heights)):
+            # find miniest height between (i, j)
+            min_h = self.heights[i]
+            for h in range(i, j):
+                min_h = self.heights[h] if min_h > self.heights[h] else min_h
+            t = min_h * (j - i + 1)
+            area = t if t > area else area
+    return area
+#+END_SRC
+
+1. 时间复杂度：$O(n^3)$
+2. 空间复杂度：$O(1)$
+
+** 分治法
+可以将问题分为两个子问题：
+- 以当前高度长度为宽，以所有高度中最矮的高度为高的矩形面积
+- 最大面积位于最矮高度左边的区域
+- 最大面积位于最矮高度右边的区域
+
+求上诉三种情况（两个子问题）下的最大面积。
+
+#+BEGIN_SRC python
+def find_min_position(self, l, r):
+    if l >= r:
+        return -1
+    m = self.heights[l]
+    p = l
+    for i in range(l, r):
+        if self.heights[i] < m:
+            p = i
+            m = self.heights[i]
+    return p
+
+def DC(self, l, r):
+    if l >= r:
+        return 0
+    m_p = self.find_min_position(l, r)
+    m_area = (r - l) * self.heights[m_p]
+    return max(m_area, self.DC(l, m_p), self.DC(m_p+1, r))
+#+END_SRC
+
+1. 时间复杂度：
+   - 最好情况（高度分布无序）：$O(n\log_n)$
+   - 最坏情况（高度分布有序）：$O(n^2)$
+2. 空间复杂度：$O(n)$
+
+** 单调栈
+单调栈分为单调递增栈核单调递减栈。单调递增栈中，栈内元素都是单调递增的；同样的，单调递减栈中，栈内元素都是单调递减的。遇到使得栈内元素不能递增/递减的元素，从栈内弹出元素，直到插入元素可以使得栈符合定义。
+
+下面以单调递增栈为例。
+
+这样的栈有一个性质，在进行栈的弹出元素操作时，设被弹出的元素为 a，设此时要插入的元素为 b，a 在栈内的前一个元素为 c。那么可以知道，a 左边第一个小于 a 的元素为 c，a 右边第一个小于 a 的元素为 b。
+
+利用这个性质，可以考虑，以高度 =heights[i]= 为高，以右边第一个 =< heights[i]= 的元素位置和左边第一个 => heights[i]= 的距离为宽，可以得到包含这个高度的矩形的最大面积。将这个思想运用到所有高度上即可。
+
+#+BEGIN_SRC python
+def STACK(self):
+    l = [(-1, -1)]
+    res = 0
+    for i in range(len(self.heights)):
+        if self.heights[i] > l[-1][1]:
+            l.append((i, self.heights[i]))
+        else:
+            while self.heights[i] <= l[-1][1]:
+                top, height = l.pop()
+                t = height * (i - l[-1][0] - 1)
+                res = t if res < t else res
+            l.append((i, self.heights[i]))
+    for i in range(len(l)-1, 0, -1):
+        res = max((len(self.heights) - l[i-1][0] - 1) * l[i][1], res)
+    return res
+#+END_SRC
+
+1. 时间复杂度：$O(n\log_n)$
+2. 空间复杂度：$O(n)$
+
+* Ref
+- [[https://leetcode-cn.com/problems/largest-rectangle-in-histogram/solution/zhu-zhuang-tu-zhong-zui-da-de-ju-xing-by-leetcode/][LeetCode 题解]]

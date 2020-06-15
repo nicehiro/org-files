@@ -1,11 +1,35 @@
 body {
     /* Adapted from https://www.zhihu.com/ */
-    font-family: -apple-system,system-ui,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
+    font-family: -apple-system,system-ui,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
+    font-size: 15px;
+}
+
+h1.title {
+    padding: 3rem;
+    font: bolder;
+    text-decoration: underline;
+    text-decoration-color: #a66;
+    text-decoration-thickness: 5px;
+}
+
+h2 {
+    padding: 1rem;
+    text-decoration: underline;
+    text-decoration-color: #a66;
+    text-decoration-thickness: 3px;
+}
+
+#content {
+    line-height: 1.6rem;
     margin: 0 auto;
-    max-width: 50rem;
-    line-height: 30px;
-    font-size: large;
-    background: #fff8dc;
+    width: 80%;
+    max-width: 1000px;
+    background: #ffffff;
+    font-size: 1.1rem;
+}
+
+a {
+    color: #a66;
 }
 
 nav {
@@ -21,11 +45,11 @@ nav a:hover {
     text-decoration: underline;
 }
 
-footer {
+div p.postamble {
+    border-top: 5px solid #a66;
+    color: #CCC;
     text-align: center;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    font-size: 0.75rem;
+    font-size: 20px;
 }
 
 code {
@@ -68,12 +92,16 @@ article time:first-of-type {
     color: DimGray;
 }
 
-h1.title {
+h1 {
     text-align: center;
 }
 
-.org-ul li {
-    font-size: 16px;
+p {
+    line-height: 2.0em;
+}
+
+ul {
+    font-size: 1.0rem;
 }
 
 .outline-text-2 p {

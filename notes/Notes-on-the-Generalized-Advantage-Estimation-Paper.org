@@ -1,0 +1,12 @@
+#+TITLE: 广义优势估计论文的笔记
+#+DATE: 2020-05-15
+#+OPTIONS: tex:dvipng
+#+STARTUP: latexpreview
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+#+LATEX_HEADER: \usepackage[long]{optidef}
+
+本文翻译自 [[https://danieltakeshi.github.io/2017/04/02/notes-on-the-generalized-advantage-estimation-paper/][Notes on the Generalized Advantage Estimation Paper]] 。
+
+---
+
+这篇文章可以看作是上篇文章的延伸。在这篇文章中，我将继续讨论 ICLR 2016 年的论文 Generalized Advantage Estimation ，这篇文章分析和介绍了更复杂形式的策略梯度算法。

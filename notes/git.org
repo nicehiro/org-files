@@ -1,0 +1,4 @@
+#+TITLE: Git Basic Usage
+#+OPTIONS: toc:nil
+#+DATE: 2020-04-02
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org

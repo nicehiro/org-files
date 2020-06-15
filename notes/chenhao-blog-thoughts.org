@@ -1,0 +1,10 @@
+#+TITLE: 酷壳博文心得
+#+DATE: 2020-05-29
+#+STARTUP: latexpreview
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+
+总结自己看陈浩博客的一些心得感受，个人化倾向很重。
+
+** [[https://coolshell.cn/articles/20276.html][别让自己“墙”了自己]]
+1. 做有价值的事情。坚持做有长远回报的事情，比如看书，啃 SICP ，啃算法。
+2. 不仅要放眼看世界，还要去世界看看。每天只看个 Github Trending ，看别人讨论是不够的，得要学着实现自己的 Idea 。
