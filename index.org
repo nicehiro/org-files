@@ -53,6 +53,8 @@
 
 - [[file:notes/lstm.org][理解 LSTM]]
 
+- [[file:notes/Going-Deeper-Into-Reinforcement-Learning:-Fundamentals-of-Policy-Gradients.org][策略梯度]]
+
 ** Tech
 
 - [[file:tech/GFW-原理简析.org][GFW原理解析]]

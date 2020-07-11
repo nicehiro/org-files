@@ -1,6 +1,7 @@
 #+TITLE: 深入强化学习之策略梯度的基础
 #+DATE: 2020-05-14
 #+STARTUP: latexpreview
+#+OPTIONS: tex:dvipng
 #+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
 #+LATEX_HEADER: \usepackage[long]{optidef}
 #+LATEX_HEADER: \DeclareMathAlphabet      {\mathbfit}{OML}{cmm}{b}{it}

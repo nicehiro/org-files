@@ -1,0 +1,149 @@
+#+TITLE: 理解 Batch Normalization 层中反向传播的原理
+#+DATE: 2020-06-17
+#+STARTUP: latexpreview
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+#+LATEX_HEADER: \usepackage[long]{optidef}
+
+本文翻译自 [[https://kratzert.github.io/2016/02/12/understanding-the-gradient-flow-through-the-batch-normalization-layer.html][Understanding the backward pass through Batch Normalization Layer]] 。
+
+* Batch Normalization
+我们先来看看 Batch Normalization 算法：
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+#+CAPTION: 批量标准化算法
+[[file:../img/bn_algorithm.PNG]]
+#+END_CENTER
+
+观察算法的最后一行，在对 =x= 进行标准化之后，又将 =x= 带入到一个线性函数中，其中 $\gamma$ 和 =\beta= 是 BatchNorm 层中可学习的参数，它所代表的意义类似于：“我不想要均值为 0 方差为 1 的输入，我想要原始的输入，那个数据对我才有用”。如果 =gamma=sqrt(var(x))= ， =beta=mean(x)= ，那么存储的数剧为原始数据。因此，在初始化时将输入初始化为均值为 0 ，标准差为 1 的分布，而在训练过程中，通过学习参数 =gamma= 和 =beta= 来让输入的分布更合理。如果你想了解更多关于 BatchNorm 的知识，可以去研究这篇 [[http://arxiv.org/abs/1502.03167][paper]] 。
+
+* 反向传播
+这篇文章中，我并不想阐述反向传播和随机梯度下降的基本内容，我会假设读这篇文章的人已经懂了上诉两个知识点。对于那些没有懂的，我在这里引依据维基百科的定义：
+#+BEGIN_QUOTE
+反向传播（BackPropagation）是“Backward propagation of errors”的缩写，是训练神经网络的一种常见方法。该方法计算损失函数相对于网络所有权重的梯度，然后相应的优化算法利用梯度来更新权重。
+#+END_QUOTE
+
+* Batch Normalization 层的计算图
+计算图是将复杂公式可视化的一种很好的方法。BatchNorm 层的计算图如下所示：
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+#+CAPTION: Batch Normalization 计算图。黑色箭头是前向传播，红色箭头是反向传播。
+[[file:../img/BNcircuit.png]]
+#+END_CENTER
+
+可以对照上面 BatchNorm 算法的计算过程理解计算图。
+
+简单实现：
+#+BEGIN_SRC python
+def batchnorm_forward(x, gamma, beta, eps):
+
+  N, D = x.shape
+
+  #step1: calculate mean
+  mu = 1./N * np.sum(x, axis = 0)
+
+  #step2: subtract mean vector of every trainings example
+  xmu = x - mu
+
+  #step3: following the lower branch - calculation denominator
+  sq = xmu ** 2
+
+  #step4: calculate variance
+  var = 1./N * np.sum(sq, axis = 0)
+
+  #step5: add eps for numerical stability, then sqrt
+  sqrtvar = np.sqrt(var + eps)
+
+  #step6: invert sqrtwar
+  ivar = 1./sqrtvar
+
+  #step7: execute normalization
+  xhat = xmu * ivar
+
+  #step8: Nor the two transformation steps
+  gammax = gamma * xhat
+
+  #step9
+  out = gammax + beta
+
+  #store intermediate
+  cache = (xhat,gamma,xmu,ivar,sqrtvar,var,eps)
+
+  return out, cache
+#+END_SRC
+
+=cache= 中存了每一步的输出结果。
+
+* BarchNorm 层中的反向传播
+我们根据计算图，从后往前，逐步分析反向传播：
+
+** step 9
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+#+CAPTION: 最后一步求和计算
+[[file:../img/step9.png]]
+#+END_CENTER
+对于求和运算， =f = x + y= ， =f= 对 =x= 和 =y= 的导数都是 1。通过这一步，我们可以得到输出对 =beta= 的梯度。
+
+** step 8
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+#+CAPTION: 标准化结果和 $\gamma$ 相乘
+[[file:../img/step8.png]]
+#+END_CENTER
+对于乘法运算， =f = x * y= ，=f= 对 =x= 的导数为 =y= ，对 =y= 的导数为 =x= 。利用链式求导和之前前向传播存储的每步输出，可以求得 =gamma= 的梯度。
+
+** step 7
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+#+CAPTION: 计算标准化结果的最后一步
+[[file:../img/step7.png]]
+#+END_CENTER
+
+** step 6
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+#+CAPTION: 一输入一输出节点
+[[file:../img/step6.png]]
+#+END_CENTER
+
+** step 5
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+#+CAPTION: 一输入一输出节点 矩阵运算
+[[file:../img/step5.png]]
+#+END_CENTER
+
+** step 4
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+#+CAPTION: 一输入一输出节点
+[[file:../img/step4.png]]
+#+END_CENTER
+
+** step 3
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+#+CAPTION: 一输入一输出节点
+[[file:../img/step3.png]]
+#+END_CENTER
+
+** step 2
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+#+CAPTION: 两个输出，其梯度需要相加
+[[file:../img/step2.png]]
+#+END_CENTER
+
+** step 1
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+#+CAPTION: 一输入一输出
+[[file:../img/step1.png]]
+#+END_CENTER
+
+** step 0
+#+BEGIN_CENTER
+#+ATTR_HTML: :width 100%
+#+CAPTION: 两个输出
+[[file:../img/step0.png]]
+#+END_CENTER
