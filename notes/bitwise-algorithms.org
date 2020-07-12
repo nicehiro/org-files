@@ -1,0 +1,58 @@
+#+TITLE: 位运算算法
+#+DATE: 2020-07-12
+#+STARTUP: latexpreview
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+
+总结 LeetCode 上遇到的位运算题目解法。位运算解题需要有灵感和技巧，多记录总会多一点想法的吧（希望）。
+
+** 判断奇偶
+#+BEGIN_SOURCE python
+even if num & 1 == 0 else odd
+#+END_SOURCE
+
+** 判断是否为 2 的幂次
+- 2 的幂次数的二进制表示中，除最高位为 1，其余都为 0
+- 2 的幂次数减 1，除最高位为 0，其余都为 1
+#+BEGIN_SOURCE python
+True if num & (num - 1) == 0 else False
+#+END_SOURCE
+
+** 一个整数的二进制表示中 1 的个数
+- 你需要特别考虑的是负整数的情况，负整数时需要进行无符号移动。（有符号移动时，负数会不停加 1）。
+
+- =n & (n-1)= 每次都会将 =n= 的最后一位的 1 约去。
+
+#+BEGIN_SOURCE python
+while n != 0:
+    n = n & (n-1)
+    res += 1
+#+END_SOURCE
+
+** #136 [[https://leetcode-cn.com/problems/single-number/][Single Number]]
+题目：在其他数都有两个的数组中找只存在一个的那个数。
+
+首先需要知道：
+- 异或运算有交换律
+- 任何数和 0 异或都是那个数本身
+- 任何数和自己异或都是 0
+
+因此只需要将所有数直接异或即可得到只出现一次的那个数。
+
+** #137 [[https://leetcode-cn.com/problems/single-number-ii/][Single Number II]]
+题目：在其他数都出现三次的数组中找只出现一次的那个数。
+
+用两个变量分别存储一个数遇到一次和两次的值。
+#+BEGIN_SOURCE python
+for n in nums:
+    seen_once = ~seen_twice & (seen_once ^ n)
+    seen_twice = ~seen_once & (seen_twice ^ n)
+return seen_once
+#+END_SOURCE
+
+| Var        | once | twice | third-times |
+|------------+------+-------+-------------|
+| seen_once  | n    | 0     |           0 |
+| seen_twice | 0    | n     |           0 |
+
+** Ref
+- [[https://juejin.im/post/5b55e3e85188251aff216311][算法之美：位运算]]
