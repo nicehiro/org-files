@@ -3,17 +3,16 @@
 #+OPTIONS: toc:nil
 #+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
 
-学习自台大李宏毅老师的机器学习课程，案例为其 [[https://github.com/ntumlta/2017fall-ml-hw1][Homework1]]
+[[https://mp.weixin.qq.com/s?__biz=MzU4MjQ3MDkwNA==&mid=2247484111&idx=1&sn=4ed4480e849298a0aff828611e18f1a8&chksm=fdb69f58cac1164e844726bd429862eb7b38d22509eb4d1826eb851036460cb7ca5a8de7b9bb#rd][理解梯度下降法]]这篇文章非常详细的讲解了梯度下降的由来，原理和改进，非常建议直接阅读链接内文章。
+
+下面内容学习自台大李宏毅老师的机器学习课程，案例为其 [[https://github.com/ntumlta/2017fall-ml-hw1][Homework1]] 。
 
 ** Gradient Decent
-首先，我们有一个可微分的函数。这个函数就代表着一座山。我们的目标就是找到这个函数的最小值，也就是山底。根据之前的场景假设，最快的下山的方式就是找到当前位置最陡峭的方向，然后沿着此方向向下走，对应到函数中，就是找到给定点的梯度 ，然后朝着梯度相反的方向，就能让函数值下降的最快！因为梯度的方向就是函数之变化最快的方向。
-
+首先，我们有一个可微分的函数。这个函数就代表着一座山。我们的目标就是找到这个函数的最小值，也就是山底。根据之前的场景假设，最快的下山的方式就是找到当前位置最陡峭的方向，然后沿着此方向向下走，对应到函数中，就是找到给定点的梯度。若函数在 $x+\delta x$ 区域内递增，导数大于 0， $\delta x$ 小于 0 才可以使得函数值减小；若函数再 $x+\delta x$ 区域内递减，导数小于 0， $\delta x$ 大于 0 才可以使得函数值减小。可见，只要朝着梯度相反的方向更新 $x$ ，就能让函数值下降。
 #+BEGIN_CENTER
 #+ATTR_HTML: :width 100%
 [[file:../img/gradient-decent-1.png]]
 #+END_CENTER
-
-\(\eta\) 即 Learning Rate , 控制每次下降的步长。
 
 ** Learning Rate
 控制 Learning Rate 的大小。
@@ -23,6 +22,7 @@
 [[file:../img/gradient-lr.png]]
 #+END_CENTER
 
+如果每次更新太大，那么 $\delta x$ 可能会很大，在新的范围内误差很大，无法收敛到极值。
 要确保 Learning Rate 是稳定的下降，才能找到局部最小值。一个合理的 Learning Rate 需要实现以下两点：
 - 随着接近局部最小值，使 Learning Rate 也减小
 - 对于不同的参数，取不同的 Learning Rate
@@ -149,3 +149,6 @@ def Adagrad(X, Y, W, eta, Iteration, lambdaL2):
             print("iteration:{}, cost:{} ".format(itera, arrayCost))
     return W, listCost
 #+END_SRC
+
+* Ref
+- [[https://mp.weixin.qq.com/s?__biz=MzU4MjQ3MDkwNA==&mid=2247484111&idx=1&sn=4ed4480e849298a0aff828611e18f1a8&chksm=fdb69f58cac1164e844726bd429862eb7b38d22509eb4d1826eb851036460cb7ca5a8de7b9bb#rd][理解梯度下降法]]

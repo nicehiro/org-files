@@ -2,3 +2,5 @@
 /*.html
 .\#*
 \#*
+*ltximg/
+*.DS_Store

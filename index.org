@@ -55,6 +55,8 @@
 
 - [[file:notes/Going-Deeper-Into-Reinforcement-Learning:-Fundamentals-of-Policy-Gradients.org][策略梯度]]
 
+- [[file:./notes/RL-Sergey-Levine.org][Sergey Levine 课程学习笔记]]
+
 ** Tech
 
 - [[file:tech/GFW-原理简析.org][GFW原理解析]]
@@ -70,3 +72,7 @@
 ** Life
 
 - [[file:life/学校每日签到的自动化完成.org][学校每日签到的自动化完成]]
+
+** Movies
+
+- [[file:notes/he-yi-wei-jia.org][何以为家]]

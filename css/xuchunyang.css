@@ -1,182 +1,182 @@
 body {
-    /* Adapted from https://www.zhihu.com/ */
-    font-family: -apple-system,system-ui,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
-    margin: 0 auto;
-    background: #f2f2f2;
+		/* Adapted from https://www.zhihu.com/ */
+		font-family: -apple-system,system-ui,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
+		margin: 0 auto;
+		background: #f2f2f2;
+		width: 60%;
+		max-width: 600px;
 }
 
 #content {
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 1000px;
-    font-size: 10px;
+		font-size: 10px;
 }
 
 #content > div {
-    padding-bottom: 5px;
+		padding-bottom: 5px;
 }
 
 h1 {
-    font-size: 2rem;
-    padding: 20px;
-    text-decoration: underline;
-    text-decoration-color: #a66;
-    text-decoration-thickness: 5px;
+		font-size: 2rem;
+		padding: 20px;
+		text-decoration: underline;
+		text-decoration-color: #a66;
+		text-decoration-thickness: 5px;
 }
 
 h2 {
-    font-size: 1.5rem;
-    text-decoration: underline;
-    text-decoration-color: #a66;
-    text-decoration-thickness: 3px;
+		font-size: 1.5rem;
+		text-decoration: underline;
+		text-decoration-color: #a66;
+		text-decoration-thickness: 3px;
 }
 
 h3 {
-    font-size: 1.2rem;
+		font-size: 1.4rem;
+		color: #444444;
 }
 
 h4, h5, h6 {
-    font-size: 1.1rem;
-    line-height: 1rem;
+		font-size: 1.3rem;
+		line-height: 1rem;
+		color: #555555;
 }
 
 p {
-    font-size: 1.1rem;
-    line-height: 2rem;
+		font-size: 1.1rem;
+		line-height: 2rem;
 }
 
 ol, ul {
-    font-size: 1.0rem;
-    line-height: 2rem;
+		font-size: 1.0rem;
+		line-height: 2rem;
 }
 
 a {
-    color: #a66;
+		color: #a66;
 }
 
 div p.postamble {
-    text-align: center;
-    border-top: 5px solid #a66;
+		text-align: center;
+		border-top: 5px solid #a66;
 }
 
 blockquote {
-    border-left: 5px solid #a66;
+		border-left: 5px solid #a66;
 }
 
 blockquote p {
-    margin-left: 7px;
+		margin-left: 7px;
 }
 
 nav {
-    border-bottom: 1px solid black;
-    line-height: 1.5em;
+		border-bottom: 1px solid black;
+		line-height: 1.5em;
 }
 
 nav a {
-    text-decoration: none;
+		text-decoration: none;
 }
 
 nav a:hover {
-    text-decoration: underline;
+		text-decoration: underline;
 }
 
 footer {
-    text-align: center;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    font-size: 0.75rem;
+		text-align: center;
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+		font-size: 0.75rem;
 }
 
 div.MathJax_Display {
-    font-size: 1rem;
+		font-size: 1rem;
 }
 
 code {
-    background-color: rgb(170, 102, 102, 0.4);
-    font-size: large;
+		background-color: rgb(170, 102, 102, 0.4);
+		font-size: large;
 }
 
 /* Copied from Discourse */
 kbd {
-    background-color: #fff;
-    border: 1px solid #e9e9e9;
-    border-radius: 3px;
-    box-shadow: 0 2px 0 rgba(0,0,0,0.2), 0 0 0 1px #fff inset;
-    background: #fafafa;
-    border: 1px solid #ccc;
-    border-bottom: medium none #fff;
-    color: #222;
-    display: inline-block;
-    font-size: .8706em;
-    line-height: 1.4;
-    margin: 0 0.1em;
-    padding: 0.1em 0.6em;
+		background-color: #fff;
+		border: 1px solid #e9e9e9;
+		border-radius: 3px;
+		box-shadow: 0 2px 0 rgba(0,0,0,0.2), 0 0 0 1px #fff inset;
+		background: #fafafa;
+		border: 1px solid #ccc;
+		border-bottom: medium none #fff;
+		color: #222;
+		display: inline-block;
+		font-size: .8706em;
+		line-height: 1.4;
+		margin: 0 0.1em;
+		padding: 0.1em 0.6em;
 }
 
 pre {
-    margin: 0 1em;
-    padding: 0.5em;
-    line-height: 2;
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    font-size: large;
-    background-color: rgb(170, 102, 102, 0.4);
+		margin: 0 1em;
+		padding: 0.5em;
+		line-height: 2;
+		border: 1px solid #ccc;
+		box-shadow: 3px 3px 3px #eee;
+		font-size: large;
+		background-color: rgb(170, 102, 102, 0.4);
 }
 
 pre.src {
-    overflow: auto;
+		overflow: auto;
 }
 
 article h1:first-of-type {
-    text-align: center;
+		text-align: center;
 }
 
 article time:first-of-type {
-    display: block;
-    text-align: center;
-    font-size: 0.8em;
-    color: DimGray;
+		display: block;
+		text-align: center;
+		font-size: 0.8em;
+		color: DimGray;
 }
 
 h1.title {
-    text-align: center;
+		text-align: center;
 }
 
 h2.title {
-    text-align: center;
+		text-align: center;
 }
 
 /* TOC inspired by http://jashkenas.github.com/coffee-script */
 #table-of-contents {
-    font-size: 10pt;
-    position: fixed;
-    right: 0em;
-    top: 0em;
-    background: white;
-    line-height: 12pt;
-    text-align: right;
-    box-shadow: 0 0 1em #777777;
-    -webkit-box-shadow: 0 0 1em #777777;
-    -moz-box-shadow: 0 0 1em #777777;
-    -webkit-border-bottom-left-radius: 5px;
-    -moz-border-radius-bottomleft: 5px;
-    /* ensure doesn't flow off the screen when expanded */
-    max-height: 80%;
-    overflow: auto; }
+		font-size: 10pt;
+		position: fixed;
+		right: 0em;
+		top: 0em;
+		background: white;
+		line-height: 12pt;
+		text-align: right;
+		box-shadow: 0 0 1em #777777;
+		-webkit-box-shadow: 0 0 1em #777777;
+		-moz-box-shadow: 0 0 1em #777777;
+		-webkit-border-bottom-left-radius: 5px;
+		-moz-border-radius-bottomleft: 5px;
+		/* ensure doesn't flow off the screen when expanded */
+		max-height: 80%;
+		overflow: auto; }
 #table-of-contents h2 {
-    font-size: 13pt;
-    max-width: 9em;
-    border: 0;
-    font-weight: normal;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    padding-top: 0.05em;
-    padding-bottom: 0.05em; }
+		font-size: 13pt;
+		max-width: 9em;
+		border: 0;
+		font-weight: normal;
+		padding-left: 0.5em;
+		padding-right: 0.5em;
+		padding-top: 0.05em;
+		padding-bottom: 0.05em; }
 #table-of-contents #text-table-of-contents {
-    display: none;
-    text-align: left; }
+		display: none;
+		text-align: left; }
 #table-of-contents:hover #text-table-of-contents {
-    display: block;
-    padding: 0.5em;
-    margin-top: -1.5em; }
+		display: block;
+		padding: 0.5em;
+		margin-top: -1.5em; }
