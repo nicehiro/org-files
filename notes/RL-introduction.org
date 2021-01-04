@@ -1,0 +1,5 @@
+#+TITLE: RL -- LQR & iLQR Linear Quadratic Regulator 翻译
+#+DATE: 2020-09-05
+#+STARTUP: latexpreview
+#+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
+#+SOURCE: https://medium.com/@jonathan_hui/rl-lqr-ilqr-linear-quadratic-regulator-a5de5104c750

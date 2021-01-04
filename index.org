@@ -2,46 +2,7 @@
 #+OPTIONS: toc:nil
 #+TITLE:Hiro's Blog
 
-| About me |
-
-** Notes
-此笔记应该不适合别人当作博客阅读，阅读需谨慎。
-
-- [[file:notes/Math.org][高数]]
-
-- [[file:notes/Probability.org][概率论]]
-
-- [[file:notes/线性代数.org][线性代数]]
-
-- [[file:notes/Network.org][计算机网络]]
-
-- [[file:notes/OS.org][操作系统]]
-
-- [[file:notes/Computer_Architecture.org][计算机组成原理]]
-
-- [[file:notes/Data_Structure.org][数据结构]]
-
-- [[file:notes/Python-笔记.org][Python笔记]]
-
-- [[file:notes/learn-lisp.org][Lisp笔记]]
-
-- [[file:notes/linux-shell-知识点总结.org][Shell笔记]]
-
-- [[file:notes/Sed-Learn.org][Sed 学习笔记]]
-
-- [[file:notes/pandas-and-numpy.org][Pandas & Numpy]]
-
-- [[file:thesis/mastering-eshell.org][Mastering Eshell]]
-
-** Reinforcement Learning
-
 - [[file:notes/RL-David-Silver.org][David Silver 课程学习笔记]]
-
-- [[file:notes/gradient-decent.org][Gradient Decent]]
-
-- [[file:notes/logistic-regression.org][罗辑回归]]
-
-- [[file:notes/back-propagation.org][反向传播算法 Back Propagation]]
 
 - [[file:notes/active-function.org][激活函数]]
 
@@ -53,15 +14,9 @@
 
 - [[file:notes/lstm.org][理解 LSTM]]
 
-- [[file:notes/Going-Deeper-Into-Reinforcement-Learning:-Fundamentals-of-Policy-Gradients.org][策略梯度]]
-
 - [[file:./notes/RL-Sergey-Levine.org][Sergey Levine 课程学习笔记]]
 
-** Tech
-
-- [[file:tech/GFW-原理简析.org][GFW原理解析]]
-
-- [[file:tech/Vim-进阶.org][Vim 进阶]]
+- [[file:./notes/linear-classification.org][线性分类器]]
 
 - [[file:tech/all_kinds_tech.org][技术杂集]]
 
@@ -69,10 +24,6 @@
 
 - [[file:tech/largest_rectangle_area.org][LeetCode #84 题解]]
 
-** Life
+- [[file:notes/2020.org][2020 年终总结]]
 
-- [[file:life/学校每日签到的自动化完成.org][学校每日签到的自动化完成]]
-
-** Movies
-
-- [[file:notes/he-yi-wei-jia.org][何以为家]]
+- [[file:notes/one-secret-to-becoming-a-great-software-engineer-read-code.org][成为杰出程序员的秘密：阅读源码]]

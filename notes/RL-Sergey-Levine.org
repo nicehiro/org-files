@@ -1,18 +1,17 @@
 #+TITLE: 强化学习 -- Sergey Levine Course
 #+DATE: 2020-08-11
 #+SETUPFILE: ~/.emacs.d/org-templates/level-1.org
-#+STARTUP: latexpreview
 
 * Optimal Control and Planning
 
 ** Model-based 强化学习简介
-先学习状态转移函数（Transition Dynamics），然后在学习在每个状态下如何作出选择。
+先学习状态转移函数（Transition Dynamics），然后再学习在每个状态下如何选择动作。
 
 ** Stochastic 优化方法
 *** 目标
 **** 确定性（Deterministic）环境下：
 当状态和动作确定时，下一状态也是确定的。即下一状态是由当前状态和动作相关的函数所确定的。
-在这种情况下，Agent 可以依据模型生成一系列的动作。
+在已知状态转移方程的情况下，Agent 可以依据模型生成一系列的动作。
 #+BEGIN_CENTER
 #+ATTR_HTML: :width 100%
 [[file:../img/rl-sergey/lec-10-1.png]]
@@ -22,18 +21,20 @@ $$
 $$
 
 **** 随机性（Stochastic）Open-loop 环境下：
-当状态和动作确定时，下一状态无法确定，但有一定的分布概率。Agent 可以依据模型生成一系列的动作。
+当状态和动作确定时，下一状态无法确定，但有一定的分布概率。
+在已知状态转移方程的条件下，Agent 依据模型生成一系列的动作。
 #+BEGIN_CENTER
 #+ATTR_HTML: :width 100%
 [[file:../img/rl-sergey/lec-10-2.png]]
 #+END_CENTER
-\begin{array}{l}
+\begin{array}{c}
 p_{\theta}\left(\mathbf{s}_{1}, \ldots, \mathbf{s}_{T} \mid \mathbf{a}_{1}, \ldots, \mathbf{a}_{T}\right)=p\left(\mathbf{s}_{1}\right) \prod_{t=1}^{T} p\left(\mathbf{s}_{t+1} \mid \mathbf{s}_{t}, \mathbf{a}_{t}\right) \\
 \mathbf{a}_{1}, \ldots, \mathbf{a}_{T}=\arg \max _{\mathbf{a}_{1}, \ldots, \mathbf{a}_{T}} E\left[\sum_{t} r\left(\mathbf{s}_{t}, \mathbf{a}_{t}\right) \mid \mathbf{a}_{1}, \ldots, \mathbf{a}_{T}\right]
 \end{array}
 
+但其实这种设定是不合理的。即使你知道状态转移方程，由于环境自身的随机性你还是无法判断下个状态。
 **** 随机性（Stochastic）Closed-loop 环境下：
-当状态和动作确定时，下一状态无法确定。Agent 可以依据模型生成一个策略。
+当状态和动作确定时，下一状态无法确定。Agent 可以依据模型生成一个策略，即每走一步，生成一步的动作。
 #+BEGIN_CENTER
 #+ATTR_HTML: :width 100%
 [[file:../img/rl-sergey/lec-10-3.png]]
@@ -52,7 +53,7 @@ $$
 $$
 \mathbf{A}=\arg \max _{\mathbf{A}} J(\mathbf{A})
 $$
-**** Guess & Check
+**** Guess & Check (random shooting)
 1. 随便找一个分布函数（distribution），使用此分布函数选择不同状态的动作序列 $A_1,\dots,A_N$
 2. 根据上诉公式选取使得 $J(A_i)$ 最大的动作序列 $A_i$
 
@@ -63,7 +64,7 @@ $$
 3. 选取上诉计算结果中表现最好（$J(A_i)$ 值最高）的几组动作序列 $A_{i_1},\dots,A_{i_M}$ ，其中 $M<N$
 4. 修改高斯分布参数，使得此高斯分布更加贴合 $A_{i_1},\dots,A_{i_M}$ ，返回 1 步继续执行
 
-** Monte Carlo 树搜索 （MCTS）
+**** Monte Carlo 树搜索 （MCTS）
 MCTS 适用于离散动作空间和连续动作空间，这里以离散动作空间举例。
 
 初始状态为 $s_1$ ，如果遍历了所有从 $s_1$ 出发的路径，那么自然可以选出哪条路径是最佳路径。
@@ -82,12 +83,11 @@ $$
 $$
 
 ** 导数求解
-一般来说，有模型强化学习很少有问题可以使用导数来求解，因为我们无法知道它的状态转移方程（环境动力学函数），
+一般来说，强化学习很少有问题可以使用导数来求解，因为我们无法知道它的状态转移方程（环境动力学函数），
 比如在玩 Atari 游戏的时候，下一状态我们是无法通过公式定义来得到的。
 假设我们现在知道状态转移方程，那么要如何通过导数来求得最优解呢？
 
-先来考虑一下确定性环境下：
-我们的目标是：
+先来考虑一下确定性环境。我们的目标是：
 $$
 \min _{\mathbf{u}_{1}, \ldots, \mathbf{u}_{T}} \sum_{t=1}^{T} c\left(\mathbf{x}_{t}, \mathbf{u}_{t}\right) \text { s.t. } \mathbf{x}_{t}=f\left(\mathbf{x}_{t-1}, \mathbf{u}_{t-1}\right)
 $$
@@ -102,19 +102,17 @@ $$
 \frac{d f}{d \mathbf{x}_{t}}, \frac{d f}{d \mathbf{u}_{t}}, \frac{d c}{d \mathbf{x}_{t}}, \frac{d c}{d \mathbf{u}_{t}}
 $$
 
-但一般在解决这种问题的时候不使用基于梯度的一阶优化方法，而是使用二阶优化方法。
-
-*** 为什么使用二阶优化方法
-**** Shooting method
+*** Shooting method
 前面提到的一阶优化方法被称作 =Shooting method= 。它只对动作进行求导，状态是关于动作的函数。
 #+BEGIN_CENTER
 #+ATTR_HTML: :width 100%
 [[file:../img/rl-sergey/lec-10-4.png]]
 #+END_CENTER
 
-上图横轴是时间，纵轴是状态。给定初始位置之后，选择动作，根据状态转移方程得到下一个状态，直到结束。可以看到，如果开始的动作发生一个细微的变化，也会对最后的结果造成很大的影响。
+上图横轴是时间，纵轴是状态。给定初始位置之后，选择动作，根据状态转移方程得到下一个状态，直到结束。
+可以看到，如果开始的动作发生一个细微的变化，也会对最后的结果造成很大的影响。
 
-**** Collocation method
+*** Collocation method
 =Collocation method= 对状态和动作求导，有约束性。
 $$
 \min _{\mathbf{u}_{1}, \ldots, \mathbf{u}_{T}, \mathbf{x}_{1}, \ldots, \mathbf{x}_{T}} \sum_{t=1}^{T} c\left(\mathbf{x}_{t}, \mathbf{u}_{t}\right) \text { s.t. } \mathbf{x}_{t}=f\left(\mathbf{x}_{t-1}, \mathbf{u}_{t-1}\right)
@@ -413,7 +411,8 @@ $$
 可以看出来，有些地方的奖励预测过高，导致会在某些地方的选择与正确动作相差巨大。
 
 假设我们有一个关于模型准确率的函数，用来描述模型在当前状态下的预测的准确率。
-下图蓝色部分为 95% 的置信区间，它表示，模型有 95% 的概率确定下一个状态会在蓝色区间内，但模型无法知道到底在蓝色区间内的什么地方。
+下图蓝色部分为 95% 的置信区间，它表示，模型有 95% 的概率确定下一个状态会在蓝色区间内，
+但模型无法知道到底在蓝色区间内的什么地方。
 #+BEGIN_CENTER
 #+ATTR_HTML: :width 100%
 [[file:../img/rl-sergey/lec-11-6.png]]
@@ -421,13 +420,15 @@ $$
 
 *** 如何计算模型不确定性？
 **** Idea 1. 计算输出动作的交叉熵。熵越高，模型越不稳定。
-这种想法是不可行的。下图中蓝线表示生成的模型，可以看出，模型的方差基本上为 0，即模型的熵为 0，但这个模型是非常不稳定的。
+这种想法是不可行的。下图中蓝线表示生成的模型，可以看出，模型的方差基本上为 0，即模型输出的熵为 0，
+但这个模型是非常不稳定的。
 “Model is certain about the data, but we are not certain about the model.”
 #+BEGIN_CENTER
 #+ATTR_HTML: :width 100%
 [[file:../img/rl-sergey/lec-11-7.png]]
 #+END_CENTER
-模型的不确定性其实体现在两个方面，一是数据的不确定性，二是模型本身的不确定性。计算交叉熵其实解决的只是数据的不确定性。
+模型的不确定性其实体现在两个方面，一是数据的不确定性，二是模型本身的不确定性。
+计算交叉熵解决的只是数据的不确定性。
 
 **** Idea 2. 计算模型本身的不确定性
 我们希望生成的模型可以满足这个条件：
@@ -444,6 +445,7 @@ $$
 
 *** 计算模型不确定性的方法
 *Bootstrap ensembles* 训练多个模型，那么其结果的期望可以近似看作多个模型的均值。
+模型在不同参数 $\theta$ 下的期望为：（ $\theta$ 的概率由 $D$ 确定 ）
 $$
 \int p(s_{t+1}|s_t,a_t,\theta)p(\theta|D)d\theta\sim\frac{1}{N}\sum_{i}p(s_{t+1}|s_t,a_t,\theta_i)
 $$
@@ -521,7 +523,8 @@ $$
 #+ATTR_HTML: :width 100%
 [[file:../img/rl-sergey/lec-12-2.png]]
 #+END_CENTER
-上图是基于模型的方法的反向传播示意图。其中，由于模型是训练到的函数，所以模型函数也会参与到梯度的传播过程中，就会导致一系列的梯度相乘叠加。
+上图是基于模型的方法的反向传播示意图。其中，由于模型是训练到的函数，所以模型函数也会参与到梯度的传播过程中，
+就会导致一系列的梯度相乘叠加。
 由于梯度在传播过程中叠加性，越靠 Trajectory 结尾，其梯度越小，越靠 Trajectory 开头，梯度越大。
 所以很容易发生梯度爆炸的问题。其次就是之前提到的全局策略的缺点，牵一发而动全身，误差会不断累积增大。
 
